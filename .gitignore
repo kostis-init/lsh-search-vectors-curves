@@ -1,5 +1,9 @@
+# CMake Builds
+/cmake-build*/
+
 # CLion Project
 /.idea/
+*.iml
 
 # Prerequisites
 *.d
