@@ -1,7 +1,3 @@
-//
-// Created by usw031 on 08/10/2019.
-//
-
 #include "Point.h"
 
 Point::Point() {
@@ -12,14 +8,14 @@ Point::~Point() {
 
 }
 
-void Point::addCoordinateLast(int co){
+void Point::addCoordinateLast(double co){
     coordinates.push_back(co);
 }
 
-int Point::getCoordinate(int position){
+double Point::getCoordinate(int position){
     return coordinates.at(position);
 }
 
-std::vector<int> Point::getCoordinates() {
+std::vector<double> Point::getCoordinates() {
     return coordinates;
 }
