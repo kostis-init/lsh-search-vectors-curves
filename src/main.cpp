@@ -3,10 +3,15 @@
 
 int main(){
 
-    auto random = new Random(50);
-    for (int i = 0; i < 10; ++i) {
-        std::cout << random->getRandomNumber() << std::endl;
-    }
+    //read input arguments
+
+    //read input files and store data in memory
+
+    //construct hash tables & hash functions
+
+    //do the query
+
+    //+more
 
     return 0;
 }
