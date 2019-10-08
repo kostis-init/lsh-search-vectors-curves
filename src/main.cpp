@@ -1,6 +1,14 @@
 #include <iostream>
-#include <unistd.h>
+#include <cstring>
+#include <getopt.h>
+#include "HashTable.h"
 
+//input arguments
+static char inputFilename[128];
+static char queryFilename[128];
+static char outputFilename[128];
+static int numOfFunctions = 4;
+static int numOfHashTables = 5;
 
 void readArguments(int argc, char* argv[]);
 
@@ -9,10 +17,12 @@ int main(int argc, char* argv[]){
     //read input arguments
     readArguments(argc, argv);
 
-
     //read input files and store data in memory
 
     //construct hash tables & hash functions
+    int sizeOfHashTables = 100;
+    HashTableList* hashTableList = new HashTableList(numOfHashTables, sizeOfHashTables);
+
 
     //do the query
 
@@ -23,27 +33,26 @@ int main(int argc, char* argv[]){
 
 void readArguments(int argc, char* argv[]) {
     int c;
-    while( (c = getopt(argc, argv, "d::q::k::L::o::")) != -1){
+    while((c = getopt(argc, argv, "d:q:k:L:o:")) != -1){
         switch (c){
             case 'd':
-                printf("d %s\n", optarg);
+                strcpy(inputFilename, optarg);
                 break;
             case 'q':
-                printf("q %s\n", optarg);
+                strcpy(queryFilename, optarg);
                 break;
             case 'k':
-                printf("k %s\n", optarg);
+                numOfFunctions = std::stoi(optarg);
                 break;
             case 'L':
-                printf("L %s\n", optarg);
+                numOfHashTables = std::stoi(optarg);
                 break;
             case 'o':
-                printf("o %s\n", optarg);
+                strcpy(outputFilename, optarg);
                 break;
             default:
                 printf("Non acceptable argument, exiting...");
                 exit(-1);
-
         }
     }
 }
