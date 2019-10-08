@@ -2,8 +2,8 @@
 #include <random>
 #include <vector>
 #include  <stdio.h>
-#include "hash_func.h"
-#include "Object.h"
+#include "hasher.h"
+//#include "Object.h"
 #include "Point.h"
 #include "utils.h"
 
