@@ -44,13 +44,14 @@ void PointHasher::generateGrids() {
     random_device r;
     //do we need another engine?
     default_random_engine e1(r());
-    uniform_real_distribution<float> uniform_dist(0,WINDOW_SIZE);
-    gridPool = (double **)malloc(gridPoolSize * sizeof(double*));
-    for(int i = 0; i < gridPoolSize;i++)  
-        gridPool[i] = (double *)malloc(numDimension* sizeof(double));
-    for (int i =0; i< gridPoolSize; i++) 
-        for (int j =0; j < numDimension; j ++) 
+    uniform_real_distribution<float> uniform_dist(0, WINDOW_SIZE);
+    gridPool = (double **) malloc(gridPoolSize * sizeof(double *));
+    for (int i = 0; i < gridPoolSize; i++)
+        gridPool[i] = (double *) malloc(numDimension * sizeof(double));
+    for (int i = 0; i < gridPoolSize; i++)
+        for (int j = 0; j < numDimension; j++) {
             gridPool[i][j] = uniform_dist(e1);
+        }
 }
 
 int PointHasher::hash(Object* obj,int hashIndex) const {
@@ -64,7 +65,7 @@ int PointHasher::hash(Object* obj,int hashIndex) const {
     //each of them is < M. So the max(sum) = numDimension * M  
     // = numDimension * 2^(32/numDimension) < 2^32. 
     for (auto c :coordinates) {
-        int gridCell = int((c - gridPool[selectedGrids[hashIndex]][i])/WINDOW_SIZE); 
+        int gridCell = int((c - gridPool[selectedGrids[hashIndex]][i])/WINDOW_SIZE);
         sum+= ((gridCell%M)*(powModulo(coefficient,j,M)))%M;
         i++;
         j--;
@@ -73,12 +74,10 @@ int PointHasher::hash(Object* obj,int hashIndex) const {
 }
 
 size_t PointHasher::operator()(Object *obj) const {
-//    Point *point = dynamic_cast<Point *>(obj);
-//    string amplified = "";
-//    for (int i =0; i < amplificationSize; i++)
-//        amplified+= to_string(hash(obj,i));
-//    return stoi(amplified);
+    string amplified = "";
+    for (int i =0; i < amplificationSize; i++)
+        amplified += to_string(hash(obj,i));
+    return atoi(amplified.c_str());
 
-    //temp to test connection between hash table and this hash function
-    return stoi(obj->getId())%4;
+    //return stoi(obj->getId())%4;
 }

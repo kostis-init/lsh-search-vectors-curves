@@ -16,7 +16,7 @@ class PointHasher : public Hasher {
     private:
         const int window = WINDOW_SIZE;
         //size depends on amplification size -evaluated at constructor?
-        double **gridPool;
+        double **gridPool = nullptr;
         int gridPoolSize;
         int amplificationSize;
         int numDimension;
@@ -29,7 +29,7 @@ class PointHasher : public Hasher {
         //compute the ith hash of Object obj
         int hash(Object *obj,int i) const;
 
-        //compute the concatenation of all hash functions i=0,1,..numDimension
+        //compute the concatenation of all hash functions i=0,1,..amplificationSize
         size_t operator() (Object* obj) const;
 
 };
