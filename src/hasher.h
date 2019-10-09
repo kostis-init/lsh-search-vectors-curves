@@ -1,5 +1,4 @@
-
-#ifndef HASHER_H 
+#ifndef HASHER_H
 #define HASHER_H 
 #include "Object.h"
 
@@ -17,10 +16,10 @@ class Hasher {
 //the index of the bucket that Object should be stored.
 class PointHasher : public Hasher {
     private:
-        static const int window = WINDOW_SIZE;
+        const int window = WINDOW_SIZE;
         //size depends on amplification size -evaluated at constructor?
-        static double **gridPool;  
-        static int gridPoolSize;
+        double **gridPool;
+        int gridPoolSize;
         int amplificationSize;
         int numDimension;
         int * selectedGrids;

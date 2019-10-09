@@ -15,7 +15,7 @@ public:
     Curve();
     ~Curve();
     std::vector<Point> getPoints();
-
+    void foo(){}
 };
 
 
