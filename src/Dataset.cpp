@@ -1,10 +1,8 @@
 #include "Dataset.h"
 
 DatasetPoints::DatasetPoints() {
-
 }
 DatasetPoints::~DatasetPoints() {
-
 }
 
 void DatasetPoints::setSize(int sz) {

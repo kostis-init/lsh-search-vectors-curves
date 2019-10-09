@@ -10,18 +10,20 @@
 using namespace std;
 
 //input arguments
-static char inputFilename[128];
-static char queryFilename[128];
-static char outputFilename[128];
-static int numOfFunctions = 4;
-static int numOfHashTables = 5;
+char inputFilename[128]; bool inputFileGiven = false;
+char queryFilename[128]; bool queryFileGiven = false;
+char outputFilename[128]; bool outputFileGiven = false;
+int numOfFunctions = 4;
+int numOfHashTables = 5;
 void readArguments(int argc, char* argv[]);
 
 //dataset
-static DatasetPoints* data;
+DatasetPoints* data;
 void parseInputFile();
 
 void test_print_data();
+
+void test_print_hashtable(HashTableStruct *pStruct);
 
 int main(int argc, char* argv[]){
 
@@ -32,10 +34,18 @@ int main(int argc, char* argv[]){
 
     //read input file and store data in memory
     parseInputFile();
-    test_print_data();
+    //test_print_data();
 
     //construct hash tables & hash functions
-    HashTableStruct* hashTableStruct = new HashTableStruct(numOfHashTables);
+    auto hashTableStruct = new HashTableStruct(numOfHashTables);
+
+    //insert points to hash tables
+    auto points = data->getData();
+    for (int i = 0; i < points.size(); i++) {
+        hashTableStruct->addToAllHashTables(points[i]);
+    }
+    test_print_hashtable(hashTableStruct);
+
 
     //ask for query file and output file if not given as arguments
 
@@ -46,6 +56,17 @@ int main(int argc, char* argv[]){
     // +check memory leaks
 
     return 0;
+}
+
+void test_print_hashtable(HashTableStruct *hashTableStruct) {
+    auto hts = hashTableStruct->getAllHashTables();
+    for (int i = 0; i < hashTableStruct->getNumOfHTs(); ++i) {
+        auto fn = hts[i].hash_function();
+        cout << "Checking hash table " << i + 1 << endl;
+        for(auto entry : hts[i]){
+            cout << entry->getId() << " hash func: " << fn(entry) << ", bucket #" << hts[i].bucket(entry)<< endl;
+        }
+    }
 }
 
 void test_print_data() {
@@ -66,9 +87,11 @@ void readArguments(int argc, char* argv[]) {
     while((c = getopt(argc, argv, "d:q:k:L:o:")) != -1){
         switch (c){
             case 'd':
+                inputFileGiven = true;
                 strcpy(inputFilename, optarg);
                 break;
             case 'q':
+                queryFileGiven = true;
                 strcpy(queryFilename, optarg);
                 break;
             case 'k':
@@ -78,6 +101,7 @@ void readArguments(int argc, char* argv[]) {
                 numOfHashTables = stoi(optarg);
                 break;
             case 'o':
+                outputFileGiven = true;
                 strcpy(outputFilename, optarg);
                 break;
             default:

@@ -4,7 +4,7 @@
 #include <string>
 #include "Object.h"
 using namespace std;
-class Point : Object{
+class Point : public Object{
 
 private:
 
@@ -16,10 +16,12 @@ public:
     Point(string id);
     ~Point();
     void foo(){}
+
     void addCoordinateLast(double coordinate);
+
     double getCoordinate(int position);
     std::vector<double> getCoordinates();
-    string getId(){return this->id;}
+    string getId() {return this->id;}
 
 };
 

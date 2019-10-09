@@ -1,19 +1,24 @@
 #include <stdlib.h>
 #include <random>
+#include <iostream>
 #include <vector>
 #include  <stdio.h>
 #include "hasher.h"
 //#include "Object.h"
 #include "Point.h"
 #include "utils.h"
-
+#include "Dataset.h"
 
 using namespace std;
 
-PointHasher::PointHasher(int amplificationSize,int numDimension) {
+extern DatasetPoints* data;
+extern int numOfFunctions;
+
+PointHasher::PointHasher() {
+    cout << "HASHER CREATED" << endl;
     //maybe we need  more or less
-    this->amplificationSize = amplificationSize;
-    this->numDimension = numDimension;
+    this->amplificationSize = numOfFunctions;
+    this->numDimension = data->getDimension();
     gridPoolSize = amplificationSize * 10;
     if (gridPool == nullptr) {
         generateGrids();
@@ -48,7 +53,7 @@ void PointHasher::generateGrids() {
             gridPool[i][j] = uniform_dist(e1);
 }
 
-int PointHasher::hash(Object* obj,int hashIndex) {
+int PointHasher::hash(Object* obj,int hashIndex) const {
     Point *point = dynamic_cast<Point *>(obj);
     vector<double> coordinates = point->getCoordinates();
     //or select coefficient randomly?
@@ -67,10 +72,13 @@ int PointHasher::hash(Object* obj,int hashIndex) {
     return sum % M;
 }
 
-int PointHasher::hash(Object* obj) {
-    Point *point = dynamic_cast<Point *>(obj);
-    string amplified = "";
-    for (int i =0; i < amplificationSize;i++) 
-        amplified+= to_string(hash(obj,i));
-    return stoi(amplified);
+size_t PointHasher::operator()(Object *obj) const {
+//    Point *point = dynamic_cast<Point *>(obj);
+//    string amplified = "";
+//    for (int i =0; i < amplificationSize; i++)
+//        amplified+= to_string(hash(obj,i));
+//    return stoi(amplified);
+
+    //temp to test connection between hash table and this hash function
+    return stoi(obj->getId())%4;
 }

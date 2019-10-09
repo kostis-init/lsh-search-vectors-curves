@@ -1,14 +1,12 @@
 #ifndef HASHER_H
 #define HASHER_H 
 #include "Object.h"
-
 //#define GRID_POOL 50
 #define WINDOW_SIZE 100
 
-
 class Hasher {
     public:
-        virtual int Hash(Object *obj) = 0;
+        //virtual int hash(Object *obj) const = 0;
 };
 
 //Create an instance per LSHHashtable.
@@ -25,14 +23,14 @@ class PointHasher : public Hasher {
         int * selectedGrids;
         void generateGrids();
     public:
-        //amplificationSize=k , numDimension =d as described in slides.
-        PointHasher(int amplificationSize,int numDimension);
+        PointHasher();
         ~PointHasher();
+
         //compute the ith hash of Object obj
-        int hash(Object *obj,int i);
+        int hash(Object *obj,int i) const;
+
         //compute the concatenation of all hash functions i=0,1,..numDimension
-        //Usually a user will need this func.
-        int hash(Object* obj);
+        size_t operator() (Object* obj) const;
 
 };
 
