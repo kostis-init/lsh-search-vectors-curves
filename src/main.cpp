@@ -28,22 +28,22 @@ int main(int argc, char* argv[]){
     //read input arguments
     readArguments(argc, argv);
 
-    //read input file if not given as argument
-
+    //ask for input file if not given as argument
 
     //read input file and store data in memory
     parseInputFile();
-
     test_print_data();
 
     //construct hash tables & hash functions
     HashTableStruct* hashTableStruct = new HashTableStruct(numOfHashTables);
 
+    //ask for query file and output file if not given as arguments
 
-    //do the query
+    //do the query, output the results
 
-    //+more
-    //+check memory leaks
+    //ask user if he wants another one
+
+    // +check memory leaks
 
     return 0;
 }

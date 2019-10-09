@@ -19,8 +19,8 @@ public:
 
     void setSize(int sz);
     void setDimension(int d);
-
     void addPoint(Point *point);
+
     vector<Point *> getData();
     int getDimension();
     int getSize();
