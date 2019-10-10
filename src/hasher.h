@@ -3,6 +3,12 @@
 #include "Object.h"
 //#define GRID_POOL 50
 #define WINDOW_SIZE 100
+#define GRID_POOL_SIZE 100
+
+//TODO:change when not testing
+//--------------
+#define private public
+//--------------
 
 class Hasher {
     public:
@@ -14,16 +20,18 @@ class Hasher {
 //the index of the bucket that Object should be stored.
 class PointHasher : public Hasher {
     private:
-        const int window = WINDOW_SIZE;
+        //const int window = WINDOW_SIZE;
         //size depends on amplification size -evaluated at constructor?
-        double **gridPool = nullptr;
-        int gridPoolSize;
+        static double **gridPool ;
+        static const int gridPoolSize = GRID_POOL_SIZE;
         int amplificationSize;
         int numDimension;
         int * selectedGrids;
         void generateGrids();
     public:
         PointHasher();
+        //debug only
+        PointHasher(int,int);
         ~PointHasher();
 
         //compute the ith hash of Object obj
@@ -33,6 +41,8 @@ class PointHasher : public Hasher {
         size_t operator() (Object* obj) const;
 
 };
+
+//double **PointHasher::gridPool;
 
 class CurveHasher : public Hasher {
     private:
