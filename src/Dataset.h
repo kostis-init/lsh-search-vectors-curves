@@ -5,7 +5,6 @@
 using namespace std;
 
 class DatasetPoints {
-
 private:
 
     int dimension;
@@ -13,9 +12,6 @@ private:
     vector<Point *> points;
 
 public:
-
-    DatasetPoints();
-    ~DatasetPoints();
 
     void setSize(int sz);
     void setDimension(int d);
@@ -26,7 +22,18 @@ public:
     int getSize();
 };
 
+class QueryDatasetPoints : public DatasetPoints {
+private:
 
+    double radius;
+
+public:
+
+    double getRadius();
+
+    void setRadius(double radius);
+
+};
 
 
 #endif //ALGORITHMS_PROJECT_DATASET_H

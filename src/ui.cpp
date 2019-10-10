@@ -84,3 +84,25 @@ DatasetPoints* parseInputFilePoints(string filename) {
     data->setDimension(current_dimension);
     return data;
 }
+
+void askQueryFile(LSH* lsh){
+    string filename;
+    cout << "Please give query filename" << endl;
+    cin >> filename;
+    lsh->setQueryFilename(filename);
+    lsh->setQueryFileGiven(true);
+}
+
+void askOutputFile(LSH* lsh){
+    string filename;
+    cout << "Please give output filename" << endl;
+    cin >> filename;
+    lsh->setOutputFilename(filename);
+    lsh->setOutputFileGiven(true);
+}
+
+QueryDatasetPoints* parseQueryFilePoints(string filename){
+
+    //TODO
+
+}

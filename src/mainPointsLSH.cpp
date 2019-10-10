@@ -25,7 +25,7 @@ int main(int argc, char* argv[]){
         askInputFile(lsh);
 
     /**
-     * read input file and store data in memory
+     * parse input file into memory
      */
     lsh->setData(parseInputFilePoints(lsh->getInputFilename()));
     //test_print_data(lsh->getData());
@@ -35,12 +35,22 @@ int main(int argc, char* argv[]){
      */
     auto hashTableStruct = new HashTableStruct(lsh->getNumOfHashTables());
     auto points = lsh->getData()->getPoints();
-    for (int i = 0; i < points.size(); i++) {
+    for (int i = 0; i < points.size(); i++)
         hashTableStruct->addToAllHashTables(points[i]);
-    }
     test_print_hashtable(hashTableStruct);
 
-    //ask for query file and output file if not given as arguments
+    /**
+     * ask query filename and output filename (if not given as arguments)
+     */
+    if(!lsh->isQueryFileGiven())
+        askQueryFile(lsh);
+    if(!lsh->isOutputFileGiven())
+        askOutputFile(lsh);
+
+    /**
+     * parse query file into memory
+     */
+     lsh->setQueryData(parseQueryFilePoints(lsh->getQueryFilename()));
 
     //do the query, output the results
 

@@ -11,6 +11,7 @@ private:
     int numOfHashTables = 5;
 
     DatasetPoints* data;
+    QueryDatasetPoints* queryData;
 public:
     const string &getInputFilename() const;
 
@@ -47,6 +48,10 @@ public:
     DatasetPoints *getData() const;
 
     void setData(DatasetPoints *data);
+
+    QueryDatasetPoints *getQueryData() const;
+
+    void setQueryData(QueryDatasetPoints *queryData);
 };
 
 

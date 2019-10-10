@@ -7,5 +7,8 @@
 void readArgumentsLSH(LSH* lsh, int argc, char **argv);
 void askInputFile(LSH* lsh);
 DatasetPoints* parseInputFilePoints(string filename);
+void askQueryFile(LSH* lsh);
+void askOutputFile(LSH* lsh);
+QueryDatasetPoints* parseQueryFilePoints(string filename);
 
 #endif //ALGORITHMS_PROJECT_UI_H

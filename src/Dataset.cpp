@@ -1,10 +1,5 @@
 #include "Dataset.h"
 
-DatasetPoints::DatasetPoints() {
-}
-DatasetPoints::~DatasetPoints() {
-}
-
 void DatasetPoints::setSize(int sz) {
     this->size = sz;
 }
@@ -27,4 +22,12 @@ int DatasetPoints::getDimension() {
 
 int DatasetPoints::getSize() {
     return size;
+}
+
+double QueryDatasetPoints::getRadius() {
+    return radius;
+}
+
+void QueryDatasetPoints::setRadius(double radius) {
+    this->radius = radius;
 }

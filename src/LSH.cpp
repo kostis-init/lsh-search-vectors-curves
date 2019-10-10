@@ -71,3 +71,11 @@ DatasetPoints *LSH::getData() const {
 void LSH::setData(DatasetPoints *data) {
     LSH::data = data;
 }
+
+QueryDatasetPoints *LSH::getQueryData() const {
+    return queryData;
+}
+
+void LSH::setQueryData(QueryDatasetPoints *queryData) {
+    LSH::queryData = queryData;
+}
