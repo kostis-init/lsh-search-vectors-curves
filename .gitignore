@@ -40,3 +40,6 @@
 
 #JSON
 *.json
+
+#vs-code buil
+/build/*
