@@ -17,7 +17,7 @@ void DatasetPoints::addPoint(Point *point) {
     this->points.push_back(point);
 }
 
-vector<Point *> DatasetPoints::getData() {
+vector<Point *> DatasetPoints::getPoints() {
     return this->points;
 }
 

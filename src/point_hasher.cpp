@@ -8,17 +8,17 @@
 #include "Point.h"
 #include "utils.h"
 #include "Dataset.h"
+#include "LSH.h"
 
 using namespace std;
 
-extern DatasetPoints* data;
-extern int numOfFunctions;
+extern LSH* lsh;
 
 PointHasher::PointHasher() {
     cout << "HASHER CREATED" << endl;
     //maybe we need  more or less
-    this->amplificationSize = numOfFunctions;
-    this->numDimension = data->getDimension();
+    this->amplificationSize = lsh->getNumOfFunctions();
+    this->numDimension = lsh->getData()->getDimension();
     gridPoolSize = amplificationSize * 10;
     if (gridPool == nullptr) {
         generateGrids();
