@@ -37,14 +37,22 @@ void readArgumentsLSH(LSH* lsh, int argc, char **argv) {
     }
 }
 
-void parseInputFilePoints(LSH* lsh) {
-    if(!file_exists(lsh->getInputFilename().c_str())){
+void askInputFile(LSH* lsh){
+    string filename;
+    cout << "Please give input filename" << endl;
+    cin >> filename;
+    lsh->setInputFilename(filename);
+    lsh->setInputFileGiven(true);
+}
+
+DatasetPoints* parseInputFilePoints(string filename) {
+    if(!file_exists(filename.c_str())){
         cout << "input file does not exist" << endl;
         exit(-1);
     };
     auto data = new DatasetPoints();
-    cout << "Parsing input file: " << lsh->getInputFilename() << ", please wait..." << endl;
-    ifstream inputFile(lsh->getInputFilename().c_str());
+    cout << "Parsing input file: " << filename << ", please wait..." << endl;
+    ifstream inputFile(filename.c_str());
     string line;
     int size = 0;
     int current_dimension = -1;
@@ -74,5 +82,5 @@ void parseInputFilePoints(LSH* lsh) {
     }
     data->setSize(size);
     data->setDimension(current_dimension);
-    lsh->setData(data);
+    return data;
 }

@@ -7,52 +7,38 @@
 
 using namespace std;
 
-void test_print_hashtable(HashTableStruct *hashTableStruct) {
-    auto hts = hashTableStruct->getAllHashTables();
-    for (int i = 0; i < hashTableStruct->getNumOfHTs(); ++i) {
-        auto fn = hts[i].hash_function();
-        cout << "Checking hash table " << i + 1 << endl;
-        for(auto entry : hts[i]){
-            cout << entry->getId() << " hash func: " << fn(entry) << ", bucket #" << hts[i].bucket(entry)<< endl;
-        }
-    }
-}
-void test_print_data(DatasetPoints *data) {
-    auto points = data->getPoints();
-    for (int i = 0; i < points.size(); i+=100) {
-        cout << "CHECKING ITEM ID: " << points[i]->getId() << endl;
-        auto coords = points[i]->getCoordinates();
-        for (int j = 0; j < coords.size(); ++j) {
-            cout << coords[j] << " ";
-        }
-        cout << endl;
-    }
-    cout << data->getDimension() << " " << data->getSize() << endl;
-}
+LSH* lsh;
 
 int main(int argc, char* argv[]){
 
-    auto lsh = new LSH();
+    lsh = new LSH();
 
-    //read input arguments
+    /**
+     * read arguments
+     */
     readArgumentsLSH(lsh, argc, argv);
 
-    //ask for input file if not given as argument
+    /**
+     * ask input filename (if not given as an argument)
+     */
+    if(!lsh->isInputFileGiven())
+        askInputFile(lsh);
 
-    //read input file and store data in memory
-    parseInputFilePoints(lsh);
-    test_print_data(lsh->getData());
+    /**
+     * read input file and store data in memory
+     */
+    lsh->setData(parseInputFilePoints(lsh->getInputFilename()));
+    //test_print_data(lsh->getData());
 
-    //construct hash tables & hash functions
+    /**
+     * insert data into hash tables
+     */
     auto hashTableStruct = new HashTableStruct(lsh->getNumOfHashTables());
-
-    //insert points to hash tables
     auto points = lsh->getData()->getPoints();
     for (int i = 0; i < points.size(); i++) {
         hashTableStruct->addToAllHashTables(points[i]);
     }
     test_print_hashtable(hashTableStruct);
-
 
     //ask for query file and output file if not given as arguments
 
