@@ -14,12 +14,32 @@ using namespace std;
 
 extern LSH* lsh;
 
+double **PointHasher::gridPool;
+
 PointHasher::PointHasher() {
+    //gridPool = nullptr;
     cout << "HASHER CREATED" << endl;
     //maybe we need  more or less
     this->amplificationSize = lsh->getNumOfFunctions();
     this->numDimension = lsh->getData()->getDimension();
-    gridPoolSize = amplificationSize * 10;
+    if (gridPool == nullptr) {
+        generateGrids();
+    }
+    random_device r;
+    //do we need another engine?
+    default_random_engine e1(r());
+    uniform_int_distribution<int> uniform_dist(0,gridPoolSize-1);
+    selectedGrids = (int *)malloc(gridPoolSize * sizeof(int));
+    for (int i = 0; i<amplificationSize; i++){
+        selectedGrids[i] = uniform_dist(e1);
+    }
+}
+
+//debug
+PointHasher::PointHasher(int ampSize,int numDimension) {
+    //maybe we need  more or less
+    this->amplificationSize = ampSize;
+    this->numDimension = numDimension;
     if (gridPool == nullptr) {
         generateGrids();
     }
@@ -34,9 +54,9 @@ PointHasher::PointHasher() {
 }
 
 PointHasher::~PointHasher() {
-    for (int i=0;i<gridPoolSize; i++)
+    /*for (int i=0;i<gridPoolSize; i++)
         free(gridPool[i]);
-    free(gridPool);
+    free(gridPool);*/
     free(selectedGrids);
 }
 
@@ -60,12 +80,12 @@ int PointHasher::hash(Object* obj,int hashIndex) const {
     //or select coefficient randomly?
     int coefficient = 0xffff;
     int sum = 0,i = 0,j = numDimension;
-    int M = pow(2,32/amplificationSize);
+    int M = pow(2,int(32/amplificationSize));
     //sum can not overflow because we sum numDimension values
     //each of them is < M. So the max(sum) = numDimension * M  
     // = numDimension * 2^(32/numDimension) < 2^32. 
     for (auto c :coordinates) {
-        int gridCell = int((c - gridPool[selectedGrids[hashIndex]][i])/WINDOW_SIZE);
+        unsigned int gridCell = int((c - gridPool[selectedGrids[hashIndex]][i])/WINDOW_SIZE);
         sum+= ((gridCell%M)*(powModulo(coefficient,j,M)))%M;
         i++;
         j--;
