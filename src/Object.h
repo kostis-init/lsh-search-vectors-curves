@@ -1,11 +1,11 @@
 #ifndef ALGORITHMS_PROJECT_OBJECT_H
 #define ALGORITHMS_PROJECT_OBJECT_H
-
+#include <string>
+using namespace std;
 class Object {
 private:
 public:
-    //dummy function (not implemented) - dont delete it has purpose 
-    virtual void foo();
+    virtual string getId() = 0;
 };
 
 #endif //ALGORITHMS_PROJECT_OBJECT_H

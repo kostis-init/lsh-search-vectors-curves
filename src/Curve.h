@@ -4,10 +4,13 @@
 #include "Object.h"
 #include "Point.h"
 
-class Curve : Object{
+using namespace std;
+
+class Curve : public Object{
 
 private:
 
+    string id;
     std::vector<Point> points;
 
 public:
@@ -15,7 +18,7 @@ public:
     Curve();
     ~Curve();
     std::vector<Point> getPoints();
-
+    string getId() {return id;}
 };
 
 

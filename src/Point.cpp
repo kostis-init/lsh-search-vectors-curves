@@ -1,21 +1,20 @@
 #include "Point.h"
 
-Point::Point() {
-
+Point::Point(string id) {
+    this->id = id;
 }
-
 Point::~Point() {
 
 }
 
-void Point::addCoordinateLast(double co){
-    coordinates.push_back(co);
+void Point::addCoordinateLast(double coordinate){
+    this->coordinates.push_back(coordinate);
 }
 
 double Point::getCoordinate(int position){
-    return coordinates.at(position);
+    return this->coordinates.at(position);
 }
 
 std::vector<double> Point::getCoordinates() {
-    return coordinates;
+    return this->coordinates;
 }
