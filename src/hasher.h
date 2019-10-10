@@ -37,4 +37,15 @@ class PointHasher : public Hasher {
 
 };
 
+class CurveHasher : public Hasher {
+    private:
+        
+
+
+    public: 
+        CurveHasher();
+        ~CurveHasher();
+        int hash(Object *obj);
+};
+
 #endif
