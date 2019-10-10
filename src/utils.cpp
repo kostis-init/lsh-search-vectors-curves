@@ -16,7 +16,7 @@ int powModulo(int base,int exp,int div) {
 }
 
 // check if file exists
-bool file_exists(char* filename){
+bool file_exists(const char* filename){
     struct stat buffer;
     return (stat (filename, &buffer) == 0);
 }

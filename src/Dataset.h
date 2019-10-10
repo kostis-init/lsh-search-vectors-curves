@@ -21,7 +21,7 @@ public:
     void setDimension(int d);
     void addPoint(Point *point);
 
-    vector<Point *> getData();
+    vector<Point *> getPoints();
     int getDimension();
     int getSize();
 };
