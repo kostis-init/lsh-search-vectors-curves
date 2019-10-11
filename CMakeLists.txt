@@ -25,9 +25,10 @@ add_executable(Main
         src/ui.h 
         src/LSH.cpp 
         src/LSH.h
-        )
+        src/parse_files.cpp src/parse_files.h)
 
 add_executable(test_point_hasher
+        src/test_point_hasher.cpp
         src/Curve.cpp
         src/Curve.h
         src/Dataset.cpp
@@ -40,10 +41,10 @@ add_executable(test_point_hasher
         src/Point.h
         src/point_hasher.cpp
         src/utils.cpp
-        src/utils.h 
-        src/ui.cpp 
-        src/ui.h 
-        src/LSH.cpp 
+        src/utils.h
+        src/ui.cpp
+        src/ui.h
+        src/LSH.cpp
         src/LSH.h
-        src/test_point_hasher.cpp 
+        src/parse_files.cpp src/parse_files.h
         )
