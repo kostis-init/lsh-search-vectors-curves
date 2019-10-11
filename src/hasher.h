@@ -20,18 +20,20 @@ class Hasher {
 //the index of the bucket that Object should be stored.
 class PointHasher : public Hasher {
     private:
-        //const int window = WINDOW_SIZE;
+        //we can set window based on dataset range of values.
+        int window = WINDOW_SIZE;
         //size depends on amplification size -evaluated at constructor?
         static double **gridPool ;
         static const int gridPoolSize = GRID_POOL_SIZE;
         int amplificationSize;
         int numDimension;
+        int partialHashRange;
         int * selectedGrids;
         void generateGrids();
     public:
         PointHasher();
         //debug only
-        PointHasher(int,int);
+        PointHasher(int,int,int);
         ~PointHasher();
 
         //compute the ith hash of Object obj

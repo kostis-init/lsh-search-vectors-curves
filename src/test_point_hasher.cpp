@@ -1,19 +1,21 @@
+#include <set>
 #include "CUnit/CUnit.h"
 #include "CUnit/Basic.h"
 #include "hasher.h"
 #include "LSH.h"
 #include "Point.h"
+#include "ui.h"
 
 static FILE* temp_file = NULL;
 LSH *lsh;
 
 void test_PointHasher(void) {
     //check signleton and selectedGrids array size.
-    auto phasher = new PointHasher(4,6);
+    auto phasher = new PointHasher(4,6,100);
     //ensure selected has 4 elements
     CU_ASSERT(phasher->selectedGrids[3] < phasher->gridPoolSize);
     auto temp = phasher->gridPool;
-    auto phasher2 = new PointHasher(6,9);
+    auto phasher2 = new PointHasher(6,9,100);
     //ensure selected has 6 elements
     CU_ASSERT(phasher2->selectedGrids[5] < phasher->gridPoolSize);
     CU_ASSERT(temp == phasher2->gridPool);
@@ -22,7 +24,7 @@ void test_PointHasher(void) {
 //check that near points lie on the same bucket.
 //This depends on the window size (currently 100).
 void test_HashNonAmplified(void) {
-    auto phasher = new PointHasher(5,2);
+    auto phasher = new PointHasher(5,2,100);
     int M = pow(2,int(32/5));
     Point *point = new Point("1");
     //
@@ -42,20 +44,47 @@ void test_HashNonAmplified(void) {
 
 }
 
-//not impemented.
 void test_HashAmplified(void) {
-    auto phasher = new PointHasher(4,3);
-    int M = pow(2,int(32/4));
-    Point *point[100];
-    int buckets[100];
-    for (int i=0;i < 100; i++){
-       point[i] = new Point("432432");
-       //add every point around 1244 + (0-50)
-       point[i]->addCoordinateLast((rand() % 50) + 1244);
-       point[i]->addCoordinateLast((rand() % 50) + 1244);
-       //buckets[i] = *phasher(point[i]);
-       printf("%d\n",buckets[i]);
-    }
+   //first dataset (kostis)
+   lsh = new LSH();
+   //all points are around 0-120 approx
+   lsh->setInputFileGiven(true);
+   lsh->setInputFilename("../src/very_small_input_for_testing");
+   lsh->setData(parseInputFilePoints(lsh->getInputFilename()));
+   auto dataset = lsh->getData();
+   auto numDim = dataset->getDimension();
+   auto points = dataset->getPoints();
+   //printf("min is %f and max is %f",dataset->getMinCoordinate(),dataset->getMaxCoordinate());
+   //because the window is bigger than the biggest coordinate of a
+   // data point (131), all points should lie on the same bucket. 
+   //reset pool - we have another dataset, we reconstruct the pool.
+   PointHasher::gridPool = nullptr;
+   auto phasher = new PointHasher(5,numDim,dataset->getMaxCoordinate()+1);
+   set<size_t> uniqueBuckets;
+   for (auto p: points) {
+      uniqueBuckets.insert((*phasher)(p));
+   }
+   CU_ASSERT(uniqueBuckets.size() == 1);
+   //second dataset (instructor's)
+   lsh = new LSH();
+   lsh->setInputFileGiven(true);
+   lsh->setInputFilename("../src/testdata/input_small_id");
+   lsh->setData(parseInputFilePoints(lsh->getInputFilename()));
+   dataset = lsh->getData();
+   numDim = dataset->getDimension();
+   points = dataset->getPoints();
+   printf("min is %f and max is %f",dataset->getMinCoordinate(),dataset->getMaxCoordinate()-100);  uniqueBuckets.clear();
+   //reset pool - we have another dataset, we reconstruct the pool.
+   phasher->gridPool = nullptr;
+   //max-min - 40 is a good windows size ( max -min = 180 here).
+   phasher = new PointHasher(7,numDim,dataset->getMaxCoordinate()-100);
+   uniqueBuckets.clear();
+   int i = 0;
+   for (auto p: points) {
+      uniqueBuckets.insert((*phasher)(p));
+      i++;
+   }
+   printf("elems in set = %d and data set size = %d\n",uniqueBuckets.size(),dataset->getSize());
 }
 
 int init_suite1(void)
@@ -83,7 +112,7 @@ int clean_suite1(void)
    }
 }
 
-int main(void) {
+int main(int argc,char *argv[]) {
    CU_pSuite pSuite = NULL;
    if (CUE_SUCCESS != CU_initialize_registry())
       return CU_get_error();
@@ -93,7 +122,8 @@ int main(void) {
       return CU_get_error();
    }
    if ((NULL == CU_add_test(pSuite, "test of PointHasher constructor", test_PointHasher))||
-       (NULL == CU_add_test(pSuite, "test of hash(obj,hashIndex) ", test_HashNonAmplified)))
+       (NULL == CU_add_test(pSuite, "test of hash(obj,hashIndex) ", test_HashNonAmplified)) || 
+       (NULL == CU_add_test(pSuite,"test amplified hash func",test_HashAmplified)))
       {
       CU_cleanup_registry();
       return CU_get_error();
