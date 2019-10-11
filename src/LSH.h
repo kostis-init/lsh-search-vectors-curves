@@ -19,23 +19,17 @@ public:
 
     bool isInputFileGiven() const;
 
-    void setInputFileGiven(bool inputFileGiven);
-
     const string &getQueryFilename() const;
 
     void setQueryFilename(const string &queryFilename);
 
     bool isQueryFileGiven() const;
 
-    void setQueryFileGiven(bool queryFileGiven);
-
     const string &getOutputFilename() const;
 
     void setOutputFilename(const string &outputFilename);
 
     bool isOutputFileGiven() const;
-
-    void setOutputFileGiven(bool outputFileGiven);
 
     int getNumOfFunctions() const;
 

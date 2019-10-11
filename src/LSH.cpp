@@ -5,6 +5,7 @@ const string &LSH::getInputFilename() const {
 }
 
 void LSH::setInputFilename(const string &inputFilename) {
+    LSH::inputFileGiven = true;
     LSH::inputFilename = inputFilename;
 }
 
@@ -12,15 +13,12 @@ bool LSH::isInputFileGiven() const {
     return inputFileGiven;
 }
 
-void LSH::setInputFileGiven(bool inputFileGiven) {
-    LSH::inputFileGiven = inputFileGiven;
-}
-
 const string &LSH::getQueryFilename() const {
     return queryFilename;
 }
 
 void LSH::setQueryFilename(const string &queryFilename) {
+    LSH::queryFileGiven = true;
     LSH::queryFilename = queryFilename;
 }
 
@@ -28,24 +26,17 @@ bool LSH::isQueryFileGiven() const {
     return queryFileGiven;
 }
 
-void LSH::setQueryFileGiven(bool queryFileGiven) {
-    LSH::queryFileGiven = queryFileGiven;
-}
-
 const string &LSH::getOutputFilename() const {
     return outputFilename;
 }
 
 void LSH::setOutputFilename(const string &outputFilename) {
+    LSH::outputFileGiven = true;
     LSH::outputFilename = outputFilename;
 }
 
 bool LSH::isOutputFileGiven() const {
     return outputFileGiven;
-}
-
-void LSH::setOutputFileGiven(bool outputFileGiven) {
-    LSH::outputFileGiven = outputFileGiven;
 }
 
 int LSH::getNumOfFunctions() const {
