@@ -31,7 +31,7 @@ PointHasher::PointHasher() {
     //do we need another engine?
     default_random_engine e1(r());
     uniform_int_distribution<int> uniform_dist(0,gridPoolSize-1);
-    selectedGrids = (int *)malloc(gridPoolSize * sizeof(int));
+    selectedGrids = (int *)malloc(amplificationSize * sizeof(int));
     for (int i = 0; i<amplificationSize; i++){
         selectedGrids[i] = uniform_dist(e1);
     }
