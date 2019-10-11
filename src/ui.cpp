@@ -1,23 +1,22 @@
 #include <iostream>
 #include <getopt.h>
-#include <sstream>
-#include <fstream>
 #include "ui.h"
 #include "utils.h"
 #include "Dataset.h"
+#include "LSH.h"
 
 using namespace std;
 
-void readArgumentsLSH(LSH* lsh, int argc, char **argv) {
+extern LSH* lsh;
+
+void readArgumentsLSH(int argc, char **argv) {
     int c;
     while((c = getopt(argc, argv, "d:q:k:L:o:")) != -1){
         switch (c){
             case 'd':
-                lsh->setInputFileGiven(true);
                 lsh->setInputFilename(optarg);
                 break;
             case 'q':
-                lsh->setQueryFileGiven(true);
                 lsh->setQueryFilename(optarg);
                 break;
             case 'k':
@@ -27,7 +26,6 @@ void readArgumentsLSH(LSH* lsh, int argc, char **argv) {
                 lsh->setNumOfHashTables(stoi(optarg));
                 break;
             case 'o':
-                lsh->setOutputFileGiven(true);
                 lsh->setOutputFilename(optarg);
                 break;
             default:
@@ -37,72 +35,23 @@ void readArgumentsLSH(LSH* lsh, int argc, char **argv) {
     }
 }
 
-void askInputFile(LSH* lsh){
+void askInputFile(){
     string filename;
     cout << "Please give input filename" << endl;
     cin >> filename;
     lsh->setInputFilename(filename);
-    lsh->setInputFileGiven(true);
 }
 
-DatasetPoints* parseInputFilePoints(string filename) {
-    if(!file_exists(filename.c_str())){
-        cout << "input file does not exist" << endl;
-        exit(-1);
-    };
-    auto data = new DatasetPoints();
-    cout << "Parsing input file: " << filename << ", please wait..." << endl;
-    ifstream inputFile(filename.c_str());
-    string line;
-    int size = 0;
-    int current_dimension = -1;
-    while(getline(inputFile, line)){
-        //extract item_id
-        string item_id = line.substr(0, line.find(' '));
-        auto point = new Point(item_id);
-        //keep only the coordinates
-        line = line.substr(line.find(' ') + 1);
-        string token;
-        stringstream line_stream;
-        line_stream << line;
-        int dimension = 0;
-        //add every coordinate to point
-        while(getline(line_stream, token, ' ')){
-            if(!is_number(token))
-                continue;
-            point->addCoordinateLast(atof(token.c_str()));
-            dimension++;
-        }
-        if(current_dimension != -1 && current_dimension != dimension){
-            cout << "Error in input file, non stable dimension" << endl;
-        }
-        current_dimension = dimension;
-        size++;
-        data->addPoint(point);
-    }
-    data->setSize(size);
-    data->setDimension(current_dimension);
-    return data;
-}
-
-void askQueryFile(LSH* lsh){
+void askQueryFile(){
     string filename;
     cout << "Please give query filename" << endl;
     cin >> filename;
     lsh->setQueryFilename(filename);
-    lsh->setQueryFileGiven(true);
 }
 
-void askOutputFile(LSH* lsh){
+void askOutputFile(){
     string filename;
     cout << "Please give output filename" << endl;
     cin >> filename;
     lsh->setOutputFilename(filename);
-    lsh->setOutputFileGiven(true);
-}
-
-QueryDatasetPoints* parseQueryFilePoints(string filename){
-
-    //TODO
-
 }

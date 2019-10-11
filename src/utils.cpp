@@ -56,3 +56,15 @@ void test_print_data(DatasetPoints *data) {
     }
     cout << data->getDimension() << " " << data->getSize() << endl;
 }
+void test_print_query_data(QueryDatasetPoints *data) {
+    auto points = data->getPoints();
+    for (int i = 0; i < points.size(); i++) {
+        cout << "CHECKING ITEM ID: " << points[i]->getId() << endl;
+        auto coords = points[i]->getCoordinates();
+        for (int j = 0; j < coords.size(); ++j) {
+            cout << coords[j] << " ";
+        }
+        cout << endl;
+    }
+    cout << data->getDimension() << " " << data->getSize() << " " << data->getRadius() << endl;
+}
