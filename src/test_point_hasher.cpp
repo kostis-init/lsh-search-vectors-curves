@@ -2,12 +2,15 @@
 #include "CUnit/CUnit.h"
 #include "CUnit/Basic.h"
 #include "hasher.h"
+#include "parse_files.h"
 #include "LSH.h"
 #include "Point.h"
 #include "ui.h"
+#include "Dataset.h"
 
 static FILE* temp_file = NULL;
 LSH *lsh;
+using namespace std;
 
 void test_PointHasher(void) {
     //check signleton and selectedGrids array size.
@@ -48,7 +51,6 @@ void test_HashAmplified(void) {
    //first dataset (kostis)
    lsh = new LSH();
    //all points are around 0-120 approx
-   lsh->setInputFileGiven(true);
    lsh->setInputFilename("../src/very_small_input_for_testing");
    lsh->setData(parseInputFilePoints(lsh->getInputFilename()));
    auto dataset = lsh->getData();
@@ -67,7 +69,6 @@ void test_HashAmplified(void) {
    CU_ASSERT(uniqueBuckets.size() == 1);
    //second dataset (instructor's)
    lsh = new LSH();
-   lsh->setInputFileGiven(true);
    lsh->setInputFilename("../src/testdata/input_small_id");
    lsh->setData(parseInputFilePoints(lsh->getInputFilename()));
    dataset = lsh->getData();
@@ -77,14 +78,14 @@ void test_HashAmplified(void) {
    //reset pool - we have another dataset, we reconstruct the pool.
    phasher->gridPool = nullptr;
    //max-min - 40 is a good windows size ( max -min = 180 here).
-   phasher = new PointHasher(7,numDim,dataset->getMaxCoordinate()-100);
+   phasher = new PointHasher(7,numDim,dataset->getMaxCoordinate()-40);
    uniqueBuckets.clear();
    int i = 0;
    for (auto p: points) {
       uniqueBuckets.insert((*phasher)(p));
       i++;
    }
-   printf("elems in set = %d and data set size = %d\n",uniqueBuckets.size(),dataset->getSize());
+   printf("buckets in set = %d and data set size = %d\n",uniqueBuckets.size(),dataset->getSize());
 }
 
 int init_suite1(void)
