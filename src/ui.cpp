@@ -2,6 +2,7 @@
 #include <getopt.h>
 #include <sstream>
 #include <fstream>
+#include <cfloat>
 #include "ui.h"
 #include "utils.h"
 #include "Dataset.h"
@@ -56,6 +57,8 @@ DatasetPoints* parseInputFilePoints(string filename) {
     string line;
     int size = 0;
     int current_dimension = -1;
+    double minCoordinate = DBL_MAX;
+    double maxCoordinate = -DBL_MAX;
     while(getline(inputFile, line)){
         //extract item_id
         string item_id = line.substr(0, line.find(' '));
@@ -70,7 +73,10 @@ DatasetPoints* parseInputFilePoints(string filename) {
         while(getline(line_stream, token, ' ')){
             if(!is_number(token))
                 continue;
-            point->addCoordinateLast(atof(token.c_str()));
+            auto coordinate = atof(token.c_str());
+            minCoordinate = min(coordinate,minCoordinate);
+            maxCoordinate = max(coordinate,maxCoordinate);
+            point->addCoordinateLast(coordinate);
             dimension++;
         }
         if(current_dimension != -1 && current_dimension != dimension){
@@ -82,6 +88,8 @@ DatasetPoints* parseInputFilePoints(string filename) {
     }
     data->setSize(size);
     data->setDimension(current_dimension);
+    data->setMaxCoordinate(maxCoordinate);
+    data->setMinCoordinate(minCoordinate);
     return data;
 }
 

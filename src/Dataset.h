@@ -9,6 +9,8 @@ private:
 
     int dimension;
     int size;
+    double minCoordinate;
+    double maxCoordinate;
     vector<Point *> points;
 
 public:
@@ -16,10 +18,13 @@ public:
     void setSize(int sz);
     void setDimension(int d);
     void addPoint(Point *point);
-
     vector<Point *> getPoints();
     int getDimension();
     int getSize();
+    double getMinCoordinate();
+    double getMaxCoordinate();
+    void setMinCoordinate(double);
+    void setMaxCoordinate(double);
 };
 
 class QueryDatasetPoints : public DatasetPoints {

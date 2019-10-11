@@ -56,3 +56,11 @@ void test_print_data(DatasetPoints *data) {
     }
     cout << data->getDimension() << " " << data->getSize() << endl;
 }
+
+double min(double coordinate,double min) {
+    return coordinate < min ? coordinate : min;
+}
+
+double max(double coordinate,double max) {
+    return coordinate > max ? coordinate : max;
+}

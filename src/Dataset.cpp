@@ -24,6 +24,22 @@ int DatasetPoints::getSize() {
     return size;
 }
 
+double DatasetPoints::getMaxCoordinate() {
+    return maxCoordinate;
+}
+
+double DatasetPoints::getMinCoordinate() {
+    return minCoordinate;
+}
+
+void DatasetPoints::setMaxCoordinate(double maxCoord) {
+    this->maxCoordinate = maxCoord;
+}
+
+void DatasetPoints::setMinCoordinate(double minCoord) {
+    this->minCoordinate = minCoord;
+}
+
 double QueryDatasetPoints::getRadius() {
     return radius;
 }
