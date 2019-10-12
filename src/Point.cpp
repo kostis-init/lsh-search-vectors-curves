@@ -1,11 +1,7 @@
 #include "Point.h"
 
-Point::Point(string id) {
-    this->id = id;
-}
-Point::~Point() {
-
-}
+Point::Point(string id) :Object(id) {}
+Point::~Point() {}
 
 void Point::addCoordinateLast(double coordinate){
     this->coordinates.push_back(coordinate);

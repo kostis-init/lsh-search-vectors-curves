@@ -4,8 +4,15 @@
 using namespace std;
 class Object {
 private:
+    string id;
 public:
-    virtual string getId() = 0;
+    Object(string id) {
+        this->id = id;
+    }
+    string getId() {
+        return id;
+    }
+    virtual void foo() = 0;
 };
 
 #endif //ALGORITHMS_PROJECT_OBJECT_H

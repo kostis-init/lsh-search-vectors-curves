@@ -8,11 +8,9 @@ class Point : public Object{
 
 private:
 
-    string id;
     vector<double> coordinates;
 
 public:
-
     Point(string id);
     ~Point();
     void foo(){}
@@ -21,7 +19,6 @@ public:
 
     double getCoordinate(int position);
     std::vector<double> getCoordinates();
-    string getId() {return this->id;}
 
 };
 
