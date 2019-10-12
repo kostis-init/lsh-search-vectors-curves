@@ -23,7 +23,6 @@ add_executable(Main
         src/utils.h 
         src/ui.cpp 
         src/ui.h 
-        src/LSH.cpp 
         src/LSH.h
         src/parse_files.cpp src/parse_files.h)
 
@@ -43,7 +42,6 @@ add_executable(test_point_hasher
         src/utils.h
         src/ui.cpp
         src/ui.h
-        src/LSH.cpp
         src/LSH.h
         src/parse_files.cpp src/parse_files.h
         )
