@@ -1,49 +1,49 @@
 #include "Dataset.h"
 
-void DatasetPoints::setSize(int sz) {
+void Dataset::setSize(int sz) {
     this->size = sz;
 }
 
-void DatasetPoints::setDimension(int d) {
+void Dataset::setDimension(int d) {
     this->dimension = d;
 }
 
-void DatasetPoints::addPoint(Point *point) {
-    this->points.push_back(point);
+void Dataset::add(Object *obj) {
+    this->data.push_back(obj);
 }
 
-vector<Point *> DatasetPoints::getPoints() {
-    return this->points;
+vector<Object *> Dataset::getData() {
+    return this->data;
 }
 
-int DatasetPoints::getDimension() {
+int Dataset::getDimension() {
     return dimension;
 }
 
-int DatasetPoints::getSize() {
+int Dataset::getSize() {
     return size;
 }
 
-double DatasetPoints::getMaxCoordinate() {
-    return maxCoordinate;
+double Dataset::getMax() {
+    return max;
 }
 
-double DatasetPoints::getMinCoordinate() {
-    return minCoordinate;
+double Dataset::getMin() {
+    return min;
 }
 
-void DatasetPoints::setMaxCoordinate(double maxCoord) {
-    this->maxCoordinate = maxCoord;
+void Dataset::setMax(double max) {
+    this->max = max;
 }
 
-void DatasetPoints::setMinCoordinate(double minCoord) {
-    this->minCoordinate = minCoord;
+void Dataset::setMin(double min) {
+    this->min = min;
 }
 
-double QueryDatasetPoints::getRadius() {
+double QueryDataset::getRadius() {
     return radius;
 }
 
-void QueryDatasetPoints::setRadius(double radius) {
+void QueryDataset::setRadius(double radius) {
     this->radius = radius;
 }
