@@ -5,14 +5,10 @@
 #define WINDOW_SIZE 100
 #define GRID_POOL_SIZE 100
 
-//TODO:change when not testing
-//--------------
-#define private public
-//--------------
 
 class Hasher {
     public:
-        //virtual int hash(Object *obj) const = 0;
+        virtual size_t operator()(Object *obj) const {};
 };
 
 //Create an instance per LSHHashtable.
@@ -48,6 +44,9 @@ class PointHasher : public Hasher {
 
 class CurveHasher : public Hasher {
     private:
+        int numDimension;
+        static double *baseGrid;
+        double *shiftedGrid;
         
 
 

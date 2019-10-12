@@ -1,3 +1,9 @@
+
+//TODO:change when not testing
+//--------------
+#define private public
+//--------------
+
 #include <set>
 #include "CUnit/CUnit.h"
 #include "CUnit/Basic.h"
