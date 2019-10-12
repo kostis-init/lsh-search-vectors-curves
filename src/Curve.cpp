@@ -1,8 +1,6 @@
 #include "Curve.h"
 
-Curve::Curve() {
-
-}
+Curve::Curve(string id) : Object(id) {}
 
 Curve::~Curve() {
 

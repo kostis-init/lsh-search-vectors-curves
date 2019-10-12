@@ -15,7 +15,7 @@ private:
 
 public:
 
-    Curve();
+    Curve(string id);
     ~Curve();
     std::vector<Point> getPoints();
     string getId() {return id;}
