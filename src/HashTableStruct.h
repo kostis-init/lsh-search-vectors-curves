@@ -1,6 +1,7 @@
 #ifndef ALGORITHMS_PROJECT_HASHTABLESTRUCT_H
 #define ALGORITHMS_PROJECT_HASHTABLESTRUCT_H
 #include <vector>
+#include <iostream>
 #include <unordered_set>
 #include "Object.h"
 #include "Point.h"
