@@ -5,14 +5,15 @@
 #include "parse_files.h"
 #include "utils.h"
 #include "LSH.h"
+#include "hasher.h"
 
 using namespace std;
 
-LSH* lsh;
+LSH<PointHasher>* lsh;
 
 int main(int argc, char* argv[]){
 
-    lsh = new LSH();
+    lsh = new LSH<PointHasher>;
 
     /**
      * read arguments
@@ -35,10 +36,11 @@ int main(int argc, char* argv[]){
      * insert data into hash tables
      */
     cout << "Constructing hash table..." << endl;
-    auto hashTableStruct = new HashTableStruct<PointHasher>(lsh->getNumOfHashTables());
-    auto points = lsh->getData()->getPoints();
+    //auto hashTableStruct = new HashTableStruct<PointHasher>(lsh->getNumOfHashTables());
+    lsh->setHashTableStruct(new HashTableStruct<PointHasher>(lsh->getNumOfHashTables()));
+    auto points = lsh->getDataset()->getData();
     for (int i = 0; i < points.size(); i++)
-        hashTableStruct->addToAllHashTables(points[i]);
+        lsh->getHashTableStruct()->addToAllHashTables(points[i]);
     //test_print_hashtable(hashTableStruct);
 
     /**

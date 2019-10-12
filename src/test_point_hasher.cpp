@@ -15,7 +15,7 @@
 #include "Dataset.h"
 
 static FILE* temp_file = NULL;
-LSH *lsh;
+LSH<PointHasher> *lsh;
 using namespace std;
 
 void test_PointHasher(void) {
@@ -55,36 +55,36 @@ void test_HashNonAmplified(void) {
 
 void test_HashAmplified(void) {
    //first dataset (kostis)
-   lsh = new LSH();
+   lsh = new LSH<PointHasher>();
    //all points are around 0-120 approx
    lsh->setInputFilename("../src/very_small_input_for_testing");
    lsh->setData(parseInputFilePoints(lsh->getInputFilename()));
-   auto dataset = lsh->getData();
+   auto dataset = lsh->getDataset();
    auto numDim = dataset->getDimension();
-   auto points = dataset->getPoints();
+   auto points = dataset->getData();
    //printf("min is %f and max is %f",dataset->getMinCoordinate(),dataset->getMaxCoordinate());
    //because the window is bigger than the biggest coordinate of a
    // data point (131), all points should lie on the same bucket. 
    //reset pool - we have another dataset, we reconstruct the pool.
    PointHasher::gridPool = nullptr;
-   auto phasher = new PointHasher(5,numDim,dataset->getMaxCoordinate()+1);
+   auto phasher = new PointHasher(5,numDim,dataset->getMax()+1);
    set<size_t> uniqueBuckets;
    for (auto p: points) {
       uniqueBuckets.insert((*phasher)(p));
    }
    CU_ASSERT(uniqueBuckets.size() == 1);
    //second dataset (instructor's)
-   lsh = new LSH();
+   lsh = new LSH<PointHasher>();
    lsh->setInputFilename("../src/testdata/input_small_id");
    lsh->setData(parseInputFilePoints(lsh->getInputFilename()));
-   dataset = lsh->getData();
+   dataset = lsh->getDataset();
    numDim = dataset->getDimension();
-   points = dataset->getPoints();
-   printf("min is %f and max is %f",dataset->getMinCoordinate(),dataset->getMaxCoordinate()-100);  uniqueBuckets.clear();
+   points = dataset->getData();
+   printf("min is %f and max is %f",dataset->getMin(),dataset->getMax()-100);  uniqueBuckets.clear();
    //reset pool - we have another dataset, we reconstruct the pool.
    phasher->gridPool = nullptr;
    //max-min - 40 is a good windows size ( max -min = 180 here).
-   phasher = new PointHasher(7,numDim,dataset->getMaxCoordinate()-40);
+   phasher = new PointHasher(7,numDim,dataset->getMax()-40);
    uniqueBuckets.clear();
    int i = 0;
    for (auto p: points) {

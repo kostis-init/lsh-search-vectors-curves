@@ -12,7 +12,7 @@
 
 using namespace std;
 
-extern LSH* lsh;
+extern LSH<PointHasher>* lsh;
 
 double **PointHasher::gridPool;
 
@@ -22,7 +22,7 @@ double **PointHasher::gridPool;
 //on change-variation of points).
 PointHasher::PointHasher() {
     amplificationSize = lsh->getNumOfFunctions();
-    numDimension = lsh->getData()->getDimension();
+    numDimension = lsh->getDataset()->getDimension();
     partialHashRange = pow(2,int(32/amplificationSize));
     if (gridPool == nullptr) {
         generateGrids();

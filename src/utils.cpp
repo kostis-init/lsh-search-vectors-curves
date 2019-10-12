@@ -1,4 +1,5 @@
 #include <sys/stat.h>
+#include <vector>
 #include <algorithm>
 #include <iostream>
 #include "utils.h"
@@ -30,8 +31,9 @@ bool is_number(string s)
             find_if(s.begin(), s.end(), [](char c) { return !std::isdigit(c); }) == s.end();
 }
 
-void test_print_data(DatasetPoints *data) {
-    auto points = data->getPoints();
+void test_print_data(Dataset *data) {
+    auto objs = data->getData();
+    vector<Point *> points(objs.begin(),objs.end());
     for (int i = 0; i < points.size(); i++) {
         cout << "CHECKING ITEM ID: " << points[i]->getId() << endl;
         auto coords = points[i]->getCoordinates();
@@ -51,8 +53,9 @@ double max(double coordinate,double max) {
     return coordinate > max ? coordinate : max;
 }
 
-void test_print_query_data(QueryDatasetPoints *data) {
-    auto points = data->getPoints();
+void test_print_query_data(QueryDataset *data) {
+    auto objs = data->getData();
+    vector<Point *> points(objs.begin(),objs.end());
     for (int i = 0; i < points.size(); i++) {
         cout << "CHECKING ITEM ID: " << points[i]->getId() << endl;
         auto coords = points[i]->getCoordinates();

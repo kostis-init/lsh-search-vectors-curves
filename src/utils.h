@@ -8,5 +8,5 @@ bool file_exists(const char* filename);
 bool is_number(string  str);
 double max(double,double);
 double min(double,double);
-void test_print_data(DatasetPoints *data);
-void test_print_query_data(QueryDatasetPoints *data);
+void test_print_data(Dataset *data);
+void test_print_query_data(QueryDataset *data);

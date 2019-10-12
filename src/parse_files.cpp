@@ -7,12 +7,12 @@
 
 using namespace std;
 
-DatasetPoints* parseInputFilePoints(string filename) {
+Dataset* parseInputFilePoints(string filename) {
     if(!file_exists(filename.c_str())){
         cout << "input file does not exist" << endl;
         exit(-1);
     };
-    auto data = new DatasetPoints();
+    auto data = new Dataset();
     cout << "Parsing input file: " << filename << ", please wait..." << endl;
     ifstream inputFile(filename.c_str());
     string line;
@@ -44,21 +44,21 @@ DatasetPoints* parseInputFilePoints(string filename) {
         }
         current_dimension = dimension;
         size++;
-        data->addPoint(point);
+        data->add(point);
     }
     data->setSize(size);
     data->setDimension(current_dimension);
-    data->setMaxCoordinate(maxCoordinate);
-    data->setMinCoordinate(minCoordinate);
+    data->setMax(maxCoordinate);
+    data->setMin(minCoordinate);
     return data;
 }
 
-QueryDatasetPoints* parseQueryFilePoints(string filename){
+QueryDataset* parseQueryFilePoints(string filename){
     if(!file_exists(filename.c_str())){
         cout << "query file does not exist" << endl;
         exit(-1);
     };
-    auto data = new QueryDatasetPoints();
+    auto data = new QueryDataset();
     cout << "Parsing query file: " << filename << endl;
     ifstream queryFile(filename.c_str());
 
@@ -93,8 +93,8 @@ QueryDatasetPoints* parseQueryFilePoints(string filename){
         }
         current_dimension = dimension;
         size++;
-        data->addPoint(point);
-    }
+        data->add(point);
+    } 
     data->setSize(size);
     data->setDimension(current_dimension);
     return data;

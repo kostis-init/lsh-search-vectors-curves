@@ -10,7 +10,7 @@
 
 using namespace std;
 
-extern LSH* lsh;
+extern LSH<PointHasher>* lsh;
 
 void readArgumentsLSH(int argc, char **argv) {
     int c;
