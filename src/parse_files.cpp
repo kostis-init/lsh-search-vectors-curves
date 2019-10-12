@@ -27,12 +27,10 @@ DatasetPoints* parseInputFilePoints(string filename) {
         //keep only the coordinates
         line = line.substr(line.find(' ') + 1);
         string token;
-        stringstream line_stream;
-        line_stream << line;
+        stringstream line_stream(line);
         int dimension = 0;
         //add every coordinate to point
-        while(getline(line_stream, token, ' ')){
-
+        while(line_stream >> token){
             if(!is_number(token))
                 continue;
             auto coordinate = atof(token.c_str());
