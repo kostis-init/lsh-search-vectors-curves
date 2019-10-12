@@ -35,7 +35,7 @@ int main(int argc, char* argv[]){
      * insert data into hash tables
      */
     cout << "Constructing hash table..." << endl;
-    auto hashTableStruct = new HashTableStruct(lsh->getNumOfHashTables());
+    auto hashTableStruct = new HashTableStruct<PointHasher>(lsh->getNumOfHashTables());
     auto points = lsh->getData()->getPoints();
     for (int i = 0; i < points.size(); i++)
         hashTableStruct->addToAllHashTables(points[i]);

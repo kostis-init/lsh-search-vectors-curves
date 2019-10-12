@@ -13,7 +13,6 @@ add_executable(Main
         src/Dataset.cpp
         src/Dataset.h
         src/hasher.h
-        src/HashTableStruct.cpp
         src/HashTableStruct.h
         src/Object.h
         src/Point.cpp
@@ -34,7 +33,6 @@ add_executable(test_point_hasher
         src/Dataset.cpp
         src/Dataset.h
         src/hasher.h
-        src/HashTableStruct.cpp
         src/HashTableStruct.h
         src/Object.h
         src/Point.cpp
