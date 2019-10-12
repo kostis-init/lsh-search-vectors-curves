@@ -30,20 +30,6 @@ bool is_number(string s)
             find_if(s.begin(), s.end(), [](char c) { return !std::isdigit(c); }) == s.end();
 }
 
-void test_print_hashtable(HashTableStruct *hashTableStruct) {
-    auto hts = hashTableStruct->getAllHashTables();
-    for (int i = 0; i < hashTableStruct->getNumOfHTs(); i++) {
-        auto fn = hts[i].hash_function();
-        cout << "\nHASH TABLE " << i + 1 << endl;
-        for(auto entry : hts[i]){
-            cout << "Item Id: " << entry->getId();
-            cout << ",\thash func: " << fn(entry);
-            cout << ",\tbucket #" << hts[i].bucket(entry);
-            cout << ",\tbucket count: " << hts[i].bucket_count();
-            cout << endl;
-        }
-    }
-}
 void test_print_data(DatasetPoints *data) {
     auto points = data->getPoints();
     for (int i = 0; i < points.size(); i++) {
