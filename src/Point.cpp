@@ -2,10 +2,10 @@
 
 Point::Point(string id) :Object(id) {}
 
-Point::Point(string id,vector<double> coordinates) :Object(id) {
+Point::Point(vector<double> coordinates) {
     this->coordinates = coordinates;    
 }
-Point::~Point() {}
+Point::~Point() { coordinates.clear();}
 
 void Point::addCoordinateLast(double coordinate){
     this->coordinates.push_back(coordinate);
@@ -17,4 +17,14 @@ double Point::getCoordinate(int position){
 
 std::vector<double> Point::getCoordinates() {
     return this->coordinates;
+}
+
+int Point::operator== (Point const point) {
+    //int min = point.coordinates.size() < coordinates.size() ? point.coordinates.size() : coordinates.size();
+    if (point.coordinates.size() !=  coordinates.size())
+        return 0;
+    for (int i =0; i<coordinates.size(); i++) 
+        if (point.coordinates.at(i) != coordinates.at(i))
+            return 0;
+    return 1;
 }

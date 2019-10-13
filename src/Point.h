@@ -12,7 +12,7 @@ private:
 
 public:
     Point(string id);
-    Point(string id,vector<double> coordinates);
+    Point(vector<double> coordinates);
     ~Point();
     void foo(){}
 
@@ -20,6 +20,7 @@ public:
 
     double getCoordinate(int position);
     std::vector<double> getCoordinates();
+    int operator== (Point const point);
 
 };
 
