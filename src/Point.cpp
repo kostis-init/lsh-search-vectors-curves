@@ -1,6 +1,10 @@
 #include "Point.h"
 
 Point::Point(string id) :Object(id) {}
+
+Point::Point(string id,vector<double> coordinates) :Object(id) {
+    this->coordinates = coordinates;    
+}
 Point::~Point() {}
 
 void Point::addCoordinateLast(double coordinate){
