@@ -2,10 +2,14 @@
 
 Curve::Curve(string id) : Object(id) {}
 
-Curve::~Curve() {
+Curve::Curve(vector<Point> points) { this->points = points;}
 
-}
+Curve::~Curve() {}
 
 std::vector<Point> Curve::getPoints() {
     return points;
+}
+
+Point Curve::getPoint(int i) {
+    return points.at(i);
 }

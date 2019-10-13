@@ -16,9 +16,12 @@ private:
 public:
 
     Curve(string id);
+    Curve(vector<Point> points);
     ~Curve();
     std::vector<Point> getPoints();
+    Point getPoint(int i);
     string getId() {return id;}
+    void foo(){}
 };
 
 
