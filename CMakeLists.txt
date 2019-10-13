@@ -45,3 +45,24 @@ add_executable(test_point_hasher
         src/LSH.h
         src/parse_files.cpp src/parse_files.h
         )
+
+add_executable(test_curve_hasher
+        src/test_curve_hasher.cpp
+        src/Curve.cpp
+        src/Curve.h
+        src/Dataset.cpp
+        src/Dataset.h
+        src/hasher.h
+        src/HashTableStruct.h
+        src/Object.h
+        src/Point.cpp
+        src/Point.h
+        src/curve_hasher.cpp
+        src/point_hasher.cpp
+        src/utils.cpp
+        src/utils.h
+        src/ui.cpp
+        src/ui.h
+        src/LSH.h
+        src/parse_files.cpp src/parse_files.h
+        )
