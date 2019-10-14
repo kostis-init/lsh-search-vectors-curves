@@ -37,7 +37,7 @@ PointHasher::PointHasher() {
     }
 }
 
-//debug
+
 PointHasher::PointHasher(int ampSize,int numDimension,int window) {
     this->amplificationSize = ampSize;
     this->numDimension = numDimension;
@@ -75,8 +75,7 @@ void PointHasher::generateGrids() {
         }
 }
 
-int PointHasher::hash(Object* obj,int hashIndex) const {
-    Point *point = dynamic_cast<Point *>(obj);
+int PointHasher::hash(Point* point,int hashIndex) const {
     vector<double> coordinates = point->getCoordinates();
     //or select coefficient randomly?
     int coefficient = 0xffff;
@@ -93,12 +92,13 @@ int PointHasher::hash(Object* obj,int hashIndex) const {
 }
 
 size_t PointHasher::operator()(Object *obj) const {
+    Point *point = dynamic_cast<Point *>(obj);
     int numPartialHashBits = 32/amplificationSize;
     int res = 0;
     int partialHash;
     //calculate each partial hash and concanate them in res
     for (int i =0; i < amplificationSize; i++) {
-        partialHash = hash(obj,i);
+        partialHash = hash(point,i);
         res |= partialHash << i*4;
     }
     return res;
