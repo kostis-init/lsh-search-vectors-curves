@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include  <stdio.h>
+#include  <string.h>
 #include "hasher.h"
 //#include "Object.h"
 #include "Point.h"
@@ -23,6 +24,8 @@ double **PointHasher::gridPool;
 PointHasher::PointHasher() {
     amplificationSize = lsh->getNumOfFunctions();
     numDimension = lsh->getDataset()->getDimension();
+    powModuloMem = (int *)malloc(numDimension * sizeof(int));
+    memset(powModuloMem,0,numDimension);
     partialHashRange = pow(2,int(32/amplificationSize));
     if (gridPool == nullptr) {
         generateGrids();
@@ -42,6 +45,8 @@ PointHasher::PointHasher(int ampSize,int numDimension,int window) {
     this->amplificationSize = ampSize;
     this->numDimension = numDimension;
     this->window = window;
+    powModuloMem = (int *)malloc(numDimension * sizeof(int));
+    memset(powModuloMem,0,numDimension);
     partialHashRange = pow(2,int(32/amplificationSize));
     if (gridPool == nullptr) {
         generateGrids();
@@ -84,7 +89,9 @@ int PointHasher::hash(Point* point,int hashIndex) const {
     //if numDimension is too high but no fuss - uint will wrap around.
     for (auto c :coordinates) {
         unsigned int gridCell = int((c - gridPool[selectedGrids[hashIndex]][i])/window);
-        sum+= ((gridCell%partialHashRange)*(powModulo(coefficient,j,partialHashRange)))%partialHashRange;
+        if (!powModuloMem[j])
+            powModuloMem[j] = powModulo(coefficient,j,partialHashRange);
+        sum+= ((gridCell%partialHashRange)*(powModuloMem[j]))%partialHashRange;
         i++;
         j--;
     }

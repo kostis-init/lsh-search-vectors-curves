@@ -28,6 +28,8 @@ class PointHasher : public Hasher {
         int numDimension;
         int partialHashRange;
         int * selectedGrids;
+        //Memoization for powModulo func.
+        int *powModuloMem;
         void generateGrids();
     public:
         PointHasher();
