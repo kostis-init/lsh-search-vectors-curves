@@ -54,12 +54,12 @@ class CurveHasher : public Hasher {
         int isConsecutiveDuplitacate(double **snapedCurve,int i);
         double *snap(Point *point);
         double **snap(Curve *curve);
-        double roundCoordinate(Point *point,int i);
-        double roundCoordinateV2(Point *point,int i);
+        double snap(double coordinate,int i);
+        //double roundCoordinateV2(Point *point,int i);
     public: 
         CurveHasher();
         //debug
-        CurveHasher(int,int,int);
+        CurveHasher(int,int,int,int);
         ~CurveHasher();
         size_t operator() (Object *obj) const;
 };
