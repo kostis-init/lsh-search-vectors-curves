@@ -1,4 +1,5 @@
 #include <iostream>
+#include <limits.h>
 #include "HashTableStruct.h"
 #include "Dataset.h"
 #include "ui.h"
@@ -36,12 +37,12 @@ int main(int argc, char* argv[]){
      * insert data into hash tables
      */
     cout << "Constructing hash table..." << endl;
-    //auto hashTableStruct = new HashTableStruct<PointHasher>(lsh->getNumOfHashTables());
-    lsh->setHashTableStruct(new HashTableStruct<PointHasher>(lsh->getNumOfHashTables()));
+    lsh->setHashTableStruct(new HashTableStruct<PointHasher>(lsh->getNumOfHashTables(), lsh->getDataset()->getSize()));
+    //lsh->setHashTableStruct(new HashTableStruct<PointHasher>(lsh->getNumOfHashTables()));
     auto points = lsh->getDataset()->getData();
     for (int i = 0; i < points.size(); i++)
         lsh->getHashTableStruct()->addToAllHashTables(points[i]);
-    //test_print_hashtable(hashTableStruct);
+    lsh->getHashTableStruct()->test_print_hashtable();
 
     /**
      * ask query filename and output filename (if not given as arguments)
@@ -57,8 +58,23 @@ int main(int argc, char* argv[]){
      lsh->setQueryData(parseQueryFilePoints(lsh->getQueryFilename()));
     //test_print_query_data(lsh->getQueryData());
 
+    /**
+     * search
+     */
+//     QueryDataset* query = lsh->getQueryData();
+//    for (int i = 0; i < query->getSize(); ++i) {
+//        cout << "Query: " << query->getData().at(i)->getId() << endl;
+//        Point* winner = nullptr;
+//        int distance = INT_MAX;
+//        auto hts = lsh->getHashTableStruct()->getAllHashTables();
+//        for (int j = 0; j < lsh->getNumOfHashTables(); ++j) {
+//            //hash function or bucket???
+//            for(auto iter = hts[j].begin(hts[j].bucket(query->getData().at(i))); iter != hts[j].end(hts[j].bucket(query->getData().at(i))); ++iter){
+//                cout << (*iter)->getId() << hts[j].bucket(query->getData().at(i)) << " " << hts[j].bucket(*iter) << endl;
+//            }
+//        }
+//    }
 
-    //do the query, output the results
 
     //ask user if he wants another one
 
