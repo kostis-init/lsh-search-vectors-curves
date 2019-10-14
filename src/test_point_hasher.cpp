@@ -50,7 +50,16 @@ void test_HashNonAmplified(void) {
     //ensure they lie on the same bucket. This can fail with small
     //propability because we the whole process is random.
     CU_ASSERT(bucket2 == bucket);
+}
 
+void test_Determinism(void) {
+   auto point = new Point(vector<double> {44.432,85.984,34.439,989.890});
+    auto phasher = new PointHasher(5,4,10);
+    size_t bucket;
+    size_t prevBucket = 0;
+    for (int i =0; i < 20; i++)
+      if (prevBucket!=0 && (bucket = (*phasher)(point)) != prevBucket) 
+         CU_FAIL("test determinism failed!");
 }
 
 void test_HashAmplified(void) {
@@ -68,10 +77,12 @@ void test_HashAmplified(void) {
    //reset pool - we have another dataset, we reconstruct the pool.
    PointHasher::gridPool = nullptr;
    auto phasher = new PointHasher(5,numDim,dataset->getMax()+1);
+   printf("min is %f and max is %f",dataset->getMin(),dataset->getMax());
    set<size_t> uniqueBuckets;
    for (auto p: points) {
       uniqueBuckets.insert((*phasher)(p));
    }
+   printf("buckets in set = %d and data set size = %d\n",uniqueBuckets.size(),dataset->getSize());
    CU_ASSERT(uniqueBuckets.size() == 1);
    //second dataset (instructor's)
    lsh = new LSH<PointHasher>();
@@ -80,11 +91,13 @@ void test_HashAmplified(void) {
    dataset = lsh->getDataset();
    numDim = dataset->getDimension();
    points = dataset->getData();
-   printf("min is %f and max is %f",dataset->getMin(),dataset->getMax()-100);  uniqueBuckets.clear();
+   printf("min is %f and max is %f",dataset->getMin(),dataset->getMax()-100);
+   uniqueBuckets.clear();
    //reset pool - we have another dataset, we reconstruct the pool.
    phasher->gridPool = nullptr;
-   //max-min - 40 is a good windows size ( max -min = 180 here).
-   phasher = new PointHasher(7,numDim,dataset->getMax()-40);
+   //////max-min - 40 is a good windows size ( max -min = 180 here).
+   phasher = new PointHasher(4,numDim,dataset->getMax()-40);
+   //phasher = new PointHasher(8,numDim,2);
    uniqueBuckets.clear();
    int i = 0;
    for (auto p: points) {
@@ -130,9 +143,10 @@ int main(int argc,char *argv[]) {
    }
    if ((NULL == CU_add_test(pSuite, "test of PointHasher constructor", test_PointHasher))||
        (NULL == CU_add_test(pSuite, "test of hash(obj,hashIndex) ", test_HashNonAmplified)) || 
-       (NULL == CU_add_test(pSuite,"test amplified hash func",test_HashAmplified)))
-      {
-      CU_cleanup_registry();
+       (NULL == CU_add_test(pSuite,"test amplified hash func",test_HashAmplified)) ||  
+      (NULL == CU_add_test(pSuite,"test determinism",test_Determinism)))
+         {
+         CU_cleanup_registry();
       return CU_get_error();
    }
    CU_basic_set_mode(CU_BRM_VERBOSE);
