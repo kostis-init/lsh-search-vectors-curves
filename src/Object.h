@@ -9,6 +9,7 @@ public:
     Object(string id) {
         this->id = id;
     }
+    Object() {}
     string getId() {
         return id;
     }
