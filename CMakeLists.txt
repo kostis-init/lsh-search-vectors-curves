@@ -6,8 +6,7 @@ add_compile_options(-fpermissive)
 link_libraries(cunit)
 project (algorithms_project)
 
-
-add_executable(Main
+add_executable(lsh
         src/mainPointsLSH.cpp
         src/Curve.cpp
         src/Curve.h

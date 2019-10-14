@@ -45,8 +45,6 @@ void askInputFile(){
     lsh->setInputFilename(filename);
 }
 
-
-//void askQueryFile(LSH* lsh){
 void askQueryFile(){
     string filename;
     cout << "Please give query filename" << endl;

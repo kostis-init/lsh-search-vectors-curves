@@ -96,10 +96,11 @@ size_t PointHasher::operator()(Object *obj) const {
     int numPartialHashBits = 32/amplificationSize;
     int res = 0;
     int partialHash;
-    //calculate each partial hash and concanate them in res
+    //calculate each partial hash and concatenate them in res
     for (int i =0; i < amplificationSize; i++) {
         partialHash = hash(point,i);
         res |= partialHash << i*4;
     }
     return res;
+//   return atoi(obj->getId().c_str())%5000;
 }
