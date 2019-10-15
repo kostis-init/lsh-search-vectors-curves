@@ -3,6 +3,7 @@
 #include <fstream>
 #include <cfloat>
 #include <string.h>
+#include <limits>
 #include "parse_files.h"
 #include "utils.h"
 #include "distance.h"
@@ -55,7 +56,7 @@ Dataset* parseInputFilePoints(string filename) {
     //remove this if we dont care about the PointHasher 
     //window value. This call costs to much in terms of
     //processing.
-    data->setMean(meanOfMins(data));
+    //data->setMean(meanOfMins(data));
     return data;
 }
 
@@ -65,34 +66,57 @@ Dataset* parseInputFilePoints(string filename) {
 //like kd-tree of octree but it needs some work.
 //Use this func only with a Dataset of Points.
 int meanOfMins(Dataset *dataset) {
-    auto data = dataset->getData();
-    vector<Point *> points(data.begin(),data.end());
-    double *mins = (double *)malloc(points.size()*sizeof(double));
-    for(int i =0; i < points.size();i++) 
-        mins[i] = DBL_MAX;
-    double dist;
-    int NNindex = 0;
-    double mean = 0;
-    for(int i =0; i < points.size();i++) {
-        if (mins[i] != DBL_MAX)
-            continue;
-        for(int j =0; j < points.size();j++) {
-            if (i == j)
-                continue;
-            if ((dist = manhattan(*points.at(i),*points.at(j))) < mins[i]) {
-                mins[i] = dist;
-                NNindex = j;
+    double sum = 0;
+    int size = dataset->getSize();
+    int i=0;
+    int limit = 1000;
+    for(auto obj : dataset->getData()){
+        Point* queryPoint = dynamic_cast<Point*>(obj);
+        double distance = numeric_limits<double>::max();
+        auto data = dataset->getData();
+        for(auto candidate : data){
+            Point* candidatePoint = dynamic_cast<Point*>(candidate);
+            double cur_dist;
+            if(candidatePoint != queryPoint
+               && (cur_dist = manhattan(*queryPoint, *candidatePoint)) < distance){
+                distance = cur_dist;
             }
         }
-        //if we find the NN of i, then i is the NN of j too
-        if (mins[NNindex] != DBL_MAX) {
-            mean += mins[i];  //compute mean on the fly
-        } else {
-            mins[NNindex] = mins[i];
-            mean += 2.0 * mins[i];  //compute mean on the fly
+        sum += distance/limit;
+        if(i == limit){
+            break;
         }
+        i++;
     }
-    return int(mean) / points.size();
+    return sum;
+//    auto data = dataset->getData();
+//    vector<Point *> points(data.begin(),data.end());
+//    double *mins = (double *)malloc(points.size()*sizeof(double));
+//    for(int i =0; i < points.size();i++)
+//        mins[i] = DBL_MAX;
+//    double dist;
+//    int NNindex = 0;
+//    double mean = 0;
+//    for(int i =0; i < points.size();i++) {
+//        if (mins[i] != DBL_MAX)
+//            continue;
+//        for(int j =0; j < points.size();j++) {
+//            if (i == j)
+//                continue;
+//            if ((dist = manhattan(*points.at(i),*points.at(j))) < mins[i]) {
+//                mins[i] = dist;
+//                NNindex = j;
+//            }
+//        }
+//        //if we find the NN of i, then i is the NN of j too
+//        if (mins[NNindex] != DBL_MAX) {
+//            mean += mins[i];  //compute mean on the fly
+//        } else {
+//            mins[NNindex] = mins[i];
+//            mean += 2.0 * mins[i];  //compute mean on the fly
+//        }
+//    }
+//    return int(mean) / points.size();
 }
 
 QueryDataset* parseQueryFilePoints(string filename){

@@ -22,9 +22,12 @@ private:
 public:
     HashTableStruct(int numOfHTs, int sz);
     ~HashTableStruct();
+
     int getNumOfHTs() {return numOfHTs;}
     auto getAllHashTables() {return hashTables;}
     auto getHashTable(int index) {return hashTables[index];}
+    auto getHashers() {return hashers;}
+
     void addToAllHashTables(Object *obj);
     void test_print_hashtable();
 
@@ -57,7 +60,7 @@ void HashTableStruct<T>::addToAllHashTables(Object *obj) {
             hashTables[i].insert(make_pair(hash, arg));
         }
     }
-    if(counter%1000 == 0)
+    if(counter%5000 == 0)
         cout << obj->getId() << endl;
 }
 

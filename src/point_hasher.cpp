@@ -26,7 +26,7 @@ PointHasher::PointHasher() {
     numDimension = lsh->getDataset()->getDimension();
     powModuloMem = (int *)malloc(numDimension * sizeof(int));
     memset(powModuloMem,0,numDimension);
-    window = lsh->getDataset()->getMean();
+    //window = 4 * lsh->getDataset()->getMean();
     partialHashRange = pow(2,int(32/amplificationSize));
     if (gridPool == nullptr) {
         generateGrids();
@@ -109,5 +109,5 @@ size_t PointHasher::operator()(Object *obj) const {
         res |= partialHash << i*4;
     }
     return res;
-//   return atoi(obj->getId().c_str())%5000;
+   //return atoi(obj->getId().c_str())%5000;
 }

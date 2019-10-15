@@ -1,5 +1,6 @@
 #include <iostream>
-#include <limits.h>
+#include <iomanip>
+#include <limits>
 #include "HashTableStruct.h"
 #include "Dataset.h"
 #include "ui.h"
@@ -7,6 +8,7 @@
 #include "utils.h"
 #include "LSH.h"
 #include "hasher.h"
+#include "distance.h"
 
 using namespace std;
 
@@ -41,10 +43,9 @@ int main(int argc, char* argv[]){
      */
     cout << "Constructing hash table..." << endl;
     lsh->setHashTableStruct(new HashTableStruct<PointHasher>(lsh->getNumOfHashTables(), lsh->getDataset()->getSize()));
-    //lsh->setHashTableStruct(new HashTableStruct<PointHasher>(lsh->getNumOfHashTables()));
     auto points = lsh->getDataset()->getData();
-    for (int i = 0; i < points.size(); i++)
-        lsh->getHashTableStruct()->addToAllHashTables(points[i]);
+    for (auto & point : points)
+        lsh->getHashTableStruct()->addToAllHashTables(point);
     lsh->getHashTableStruct()->test_print_hashtable();
 
     /**
@@ -58,25 +59,74 @@ int main(int argc, char* argv[]){
     /**
      * parse query file into memory
      */
-     lsh->setQueryData(parseQueryFilePoints(lsh->getQueryFilename()));
+    lsh->setQueryData(parseQueryFilePoints(lsh->getQueryFilename()));
     //test_print_query_data(lsh->getQueryData());
 
     /**
      * search
      */
-//     QueryDataset* query = lsh->getQueryData();
-//    for (int i = 0; i < query->getSize(); ++i) {
-//        cout << "Query: " << query->getData().at(i)->getId() << endl;
-//        Point* winner = nullptr;
-//        int distance = INT_MAX;
-//        auto hts = lsh->getHashTableStruct()->getAllHashTables();
-//        for (int j = 0; j < lsh->getNumOfHashTables(); ++j) {
-//            //hash function or bucket???
-//            for(auto iter = hts[j].begin(hts[j].bucket(query->getData().at(i))); iter != hts[j].end(hts[j].bucket(query->getData().at(i))); ++iter){
-//                cout << (*iter)->getId() << hts[j].bucket(query->getData().at(i)) << " " << hts[j].bucket(*iter) << endl;
-//            }
-//        }
-//    }
+    QueryDataset* query = lsh->getQueryData();
+    auto hts = lsh->getHashTableStruct()->getAllHashTables();
+    auto hashers = lsh->getHashTableStruct()->getHashers();
+    int sz = lsh->getNumOfHashTables();
+    auto data = lsh->getDataset()->getData();
+
+    for (int i = 0; i < query->getSize(); ++i) {
+        Point* queryPoint = (Point*)query->getData().at(i);
+        cout << "Query: " << queryPoint->getId() << endl;
+
+        //LSH
+        cout << "LSH" << endl;
+        clock_t begin = clock();
+        Point* nnPoint = nullptr;
+        double distance = numeric_limits<double>::max();
+        for (int j = 0; j < sz; ++j) {
+            size_t hash = hashers[j](queryPoint);
+            if(hts[j].find(hash) == hts[j].end()) //empty bucket
+                continue;
+            auto points = hts[j].at(hash);
+            for(auto candidate : points){
+                Point* candidatePoint = dynamic_cast<Point*>(candidate);
+                double cur_dist;
+                //TODO: if large number of retrieved items (e.g. > 3L) then Break // exit loop
+                if((cur_dist = manhattan(*queryPoint, *candidatePoint)) < distance){
+                    distance = cur_dist;
+                    nnPoint = candidatePoint;
+                }
+            }
+        }
+        clock_t end = clock();
+        if(nnPoint==nullptr){
+            cout << "Nearest neighbor: Not Found" << endl;
+        } else {
+            cout << "Nearest neighbor LSH: " << nnPoint->getId() << endl;
+            cout << "distance LSH: " << distance << endl;
+            cout << "time LSH: " << end - begin << endl;
+        }
+
+        //Brute Force
+        cout << "Brute Force" << endl;
+        begin = clock();
+        nnPoint = nullptr;
+        distance = numeric_limits<double>::max();
+        for(auto candidate : data){
+            Point* candidatePoint = dynamic_cast<Point*>(candidate);
+            double cur_dist;
+            if( (cur_dist = manhattan(*queryPoint, *candidatePoint)) < distance){
+                distance = cur_dist;
+                nnPoint = candidatePoint;
+            }
+        }
+        end = clock();
+        if(nnPoint==nullptr){
+            cout << "Nearest neighbor: Not Found" << endl;
+        } else {
+            cout << "Nearest neighbor Brute Force: " << nnPoint->getId() << endl;
+            cout << "distance Brute Force: " << distance << endl;
+            cout << "time Brute Force: " << end - begin << endl << endl << endl;
+        }
+
+    }
 
 
     //ask user if he wants another one
