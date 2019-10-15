@@ -56,7 +56,7 @@ Dataset* parseInputFilePoints(string filename) {
     //remove this if we dont care about the PointHasher 
     //window value. This call costs to much in terms of
     //processing.
-    //data->setMean(meanOfMins(data));
+    data->setMean(meanOfMins(data,1000));
     return data;
 }
 
@@ -65,11 +65,10 @@ Dataset* parseInputFilePoints(string filename) {
 //We can use a better algorithm instead of bruteforce 
 //like kd-tree of octree but it needs some work.
 //Use this func only with a Dataset of Points.
-int meanOfMins(Dataset *dataset) {
+int meanOfMins(Dataset *dataset,int limit) {
     double sum = 0;
     int size = dataset->getSize();
     int i=0;
-    int limit = 1000;
     auto data = dataset->getData();
     for(auto obj : data){
         Point* queryPoint = dynamic_cast<Point*>(obj);
@@ -82,11 +81,11 @@ int meanOfMins(Dataset *dataset) {
                 distance = cur_dist;
             }
         }
+        i++;
         sum += distance/limit;
         if(i == limit){
             break;
         }
-        i++;
     }
     return sum;
 //    auto data = dataset->getData();

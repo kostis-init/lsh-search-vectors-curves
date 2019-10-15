@@ -1,9 +1,4 @@
-
-//TODO:change when not testing
-//--------------
 #define private public
-//--------------
-
 #include <set>
 #include "CUnit/CUnit.h"
 #include "CUnit/Basic.h"
@@ -16,14 +11,14 @@
 #include "parse_files.h"
 
 static FILE* temp_file = NULL;
-LSH<PointHasher> *lsh;
+LSH *lsh;
 using namespace std;
 
 void test_meanOfMins() {
    vector<Point*> points {new Point(vector<double> {2.0,2.0,2.0}),new Point(vector<double> {3.0,3.0,3.0}),new Point(vector<double> {4.0,4.0,4.0})};
    vector<Object *> objs (points.begin(),points.end());
    //mean dist = (3 + 3 + 3)/3 = 3
-   CU_ASSERT(meanOfMins(new Dataset(objs)) == 3);
+   CU_ASSERT(meanOfMins(new Dataset(objs),3) == 3);
 }
 
 void test_PointHasher(void) {
@@ -51,8 +46,8 @@ void test_HashNonAmplified(void) {
     int bucket = phasher->hash(point,1);
     CU_ASSERT(bucket < M && bucket > 0);
     Point *point2 = new Point("2");
-    point2->addCoordinateLast(-2010.1);
-    point2->addCoordinateLast(9015.1);
+    point2->addCoordinateLast(-2002.1);
+    point2->addCoordinateLast(9005.1);
     int bucket2 = phasher->hash(point2,1);
     CU_ASSERT(bucket2 < M && bucket2 > 0);
     //ensure they lie on the same bucket. This can fail with small
@@ -72,7 +67,7 @@ void test_Determinism(void) {
 
 void test_HashAmplified(void) {
    //first dataset (kostis)
-   lsh = new LSH<PointHasher>();
+   lsh = new LSH();
    //all points are around 0-120 approx
    lsh->setInputFilename("../src/very_small_input_for_testing");
    lsh->setData(parseInputFilePoints(lsh->getInputFilename()));
@@ -95,7 +90,7 @@ void test_HashAmplified(void) {
    printf("buckets in set = %d and data set size = %d\n",uniqueBuckets.size(),dataset->getSize());
    CU_ASSERT(uniqueBuckets.size() == 1);
    //second dataset (instructor's)
-   lsh = new LSH<PointHasher>();
+   lsh = new LSH();
    lsh->setInputFilename("../src/testdata/input_small_id");
    lsh->setData(parseInputFilePoints(lsh->getInputFilename()));
    dataset = lsh->getDataset();
@@ -107,7 +102,7 @@ void test_HashAmplified(void) {
    //reset pool - we have another dataset, we reconstruct the pool.
    phasher->gridPool = nullptr;
    //////max-min - 40 is a good windows size ( max -min = 180 here).
-   phasher = new PointHasher(4,numDim,dataset->getMean());
+   phasher = new PointHasher(4,numDim,4 * dataset->getMean());
    //phasher = new PointHasher(8,numDim,2);
    uniqueBuckets.clear();
    int i = 0;

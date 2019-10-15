@@ -9,7 +9,7 @@
 
 
 
-extern LSH<CurveHasher>* lsh;
+extern LSH* lsh;
 
 //assume ai = 1 i =1,2,..d (from slides)
 CurveHasher::CurveHasher() {

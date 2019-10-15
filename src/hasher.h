@@ -60,7 +60,6 @@ class CurveHasher : public Hasher {
         //double roundCoordinateV2(Point *point,int i);
     public: 
         CurveHasher();
-        //debug
         CurveHasher(int,int,int,int);
         ~CurveHasher();
         size_t operator() (Object *obj) const;

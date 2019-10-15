@@ -13,7 +13,7 @@
 
 using namespace std;
 
-extern LSH<PointHasher>* lsh;
+extern LSH* lsh;
 
 double **PointHasher::gridPool;
 
@@ -47,6 +47,7 @@ PointHasher::PointHasher(int ampSize,int numDimension,int window) {
     powModuloMem = (int *)malloc(numDimension * sizeof(int));
     memset(powModuloMem,0,numDimension);
     //window = lsh->getDataset()->getMean();
+    this->window = window;
     partialHashRange = pow(2,int(32/amplificationSize));
     if (gridPool == nullptr) {
         generateGrids();

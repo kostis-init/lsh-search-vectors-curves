@@ -10,7 +10,7 @@
 
 
 static FILE* temp_file = NULL;
-LSH<CurveHasher> *lsh;
+LSH *lsh;
 using namespace std;
 
 struct point_compare {

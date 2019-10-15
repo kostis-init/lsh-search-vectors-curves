@@ -12,11 +12,11 @@
 
 using namespace std;
 
-LSH<PointHasher>* lsh;
+LSH* lsh;
 
 int main(int argc, char* argv[]){
 
-    lsh = new LSH<PointHasher>;
+    lsh = new LSH;
 
     /**
      * read arguments
@@ -42,7 +42,7 @@ int main(int argc, char* argv[]){
      * insert data into hash tables
      */
     cout << "Constructing hash table..." << endl;
-    lsh->setHashTableStruct(new HashTableStruct<PointHasher>(lsh->getNumOfHashTables(), lsh->getDataset()->getSize()));
+    lsh->setHashTableStruct(new PointHashTableStruct(lsh->getNumOfHashTables(), lsh->getDataset()->getSize(),lsh->getNumOfFunctions(),lsh->getDataset()->getDimension(),lsh->getDataset()->getMean()));
     auto points = lsh->getDataset()->getData();
     for (auto & point : points)
         lsh->getHashTableStruct()->addToAllHashTables(point);
@@ -81,7 +81,8 @@ int main(int argc, char* argv[]){
         Point* nnPoint = nullptr;
         double distance = numeric_limits<double>::max();
         for (int j = 0; j < sz; ++j) {
-            size_t hash = hashers[j](queryPoint);
+            //size_t hash = hashers[j](queryPoint);
+            size_t hash = (*hashers.at(j))(queryPoint);
             if(hts[j].find(hash) == hts[j].end()) //empty bucket
                 continue;
             auto points = hts[j].at(hash);

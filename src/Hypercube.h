@@ -4,7 +4,7 @@
 #include "LSH.h"
 
 template <typename T>
-class Hypercube : public LSH<T>{
+class Hypercube : public LSH{
 private:
     int dimension = 3;
     int max_checked = 10;
