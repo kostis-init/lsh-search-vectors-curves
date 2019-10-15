@@ -12,6 +12,8 @@ add_executable(lsh
         src/Curve.h
         src/Dataset.cpp
         src/Dataset.h
+        src/distance.h
+        src/distance.cpp
         src/hasher.h
         src/HashTableStruct.h
         src/Object.h
@@ -31,6 +33,8 @@ add_executable(test_point_hasher
         src/Curve.h
         src/Dataset.cpp
         src/Dataset.h
+        src/distance.h
+        src/distance.cpp
         src/hasher.h
         src/HashTableStruct.h
         src/Object.h
@@ -51,6 +55,8 @@ add_executable(test_curve_hasher
         src/Curve.h
         src/Dataset.cpp
         src/Dataset.h
+        src/distance.h
+        src/distance.cpp
         src/hasher.h
         src/HashTableStruct.h
         src/Object.h
