@@ -15,7 +15,8 @@ LSH *LoadInput(string inputFilename,string queryFilename) {
     lsh->setInputFilename(inputFilename);
     lsh->setData(parseInputFilePoints(lsh->getInputFilename()));
     //TODO: change this when we have a good formula for window.
-    lsh->getDataset()->setMean(100);
+    //change this value to experiment with performance of LSH.
+    lsh->getDataset()->setMean(112);
     lsh->setHashTableStruct(new PointHashTableStruct(lsh->getNumOfHashTables(), lsh->getDataset()->getSize(),lsh->getNumOfFunctions(),lsh->getDataset()->getDimension(),lsh->getDataset()->getMean()));
     auto points = lsh->getDataset()->getData();
     for (auto & point : points)
@@ -34,7 +35,9 @@ void DoQueries(LSH *lsh) {
     auto queryData = lsh->getQueryData()->getData();
     clock_t meanSearchLSH = 0;
     clock_t meanSearchBF = 0;
-    double max = numeric_limits<double>::min();
+    double maxAF = numeric_limits<double>::min();
+    double averageAF = 0;
+    int averageAFCount = 0;
     for (int i = 0; i < querySize; ++i) {
         Point* queryPoint = (Point*)queryData.at(i);
         Point* nnPoint;
@@ -49,10 +52,14 @@ void DoQueries(LSH *lsh) {
         end = clock();
         meanSearchBF += (end-begin);
         double AF;
-        if ((AF = distanceLSH/distanceBF) > max) 
-            max = AF;
+        if ((AF = distanceLSH/distanceBF) > maxAF) 
+            maxAF = AF;
+        if (distanceLSH) {//compute only if > 0
+            averageAF += distanceLSH/distanceBF;
+            averageAFCount++;
+        }
     }
-    cout << "meanTimeSearchLSH " << meanSearchLSH/querySize << " meanTimeSearchBF " << meanSearchBF/querySize << " and maxAF = " << max << endl;
+    cout << "meanTimeSearchLSH " << meanSearchLSH/querySize << " meanTimeSearchBF " << meanSearchBF/querySize << " and maxAF = " << maxAF << " and averageAF " << averageAF/averageAFCount << endl;
 }
 
 void test_File(string inputFilename,string queryFilename) {

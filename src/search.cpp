@@ -66,20 +66,29 @@ void search_LSH(Point **nnPoint, double *distance, int numOfHashTables, vector<H
                 unordered_map<int, vector<Object *>> *hts) {
     *nnPoint = nullptr;
     *distance = numeric_limits<double>::max();
+    bool found = false;
+    int threshold = 3 * numOfHashTables;
     for (int j = 0; j < numOfHashTables; ++j) {
         size_t hash = (*hashers.at(j))(queryPoint);
         if(hts[j].find(hash) == hts[j].end()) //empty bucket
             continue;
         auto points = hts[j].at(hash);
+        int thresholdCount = 0;
         for(auto candidate : points){
+            if (thresholdCount > threshold)
+                break;
             Point* candidatePoint = dynamic_cast<Point*>(candidate);
             double cur_dist;
             //TODO: if large number of retrieved items (e.g. > 3L) then Break // exit loop
             if((cur_dist = manhattan(*queryPoint, *candidatePoint)) < *distance){
+                found = true;
                 *distance = cur_dist;
                 *nnPoint = candidatePoint;
             }
         }
     }
-
+    //if we fall in empty backet for all htables
+    //set dist to zero (otherwise AF calculation is useless)
+    if (!found) 
+        *distance = 0.0;
 }
