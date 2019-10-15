@@ -56,7 +56,7 @@ Dataset* parseInputFilePoints(string filename) {
     //remove this if we dont care about the PointHasher 
     //window value. This call costs to much in terms of
     //processing.
-    data->setMean(meanOfMins(data,1000));
+    //data->setMean(meanOfMins(data,1000));
     return data;
 }
 
