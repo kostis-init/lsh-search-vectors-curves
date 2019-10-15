@@ -7,6 +7,7 @@
 #include "utils.h"
 #include "Dataset.h"
 #include "LSH.h"
+#include "Hypercube.h"
 
 using namespace std;
 
@@ -30,6 +31,36 @@ void readArgumentsLSH(int argc, char **argv) {
                 break;
             case 'o':
                 lsh->setOutputFilename(optarg);
+                break;
+            default:
+                cout << "Non acceptable argument, exiting..." << endl;
+                exit(-1);
+        }
+    }
+}
+
+void readArgumentsCube(int argc, char **argv) {
+    auto cube = dynamic_cast<Hypercube<PointHasher>*>(lsh);
+    int c;
+    while((c = getopt(argc, argv, "d:q:k:M:p:o:")) != -1){
+        switch (c){
+            case 'd':
+                cube->setInputFilename(optarg);
+                break;
+            case 'q':
+                cube->setQueryFilename(optarg);
+                break;
+            case 'k':
+                cube->setDimension(stoi(optarg));
+                break;
+            case 'M':
+                cube->setMaxChecked(stoi(optarg));
+                break;
+            case 'p':
+                cube->setMaxProbes(stoi(optarg));
+                break;
+            case 'o':
+                cube->setOutputFilename(optarg);
                 break;
             default:
                 cout << "Non acceptable argument, exiting..." << endl;

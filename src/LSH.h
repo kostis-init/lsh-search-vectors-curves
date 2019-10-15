@@ -55,6 +55,8 @@ public:
     void setHashTableStruct(HashTableStruct<T> *ht);
 
     auto getHashTableStruct() { return tables;}
+
+    virtual void poly();
 };
 
 template <typename T>

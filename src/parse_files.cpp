@@ -70,10 +70,10 @@ int meanOfMins(Dataset *dataset) {
     int size = dataset->getSize();
     int i=0;
     int limit = 1000;
-    for(auto obj : dataset->getData()){
+    auto data = dataset->getData();
+    for(auto obj : data){
         Point* queryPoint = dynamic_cast<Point*>(obj);
         double distance = numeric_limits<double>::max();
-        auto data = dataset->getData();
         for(auto candidate : data){
             Point* candidatePoint = dynamic_cast<Point*>(candidate);
             double cur_dist;

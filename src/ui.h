@@ -2,6 +2,7 @@
 #define ALGORITHMS_PROJECT_UI_H
 
 void readArgumentsLSH(int argc, char **argv);
+void readArgumentsCube(int argc, char **argv);
 void askInputFile();
 void askQueryFile();
 void askOutputFile();
