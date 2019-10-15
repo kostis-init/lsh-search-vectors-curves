@@ -9,10 +9,8 @@
 
 
 
-extern LSH* lsh;
 
-//assume ai = 1 i =1,2,..d (from slides)
-CurveHasher::CurveHasher() {
+/*CurveHasher::CurveHasher() {
     numDimension = lsh->getDataset()->getDimension();
     int min = int(lsh->getDataset()->getMin());
     this->max = int(lsh->getDataset()->getMax());
@@ -27,9 +25,9 @@ CurveHasher::CurveHasher() {
     for (int i = 0; i < numDimension;i++) {
         shiftedGrid[i] = uniform_dist(e1);
     }
-}
+}*/
 
-//debug
+//assume ai = 1 i =1,2,..d (from slides)
 CurveHasher::CurveHasher(int numDimension,int min,int max,int pointHasherWindow) {
     this->numDimension = numDimension;
     this->max = max;

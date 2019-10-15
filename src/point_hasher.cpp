@@ -13,7 +13,6 @@
 
 using namespace std;
 
-extern LSH* lsh;
 
 double **PointHasher::gridPool;
 
@@ -21,7 +20,9 @@ double **PointHasher::gridPool;
 //needs to be done inside lsh. We could set it based on some metrics e.g. 
 //based on the highest coordinate of a point and minimum (generally based 
 //on change-variation of points).
-PointHasher::PointHasher() {
+
+
+/*PointHasher::PointHasher() {
     amplificationSize = lsh->getNumOfFunctions();
     numDimension = lsh->getDataset()->getDimension();
     powModuloMem = (int *)malloc(numDimension * sizeof(int));
@@ -39,7 +40,7 @@ PointHasher::PointHasher() {
     for (int i = 0; i<amplificationSize; i++){
         selectedGrids[i] = uniform_dist(e1);
     }
-}
+}*/
 
 PointHasher::PointHasher(int ampSize,int numDimension,int window) {
     this->amplificationSize = ampSize;

@@ -6,29 +6,30 @@ add_compile_options(-fpermissive)
 link_libraries(cunit)
 project (algorithms_project)
 
-#add_executable(cube
-#        src/mainPointsHypercube.cpp
-#        src/Curve.cpp
-#        src/Curve.h
-#        src/Dataset.cpp
-#        src/Dataset.h
-#        src/distance.h
-#        src/distance.cpp
-#        src/hasher.h
-#        src/HashTableStruct.h
-#        src/HashTableStruct.cpp
-#        src/Object.h
-#        src/Point.cpp
-#        src/Point.h
-#        src/point_hasher.cpp
-#        src/utils.cpp
-#        src/utils.h
-#        src/ui.cpp
-#        src/ui.h
-#        src/LSH.h
-#        src/LSH.cpp
-#        src/parse_files.cpp src/parse_files.h
-#        src/Hypercube.h)
+add_executable(cube
+        src/mainPointsCube.cpp
+        src/Curve.cpp
+        src/Curve.h
+        src/curve_hasher.cpp
+        src/Dataset.cpp
+        src/Dataset.h
+        src/distance.h
+        src/distance.cpp
+        src/hasher.h
+        src/HashTableStruct.h
+        src/HashTableStruct.cpp
+        src/Object.h
+        src/Point.cpp
+        src/Point.h
+        src/point_hasher.cpp
+        src/utils.cpp
+        src/utils.h
+        src/ui.cpp
+        src/ui.h
+        src/LSH.h
+        src/parse_files.cpp src/parse_files.h
+        src/Cube.h src/search.cpp src/search.h
+        )
 
 add_executable(lsh
         src/mainPointsLSH.cpp
@@ -51,9 +52,8 @@ add_executable(lsh
         src/ui.cpp 
         src/ui.h 
         src/LSH.h
-        src/LSH.cpp
         src/parse_files.cpp src/parse_files.h
-        src/Hypercube.h)
+        src/Cube.h src/search.cpp src/search.h)
 
 add_executable(test_point_hasher
         src/test_point_hasher.cpp
@@ -76,10 +76,9 @@ add_executable(test_point_hasher
         src/ui.cpp
         src/ui.h
         src/LSH.h
-        src/LSH.cpp
         src/parse_files.cpp src/parse_files.h
-        src/Hypercube.h
-        )
+        src/Cube.h
+        src/search.cpp src/search.h)
 
 add_executable(test_curve_hasher
         src/test_curve_hasher.cpp
@@ -102,6 +101,5 @@ add_executable(test_curve_hasher
         src/ui.cpp
         src/ui.h
         src/LSH.h
-        src/LSH.cpp
         src/parse_files.cpp src/parse_files.h
-        src/Hypercube.h)
+        src/Cube.h src/search.cpp src/search.h)

@@ -1,19 +1,13 @@
 #include <iostream>
 #include <getopt.h>
-#include <sstream>
-#include <fstream>
-#include <cfloat>
-#include "ui.h"
 #include "utils.h"
 #include "Dataset.h"
 #include "LSH.h"
-#include "Hypercube.h"
+#include "Cube.h"
 
 using namespace std;
 
-extern LSH* lsh;
-
-void readArgumentsLSH(int argc, char **argv) {
+void readArgumentsLSH(LSH* lsh, int argc, char **argv) {
     int c;
     while((c = getopt(argc, argv, "d:q:k:L:o:")) != -1){
         switch (c){
@@ -39,16 +33,16 @@ void readArgumentsLSH(int argc, char **argv) {
     }
 }
 
-void readArgumentsCube(int argc, char **argv) {
-    auto cube = dynamic_cast<Hypercube<PointHasher>*>(lsh);
+//TODO: check -probes argument
+void readArgumentsCube(Cube* cube, int argc, char **argv) {
     int c;
     while((c = getopt(argc, argv, "d:q:k:M:p:o:")) != -1){
         switch (c){
             case 'd':
-                cube->setInputFilename(optarg);
+                cube->getLsh()->setInputFilename(optarg);
                 break;
             case 'q':
-                cube->setQueryFilename(optarg);
+                cube->getLsh()->setQueryFilename(optarg);
                 break;
             case 'k':
                 cube->setDimension(stoi(optarg));
@@ -60,7 +54,7 @@ void readArgumentsCube(int argc, char **argv) {
                 cube->setMaxProbes(stoi(optarg));
                 break;
             case 'o':
-                cube->setOutputFilename(optarg);
+                cube->getLsh()->setOutputFilename(optarg);
                 break;
             default:
                 cout << "Non acceptable argument, exiting..." << endl;
@@ -69,23 +63,23 @@ void readArgumentsCube(int argc, char **argv) {
     }
 }
 
-void askInputFile(){
+string askInputFile(){
     string filename;
     cout << "Please give input filename" << endl;
     cin >> filename;
-    lsh->setInputFilename(filename);
+    return filename;
 }
 
-void askQueryFile(){
+string askQueryFile(){
     string filename;
     cout << "Please give query filename" << endl;
     cin >> filename;
-    lsh->setQueryFilename(filename);
+    return filename;
 }
 
-void askOutputFile(){
+string askOutputFile(){
     string filename;
     cout << "Please give output filename" << endl;
     cin >> filename;
-    lsh->setOutputFilename(filename);
+    return filename;
 }

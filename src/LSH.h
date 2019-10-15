@@ -5,55 +5,65 @@
 
 class LSH {
 private:
+
     string inputFilename; bool inputFileGiven = false;
     string queryFilename; bool queryFileGiven = false;
     string outputFilename; bool outputFileGiven = false;
-    int numOfFunctions = 4;
-    int numOfHashTables = 5;
 
     Dataset* data;
     QueryDataset* queryData;
     HashTableStruct * tables;
 
 public:
+    int numOfFunctions = 4;
+    int numOfHashTables = 5;
+    const string &getInputFilename() const {return inputFilename;}
+    const string &getQueryFilename() const {return queryFilename;}
+    const string &getOutputFilename() const {return outputFilename;}
+    bool isInputFileGiven() const {return inputFileGiven;}
+    bool isQueryFileGiven() const {return queryFileGiven;}
+    bool isOutputFileGiven() const {return outputFileGiven;}
+    Dataset *getDataset() const {return data;}
+    QueryDataset *getQueryData() const {return queryData;}
 
-    const string &getInputFilename() const;
+    void setInputFilename(const string &inputFilename){
+        inputFileGiven = true;
+        this->inputFilename = inputFilename;
+    }
 
-    void setInputFilename(const string &inputFilename);
+    void setQueryFilename(const string &queryFilename){
+        queryFileGiven = true;
+        this->queryFilename = queryFilename;
+    }
 
-    bool isInputFileGiven() const;
+    void setOutputFilename(const string &outputFilename){
+        outputFileGiven = true;
+        this->outputFilename = outputFilename;
+    }
 
-    const string &getQueryFilename() const;
+    void setData(Dataset *data) {
+        this->data = data;
+    }
 
-    void setQueryFilename(const string &queryFilename);
+    void setQueryData(QueryDataset *queryData) {
+        this->queryData = queryData;
+    }
 
-    bool isQueryFileGiven() const;
+    int getNumOfFunctions() const {return numOfFunctions;}
+    int getNumOfHashTables() const {return numOfHashTables;}
+    auto getHashTableStruct() {return tables;}
 
-    const string &getOutputFilename() const;
+    void setNumOfFunctions(int numOfFunctions){
+        this->numOfFunctions = numOfFunctions;
+    }
 
-    void setOutputFilename(const string &outputFilename);
+    void setNumOfHashTables(int numOfHashTables){
+        this->numOfHashTables = numOfHashTables;
+    }
 
-    bool isOutputFileGiven() const;
-
-    int getNumOfFunctions() const;
-
-    void setNumOfFunctions(int numOfFunctions);
-
-    int getNumOfHashTables() const;
-
-    void setNumOfHashTables(int numOfHashTables);
-
-    Dataset *getDataset() const;
-
-    void setData(Dataset *data);
-
-    QueryDataset *getQueryData() const;
-
-    void setQueryData(QueryDataset *queryData);
-
-    void setHashTableStruct(HashTableStruct *ht);
-
-    auto getHashTableStruct() { return tables;}
+    void setHashTableStruct(HashTableStruct *ht) {
+        tables = ht;
+    }
 
     virtual void poly(){};
 };
