@@ -1,9 +1,5 @@
 #include <iostream>
 #include <getopt.h>
-#include <sstream>
-#include <fstream>
-#include <cfloat>
-#include "ui.h"
 #include "utils.h"
 #include "Dataset.h"
 #include "LSH.h"
@@ -37,6 +33,7 @@ void readArgumentsLSH(LSH<PointHasher>* lsh, int argc, char **argv) {
     }
 }
 
+//TODO: check -probes argument
 void readArgumentsCube(Cube<PointHasher>* cube, int argc, char **argv) {
     int c;
     while((c = getopt(argc, argv, "d:q:k:M:p:o:")) != -1){
@@ -66,23 +63,23 @@ void readArgumentsCube(Cube<PointHasher>* cube, int argc, char **argv) {
     }
 }
 
-void askInputFile(){
+string askInputFile(){
     string filename;
     cout << "Please give input filename" << endl;
     cin >> filename;
-    lsh->setInputFilename(filename);
+    return filename;
 }
 
-void askQueryFile(){
+string askQueryFile(){
     string filename;
     cout << "Please give query filename" << endl;
     cin >> filename;
-    lsh->setQueryFilename(filename);
+    return filename;
 }
 
-void askOutputFile(){
+string askOutputFile(){
     string filename;
     cout << "Please give output filename" << endl;
     cin >> filename;
-    lsh->setOutputFilename(filename);
+    return filename;
 }

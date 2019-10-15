@@ -4,8 +4,8 @@
 
 void readArgumentsLSH(LSH<PointHasher>* lsh, int argc, char **argv);
 void readArgumentsCube(Cube<PointHasher>* cube, int argc, char **argv);
-void askInputFile();
-void askQueryFile();
-void askOutputFile();
+string askInputFile();
+string askQueryFile();
+string askOutputFile();
 
 #endif //ALGORITHMS_PROJECT_UI_H

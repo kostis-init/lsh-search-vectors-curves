@@ -7,7 +7,7 @@ link_libraries(cunit)
 project (algorithms_project)
 
 add_executable(cube
-        src/mainPointsHypercube.cpp
+        src/mainPointsCube.cpp
         src/Curve.cpp
         src/Curve.h
         src/Dataset.cpp
@@ -26,7 +26,7 @@ add_executable(cube
         src/ui.h
         src/LSH.h
         src/parse_files.cpp src/parse_files.h
-        src/Hypercube.h)
+        src/Cube.h src/search.cpp src/search.h)
 
 add_executable(lsh
         src/mainPointsLSH.cpp
@@ -48,7 +48,7 @@ add_executable(lsh
         src/ui.h 
         src/LSH.h
         src/parse_files.cpp src/parse_files.h
-        src/Hypercube.h)
+        src/Cube.h src/search.cpp src/search.h)
 
 add_executable(test_point_hasher
         src/test_point_hasher.cpp
@@ -70,8 +70,8 @@ add_executable(test_point_hasher
         src/ui.h
         src/LSH.h
         src/parse_files.cpp src/parse_files.h
-        src/Hypercube.h
-        )
+        src/Cube.h
+        src/search.cpp src/search.h)
 
 add_executable(test_curve_hasher
         src/test_curve_hasher.cpp
@@ -94,4 +94,4 @@ add_executable(test_curve_hasher
         src/ui.h
         src/LSH.h
         src/parse_files.cpp src/parse_files.h
-        src/Hypercube.h)
+        src/Cube.h src/search.cpp src/search.h)
