@@ -14,6 +14,8 @@ LSH *LoadInput(string inputFilename,string queryFilename) {
     auto lsh = new LSH();
     lsh->setInputFilename(inputFilename);
     lsh->setData(parseInputFilePoints(lsh->getInputFilename()));
+    //TODO: change this when we have a good formula for window.
+    lsh->getDataset()->setMean(100);
     lsh->setHashTableStruct(new PointHashTableStruct(lsh->getNumOfHashTables(), lsh->getDataset()->getSize(),lsh->getNumOfFunctions(),lsh->getDataset()->getDimension(),lsh->getDataset()->getMean()));
     auto points = lsh->getDataset()->getData();
     for (auto & point : points)
@@ -50,7 +52,7 @@ void DoQueries(LSH *lsh) {
         if ((AF = distanceLSH/distanceBF) > max) 
             max = AF;
     }
-    cout << "meanTimeSearchLSH " << meanSearchLSH << " meanTimeSearchBF " << meanSearchBF << " and maxAF = " << max << endl;
+    cout << "meanTimeSearchLSH " << meanSearchLSH/querySize << " meanTimeSearchBF " << meanSearchBF/querySize << " and maxAF = " << max << endl;
 }
 
 void test_File(string inputFilename,string queryFilename) {
