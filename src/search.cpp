@@ -68,12 +68,12 @@ void search_LSH(Point **nnPoint, double *distance, int numOfHashTables, vector<H
     *distance = numeric_limits<double>::max();
     bool found = false;
     int threshold = 3 * numOfHashTables;
+    int thresholdCount = 0;
     for (int j = 0; j < numOfHashTables; ++j) {
         size_t hash = (*hashers.at(j))(queryPoint);
         if(hts[j].find(hash) == hts[j].end()) //empty bucket
             continue;
         auto points = hts[j].at(hash);
-        int thresholdCount = 0;
         for(auto candidate : points){
             if (thresholdCount > threshold)
                 break;
@@ -85,6 +85,7 @@ void search_LSH(Point **nnPoint, double *distance, int numOfHashTables, vector<H
                 *distance = cur_dist;
                 *nnPoint = candidatePoint;
             }
+            thresholdCount++;
         }
     }
     //if we fall in empty backet for all htables
