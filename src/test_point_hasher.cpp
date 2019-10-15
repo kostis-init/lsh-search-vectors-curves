@@ -81,7 +81,7 @@ void test_HashAmplified(void) {
    //reset pool - we have another dataset, we reconstruct the pool.
    PointHasher::gridPool = nullptr;
    //auto phasher = new PointHasher(5,numDim,dataset->getMax()+1);
-   auto phasher = new PointHasher(5,numDim,dataset->getMean());
+   auto phasher = new PointHasher(5,numDim,dataset->getMax()+1);
    printf("min is %f and max is %f and mean of min is ",dataset->getMin(),dataset->getMax());
    set<size_t> uniqueBuckets;
    for (auto p: points) {
@@ -102,8 +102,7 @@ void test_HashAmplified(void) {
    //reset pool - we have another dataset, we reconstruct the pool.
    phasher->gridPool = nullptr;
    //////max-min - 40 is a good windows size ( max -min = 180 here).
-   phasher = new PointHasher(4,numDim,4 * dataset->getMean());
-   //phasher = new PointHasher(8,numDim,2);
+   phasher = new PointHasher(4,numDim,dataset->getMean());
    uniqueBuckets.clear();
    int i = 0;
    for (auto p: points) {
