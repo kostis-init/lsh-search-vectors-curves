@@ -103,3 +103,27 @@ add_executable(test_curve_hasher
         src/LSH.h
         src/parse_files.cpp src/parse_files.h
         src/Cube.h src/search.cpp src/search.h)
+
+add_executable(test_lsh_points
+        src/test_lsh_points.cpp
+        src/Curve.cpp
+        src/Curve.h
+        src/Dataset.cpp
+        src/Dataset.h
+        src/distance.h
+        src/distance.cpp
+        src/hasher.h
+        src/HashTableStruct.h
+        src/HashTableStruct.cpp
+        src/Object.h
+        src/Point.cpp
+        src/Point.h
+        src/curve_hasher.cpp
+        src/point_hasher.cpp
+        src/utils.cpp
+        src/utils.h
+        src/ui.cpp
+        src/ui.h
+        src/LSH.h
+        src/parse_files.cpp src/parse_files.h
+        src/Cube.h src/search.cpp src/search.h)
