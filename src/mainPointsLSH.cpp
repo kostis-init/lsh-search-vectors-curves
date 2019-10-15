@@ -30,7 +30,10 @@ int main(int argc, char* argv[]){
     /**
      * parse input file into memory
      */
+    cout << "omg" << endl;
     lsh->setData(parseInputFilePoints(lsh->getInputFilename()));
+    cout << lsh->getDataset()->getMean() << endl;
+    cout << "omg" << endl;
     //test_print_data(lsh->getData());
 
     /**

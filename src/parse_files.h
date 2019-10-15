@@ -4,5 +4,6 @@
 
 Dataset* parseInputFilePoints(string filename);
 QueryDataset* parseQueryFilePoints(string filename);
+int meanOfMins(Dataset *dataset);
 
 #endif //ALGORITHMS_PROJECT_PARSE_FILES_H

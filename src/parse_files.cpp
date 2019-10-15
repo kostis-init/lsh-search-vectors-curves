@@ -2,8 +2,10 @@
 #include <sstream>
 #include <fstream>
 #include <cfloat>
+#include <string.h>
 #include "parse_files.h"
 #include "utils.h"
+#include "distance.h"
 
 using namespace std;
 
@@ -50,7 +52,47 @@ Dataset* parseInputFilePoints(string filename) {
     data->setDimension(current_dimension);
     data->setMax(maxCoordinate);
     data->setMin(minCoordinate);
+    //remove this if we dont care about the PointHasher 
+    //window value. This call costs to much in terms of
+    //processing.
+    data->setMean(meanOfMins(data));
     return data;
+}
+
+//Calculate the mean distance of every point with his NN.
+//Complexity: numDimension * n^2 / 2 
+//We can use a better algorithm instead of bruteforce 
+//like kd-tree of octree but it needs some work.
+//Use this func only with a Dataset of Points.
+int meanOfMins(Dataset *dataset) {
+    auto data = dataset->getData();
+    vector<Point *> points(data.begin(),data.end());
+    double *mins = (double *)malloc(points.size()*sizeof(double));
+    for(int i =0; i < points.size();i++) 
+        mins[i] = DBL_MAX;
+    double dist;
+    int NNindex = 0;
+    double mean = 0;
+    for(int i =0; i < points.size();i++) {
+        if (mins[i] != DBL_MAX)
+            continue;
+        for(int j =0; j < points.size();j++) {
+            if (i == j)
+                continue;
+            if ((dist = manhattan(*points.at(i),*points.at(j))) < mins[i]) {
+                mins[i] = dist;
+                NNindex = j;
+            }
+        }
+        //if we find the NN of i, then i is the NN of j too
+        if (mins[NNindex] != DBL_MAX) {
+            mean += mins[i];  //compute mean on the fly
+        } else {
+            mins[NNindex] = mins[i];
+            mean += 2.0 * mins[i];  //compute mean on the fly
+        }
+    }
+    return int(mean) / points.size();
 }
 
 QueryDataset* parseQueryFilePoints(string filename){
@@ -99,3 +141,4 @@ QueryDataset* parseQueryFilePoints(string filename){
     data->setDimension(current_dimension);
     return data;
 }
+
