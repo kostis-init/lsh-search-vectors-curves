@@ -13,10 +13,18 @@
 #include "Point.h"
 #include "ui.h"
 #include "Dataset.h"
+#include "parse_files.h"
 
 static FILE* temp_file = NULL;
 LSH<PointHasher> *lsh;
 using namespace std;
+
+void test_meanOfMins() {
+   vector<Point*> points {new Point(vector<double> {2.0,2.0,2.0}),new Point(vector<double> {3.0,3.0,3.0}),new Point(vector<double> {4.0,4.0,4.0})};
+   vector<Object *> objs (points.begin(),points.end());
+   //mean dist = (3 + 3 + 3)/3 = 3
+   CU_ASSERT(meanOfMins(new Dataset(objs)) == 3);
+}
 
 void test_PointHasher(void) {
     //check signleton and selectedGrids array size.
@@ -71,13 +79,15 @@ void test_HashAmplified(void) {
    auto dataset = lsh->getDataset();
    auto numDim = dataset->getDimension();
    auto points = dataset->getData();
+   printf("mean is %d",dataset->getMean());
    //printf("min is %f and max is %f",dataset->getMinCoordinate(),dataset->getMaxCoordinate());
    //because the window is bigger than the biggest coordinate of a
    // data point (131), all points should lie on the same bucket. 
    //reset pool - we have another dataset, we reconstruct the pool.
    PointHasher::gridPool = nullptr;
-   auto phasher = new PointHasher(5,numDim,dataset->getMax()+1);
-   printf("min is %f and max is %f",dataset->getMin(),dataset->getMax());
+   //auto phasher = new PointHasher(5,numDim,dataset->getMax()+1);
+   auto phasher = new PointHasher(5,numDim,dataset->getMean());
+   printf("min is %f and max is %f and mean of min is ",dataset->getMin(),dataset->getMax());
    set<size_t> uniqueBuckets;
    for (auto p: points) {
       uniqueBuckets.insert((*phasher)(p));
@@ -91,12 +101,13 @@ void test_HashAmplified(void) {
    dataset = lsh->getDataset();
    numDim = dataset->getDimension();
    points = dataset->getData();
-   printf("min is %f and max is %f",dataset->getMin(),dataset->getMax()-100);
+   printf("min is %f and max is %f and mean of min is ",dataset->getMin(),dataset->getMax());
+   printf("mean is %d",dataset->getMean());
    uniqueBuckets.clear();
    //reset pool - we have another dataset, we reconstruct the pool.
    phasher->gridPool = nullptr;
    //////max-min - 40 is a good windows size ( max -min = 180 here).
-   phasher = new PointHasher(4,numDim,dataset->getMax()-40);
+   phasher = new PointHasher(4,numDim,dataset->getMean());
    //phasher = new PointHasher(8,numDim,2);
    uniqueBuckets.clear();
    int i = 0;
@@ -144,7 +155,8 @@ int main(int argc,char *argv[]) {
    if ((NULL == CU_add_test(pSuite, "test of PointHasher constructor", test_PointHasher))||
        (NULL == CU_add_test(pSuite, "test of hash(obj,hashIndex) ", test_HashNonAmplified)) || 
        (NULL == CU_add_test(pSuite,"test amplified hash func",test_HashAmplified)) ||  
-      (NULL == CU_add_test(pSuite,"test determinism",test_Determinism)))
+       (NULL == CU_add_test(pSuite,"test determinism",test_Determinism)) ||
+       (NULL == CU_add_test(pSuite,"test mean of mins",test_meanOfMins)))
          {
          CU_cleanup_registry();
       return CU_get_error();

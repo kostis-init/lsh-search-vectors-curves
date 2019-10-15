@@ -26,6 +26,7 @@ PointHasher::PointHasher() {
     numDimension = lsh->getDataset()->getDimension();
     powModuloMem = (int *)malloc(numDimension * sizeof(int));
     memset(powModuloMem,0,numDimension);
+    window = lsh->getDataset()->getMean();
     partialHashRange = pow(2,int(32/amplificationSize));
     if (gridPool == nullptr) {
         generateGrids();
@@ -40,13 +41,12 @@ PointHasher::PointHasher() {
     }
 }
 
-
 PointHasher::PointHasher(int ampSize,int numDimension,int window) {
     this->amplificationSize = ampSize;
     this->numDimension = numDimension;
-    this->window = window;
     powModuloMem = (int *)malloc(numDimension * sizeof(int));
     memset(powModuloMem,0,numDimension);
+    //window = lsh->getDataset()->getMean();
     partialHashRange = pow(2,int(32/amplificationSize));
     if (gridPool == nullptr) {
         generateGrids();
