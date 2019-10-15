@@ -1,5 +1,9 @@
 #include "Dataset.h"
 
+Dataset::Dataset(vector<Object *> data) {
+    this->data = data;
+}
+
 void Dataset::setSize(int sz) {
     this->size = sz;
 }
@@ -38,6 +42,14 @@ void Dataset::setMax(double max) {
 
 void Dataset::setMin(double min) {
     this->min = min;
+}
+
+void Dataset::setMean(int mean) {
+    this->mean = mean;
+}
+
+int Dataset::getMean() {
+    return mean;
 }
 
 double QueryDataset::getRadius() {

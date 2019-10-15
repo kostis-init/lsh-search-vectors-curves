@@ -12,9 +12,15 @@ class Dataset {
         int size;
         double min;
         double max;
+        int mean;
         vector<Object *> data;
     public:
+        Dataset(vector<Object *> data);
+        Dataset(){};
         void setSize(int sz);
+        void setMax(double max);
+        void setMin(double min);
+        void setMean(int mean);
         void setDimension(int d);
         void add(Object *obj);
         vector<Object *> getData();
@@ -26,8 +32,7 @@ class Dataset {
         //max coordinate for points 
         //max length for curves
         double getMax();
-        void setMin(double);
-        void setMax(double);
+        int getMean();
 };
 
 /*
