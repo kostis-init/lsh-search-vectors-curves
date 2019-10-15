@@ -6,134 +6,69 @@
 template <typename T>
 class LSH {
 private:
+
     string inputFilename; bool inputFileGiven = false;
     string queryFilename; bool queryFileGiven = false;
     string outputFilename; bool outputFileGiven = false;
-    int numOfFunctions = 4;
-    int numOfHashTables = 5;
 
     Dataset* data;
     QueryDataset* queryData;
+
+    int numOfFunctions = 4;
+    int numOfHashTables = 5;
+
     HashTableStruct<T> * tables;
 
 public:
 
-    const string &getInputFilename() const;
+    const string &getInputFilename() const {return inputFilename;}
+    const string &getQueryFilename() const {return queryFilename;}
+    const string &getOutputFilename() const {return outputFilename;}
+    bool isInputFileGiven() const {return inputFileGiven;}
+    bool isQueryFileGiven() const {return queryFileGiven;}
+    bool isOutputFileGiven() const {return outputFileGiven;}
+    Dataset *getDataset() const {return data;}
+    QueryDataset *getQueryData() const {return queryData;}
 
-    void setInputFilename(const string &inputFilename);
+    void setInputFilename(const string &inputFilename){
+        inputFileGiven = true;
+        this->inputFilename = inputFilename;
+    }
 
-    bool isInputFileGiven() const;
+    void setQueryFilename(const string &queryFilename){
+        queryFileGiven = true;
+        this->queryFilename = queryFilename;
+    }
 
-    const string &getQueryFilename() const;
+    void setOutputFilename(const string &outputFilename){
+        outputFileGiven = true;
+        this->outputFilename = outputFilename;
+    }
 
-    void setQueryFilename(const string &queryFilename);
+    void setData(Dataset *data) {
+        this->data = data;
+    }
 
-    bool isQueryFileGiven() const;
+    void setQueryData(QueryDataset *queryData) {
+        this->queryData = queryData;
+    }
 
-    const string &getOutputFilename() const;
+    int getNumOfFunctions() const {return numOfFunctions;}
+    int getNumOfHashTables() const {return numOfHashTables;}
+    auto getHashTableStruct() {return tables;}
 
-    void setOutputFilename(const string &outputFilename);
+    void setNumOfFunctions(int numOfFunctions){
+        this->numOfFunctions = numOfFunctions;
+    }
 
-    bool isOutputFileGiven() const;
+    void setNumOfHashTables(int numOfHashTables){
+        this->numOfHashTables = numOfHashTables;
+    }
 
-    int getNumOfFunctions() const;
+    void setHashTableStruct(HashTableStruct<T> *ht) {
+        this->tables = ht;
+    }
 
-    void setNumOfFunctions(int numOfFunctions);
-
-    int getNumOfHashTables() const;
-
-    void setNumOfHashTables(int numOfHashTables);
-
-    Dataset *getDataset() const;
-
-    void setData(Dataset *data);
-
-    QueryDataset *getQueryData() const;
-
-    void setQueryData(QueryDataset *queryData);
-
-    void setHashTableStruct(HashTableStruct<T> *ht);
-
-    auto getHashTableStruct() { return tables;}
-
-    virtual void poly();
 };
-
-template <typename T>
-const string &LSH<T>::getInputFilename() const {
-    return inputFilename;
-}
-template <typename T>
-void LSH<T>::setInputFilename(const string &inputFilename) {
-    inputFileGiven = true;
-    this->inputFilename = inputFilename;
-}
-template <typename T>
-bool LSH<T>::isInputFileGiven() const {
-    return inputFileGiven;
-}
-template <typename T>
-const string &LSH<T>::getQueryFilename() const {
-    return queryFilename;
-}
-template <typename T>
-void LSH<T>::setQueryFilename(const string &queryFilename) {
-    queryFileGiven = true;
-    this->queryFilename = queryFilename;
-}
-template <typename T>
-bool LSH<T>::isQueryFileGiven() const {
-    return queryFileGiven;
-}
-template <typename T>
-const string &LSH<T>::getOutputFilename() const {
-    return outputFilename;
-}
-template <typename T>
-void LSH<T>::setOutputFilename(const string &outputFilename) {
-    outputFileGiven = true;
-    this->outputFilename = outputFilename;
-}
-template <typename T>
-bool LSH<T>::isOutputFileGiven() const {
-    return outputFileGiven;
-}
-template <typename T>
-int LSH<T>::getNumOfFunctions() const {
-    return numOfFunctions;
-}
-template <typename T>
-void LSH<T>::setNumOfFunctions(int numOfFunctions) {
-    this->numOfFunctions = numOfFunctions;
-}
-template <typename T>
-int LSH<T>::getNumOfHashTables() const {
-    return numOfHashTables;
-}
-template <typename T>
-void LSH<T>::setNumOfHashTables(int numOfHashTables) {
-    this->numOfHashTables = numOfHashTables;
-}
-template <typename T>
-Dataset *LSH<T>::getDataset() const {
-    return data;
-}
-template <typename T>
-void LSH<T>::setData(Dataset *data) {
-    this->data = data;
-}
-template <typename T>
-QueryDataset *LSH<T>::getQueryData() const {
-    return queryData;
-}
-template <typename T>
-void LSH<T>::setQueryData(QueryDataset *queryData) {
-    this->queryData = queryData;
-}
-
-template <typename T>
-void LSH<T>::setHashTableStruct(HashTableStruct<T> *ht) {
-    tables = ht;
-}
 
 #endif //ALGORITHMS_PROJECT_LSH_H

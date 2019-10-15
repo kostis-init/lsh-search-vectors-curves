@@ -7,13 +7,11 @@
 #include "utils.h"
 #include "Dataset.h"
 #include "LSH.h"
-#include "Hypercube.h"
+#include "Cube.h"
 
 using namespace std;
 
-extern LSH<PointHasher>* lsh;
-
-void readArgumentsLSH(int argc, char **argv) {
+void readArgumentsLSH(LSH<PointHasher>* lsh, int argc, char **argv) {
     int c;
     while((c = getopt(argc, argv, "d:q:k:L:o:")) != -1){
         switch (c){
@@ -39,16 +37,15 @@ void readArgumentsLSH(int argc, char **argv) {
     }
 }
 
-void readArgumentsCube(int argc, char **argv) {
-    auto cube = dynamic_cast<Hypercube<PointHasher>*>(lsh);
+void readArgumentsCube(Cube<PointHasher>* cube, int argc, char **argv) {
     int c;
     while((c = getopt(argc, argv, "d:q:k:M:p:o:")) != -1){
         switch (c){
             case 'd':
-                cube->setInputFilename(optarg);
+                cube->getLsh()->setInputFilename(optarg);
                 break;
             case 'q':
-                cube->setQueryFilename(optarg);
+                cube->getLsh()->setQueryFilename(optarg);
                 break;
             case 'k':
                 cube->setDimension(stoi(optarg));
@@ -60,7 +57,7 @@ void readArgumentsCube(int argc, char **argv) {
                 cube->setMaxProbes(stoi(optarg));
                 break;
             case 'o':
-                cube->setOutputFilename(optarg);
+                cube->getLsh()->setOutputFilename(optarg);
                 break;
             default:
                 cout << "Non acceptable argument, exiting..." << endl;

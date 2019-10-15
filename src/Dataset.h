@@ -4,8 +4,6 @@
 #include "Point.h"
 using namespace std;
 
-
-//Trying to generalize things.
 class Dataset {
     private:
         int dimension;
@@ -34,28 +32,6 @@ class Dataset {
         double getMax();
         int getMean();
 };
-
-/*
-class DatasetPoints {
-private:
-    int dimension;
-    int size;
-    double minCoordinate;
-    double maxCoordinate;
-    vector<Point *> points;
-public:
-    void setSize(int sz);
-    void setDimension(int d);
-    void addPoint(Point *point);
-    vector<Point *> getPoints();
-    int getDimension();
-    int getSize();
-    double getMinCoordinate();
-    double getMaxCoordinate();
-    void setMinCoordinate(double);
-    void setMaxCoordinate(double);
-};
-*/
 
 class QueryDataset : public Dataset {
 private:
