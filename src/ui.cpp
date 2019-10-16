@@ -35,7 +35,7 @@ void readArgumentsLSH(LSH* lsh, int argc, char **argv) {
 
 //TODO: check -probes argument
 void readArgumentsCube(Cube* cube, int argc, char **argv) {
-    int c;
+    int c; int n;
     while((c = getopt(argc, argv, "d:q:k:M:p:o:")) != -1){
         switch (c){
             case 'd':
@@ -45,7 +45,10 @@ void readArgumentsCube(Cube* cube, int argc, char **argv) {
                 cube->getLsh()->setQueryFilename(optarg);
                 break;
             case 'k':
-                cube->setDimension(stoi(optarg));
+                n = stoi(optarg);
+                cube->setDimensionGiven(true);
+                cube->setDimension(n);
+                cube->getLsh()->setNumOfHashTables(n);
                 break;
             case 'M':
                 cube->setMaxChecked(stoi(optarg));

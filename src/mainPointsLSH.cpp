@@ -11,23 +11,23 @@
 #include "distance.h"
 #include "search.h"
 
-
-LSH* lsh;
-
 int main(int argc, char* argv[]){
 
-    lsh = new LSH;
+    auto lsh = new LSH;
 
     /**
      * read arguments
      */
     readArgumentsLSH(lsh, argc, argv);
-
     /**
-     * ask input filename (if not given as an argument)
+     * ask files (if not given as arguments)
      */
     if(!lsh->isInputFileGiven())
         lsh->setInputFilename(askInputFile());
+    if(!lsh->isQueryFileGiven())
+        lsh->setQueryFilename(askQueryFile());
+    if(!lsh->isOutputFileGiven())
+        lsh->setOutputFilename(askOutputFile());
 
     /**
      * parse input file into memory
@@ -45,14 +45,6 @@ int main(int argc, char* argv[]){
     for (auto & point : points)
         lsh->getHashTableStruct()->addToAllHashTables(point);
     //lsh->getHashTableStruct()->test_print_hashtable();
-
-    /**
-     * ask query filename and output filename (if not given as arguments)
-     */
-    if(!lsh->isQueryFileGiven())
-        lsh->setQueryFilename(askQueryFile());
-    if(!lsh->isOutputFileGiven())
-        lsh->setOutputFilename(askOutputFile());
 
     /**
      * parse query file into memory

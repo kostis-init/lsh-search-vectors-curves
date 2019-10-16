@@ -65,7 +65,6 @@ public:
         tables = ht;
     }
 
-    virtual void poly(){};
 };
 
 #endif //ALGORITHMS_PROJECT_LSH_H

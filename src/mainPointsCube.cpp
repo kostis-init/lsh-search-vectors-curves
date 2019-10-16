@@ -1,5 +1,8 @@
 #include <iostream>
+#include <cmath>
 #include "hasher.h"
+#include "search.h"
+#include "utils.h"
 #include "Cube.h"
 #include "ui.h"
 #include "parse_files.h"
@@ -14,45 +17,48 @@ int main(int argc, char* argv[]){
      * read arguments
      */
     readArgumentsCube(cube, argc, argv);
-
     /**
-     * ask input filename (if not given as an argument)
+     * ask files (if not given as arguments)
      */
     if(!lsh->isInputFileGiven())
         lsh->setInputFilename(askInputFile());
-
-    /**
-     * parse input file into memory
-     */
-    lsh->setData(parseInputFilePoints(lsh->getInputFilename()));
-    //test_print_data(lsh->getData());
-
-    /**
-    * insert data into hash tables
-    */
-    cout << "Constructing hash table..." << endl;
-lsh->setHashTableStruct(new PointHashTableStruct(lsh->getNumOfHashTables(), lsh->getDataset()->getSize(),lsh->getNumOfFunctions(),lsh->getDataset()->getDimension(),lsh->getDataset()->getMean()));
-    auto points = lsh->getDataset()->getData();
-    for (auto & point : points)
-        lsh->getHashTableStruct()->addToAllHashTables(point);
-    //lsh->getHashTableStruct()->test_print_hashtable();
-
-    /**
-    * ask query filename and output filename (if not given as arguments)
-    */
     if(!lsh->isQueryFileGiven())
         lsh->setQueryFilename(askQueryFile());
     if(!lsh->isOutputFileGiven())
         lsh->setOutputFilename(askOutputFile());
 
     /**
+     * parse input file into memory, set dimension if not given
+     */
+    lsh->setData(parseInputFilePoints(lsh->getInputFilename()));
+    //test_print_data(lsh->getData());
+    if(!cube->isDimensionGiven())
+        cube->setDimension(log(lsh->getDataset()->getSize())/log(2));
+
+    /**
+    * construct hash table struct
+    */
+    lsh->setHashTableStruct(new PointHashTableStruct(cube->getDimension(), lsh->getDataset()->getSize(),
+                                                     lsh->getNumOfFunctions(),lsh->getDataset()->getDimension(), 100));
+
+    /**
     * parse query file into memory
     */
     lsh->setQueryData(parseQueryFilePoints(lsh->getQueryFilename()));
-    //test_print_query_data(lsh->getQueryData());
+    test_print_query_data(lsh->getQueryData());
 
-    //TODO: now do the cube thing...
+    /**
+     * Init Cube, based on LSH
+     */
+    cube->createBinaryMaps();
+    //cube->test_print_binaryMaps();
+    cube->createVertices();
+    //cube->test_print_vertices();
 
+    /**
+     * Search Cube
+     */
+    search_points_Cube_vs_BruteForce(cube);
 
     //ask user if he wants another one
 

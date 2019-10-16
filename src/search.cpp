@@ -2,6 +2,58 @@
 #include "distance.h"
 #include <limits>
 
+void search_points_Cube_vs_BruteForce(Cube* cube){
+
+    int querySize = cube->getLsh()->getQueryData()->getSize();
+
+    auto data = cube->getLsh()->getDataset()->getData();
+    auto queryData = cube->getLsh()->getQueryData()->getData();
+
+    for (int i = 0; i < querySize; ++i) {
+        Point* queryPoint = (Point*)queryData.at(i);
+        cout << "Query: " << queryPoint->getId() << endl;
+        Point* nnPoint = nullptr;
+        double distance;
+
+        //Cube
+        cout << "Cube" << endl;
+
+        clock_t begin = clock();
+        search_points_Cube(&nnPoint, &distance, queryPoint, cube);
+        clock_t end = clock();
+
+        if(nnPoint==nullptr){
+            cout << "Nearest neighbor: Not Found" << endl;
+        } else {
+            cout << "Nearest neighbor LSH: " << nnPoint->getId() << endl;
+            cout << "distance LSH: " << distance << endl;
+            cout << "time LSH: " << end - begin << endl;
+        }
+
+
+    }
+
+}
+
+void search_points_Cube(Point **nnPoint, double *distance, Point* queryPoint, Cube* cube) {
+    *nnPoint = nullptr;
+    *distance = numeric_limits<double>::max();
+
+    auto binaryMaps = cube->getBinaryMaps();
+    auto hashers = cube->getLsh()->getHashTableStruct()->getHashers();
+    unsigned int index = 0;
+    //construct index
+    for (int i = 0; i < cube->getDimension(); ++i) {
+        index <<= 1;
+        index |= binaryMaps[i].at((*hashers.at(i))(queryPoint));
+    }
+
+    //!!!!!!!!!!!!!!!!!!!!!!!!
+    ///TODO: there is more....
+    //!!!!!!!!!!!!!!!!!!!!!!!!
+
+}
+
 void search_points_LSH_vs_BruteForce(LSH* lsh) {
     auto hts = lsh->getHashTableStruct()->getAllHashTables();
     auto hashers = lsh->getHashTableStruct()->getHashers();
@@ -14,7 +66,7 @@ void search_points_LSH_vs_BruteForce(LSH* lsh) {
     for (int i = 0; i < querySize; ++i) {
         Point* queryPoint = (Point*)queryData.at(i);
         cout << "Query: " << queryPoint->getId() << endl;
-        Point* nnPoint;
+        Point* nnPoint = nullptr;
         double distance;
 
         //LSH
@@ -90,6 +142,6 @@ void search_LSH(Point **nnPoint, double *distance, int numOfHashTables, vector<H
     }
     //if we fall in empty backet for all htables
     //set dist to zero (otherwise AF calculation is useless)
-    if (!found) 
+    if (!found)
         *distance = 0.0;
 }
