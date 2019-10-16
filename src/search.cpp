@@ -25,33 +25,85 @@ void search_points_Cube_vs_BruteForce(Cube* cube){
         if(nnPoint==nullptr){
             cout << "Nearest neighbor: Not Found" << endl;
         } else {
-            cout << "Nearest neighbor LSH: " << nnPoint->getId() << endl;
-            cout << "distance LSH: " << distance << endl;
-            cout << "time LSH: " << end - begin << endl;
+            cout << "Nearest neighbor Cube: " << nnPoint->getId() << endl;
+            cout << "distance Cube: " << distance << endl;
+            cout << "time Cube: " << end - begin << endl;
         }
 
+        //Brute Force
+        cout << "Brute Force" << endl;
+
+        begin = clock();
+        search_BruteForce(&nnPoint, &distance, data, queryPoint);
+        end = clock();
+
+        if(nnPoint==nullptr){
+            cout << "Nearest neighbor: Not Found" << endl;
+        } else {
+            cout << "Nearest neighbor Brute Force: " << nnPoint->getId() << endl;
+            cout << "distance Brute Force: " << distance << endl;
+            cout << "time Brute Force: " << end - begin << endl << endl << endl;
+        }
 
     }
 
 }
 
 void search_points_Cube(Point **nnPoint, double *distance, Point* queryPoint, Cube* cube) {
-    *nnPoint = nullptr;
-    *distance = numeric_limits<double>::max();
+    random_device randomDevice;
+    mt19937 mt(randomDevice());
+    uniform_int_distribution<int> dist(0,1);
 
     auto binaryMaps = cube->getBinaryMaps();
     auto hashers = cube->getLsh()->getHashTableStruct()->getHashers();
-    unsigned int index = 0;
+    auto vertices = cube->getVertices();
+
+    int index = 0;
     //construct index
     for (int i = 0; i < cube->getDimension(); ++i) {
+        int hash = (*hashers.at(i))(queryPoint);
         index <<= 1;
-        index |= binaryMaps[i].at((*hashers.at(i))(queryPoint));
+        if(binaryMaps[i].find(hash) != binaryMaps[i].end()){
+            index |= binaryMaps[i].at(hash);
+        }
+        else{ //not found, produce random 0/1
+            index |= dist(mt);
+        }
     }
 
-    //!!!!!!!!!!!!!!!!!!!!!!!!
-    ///TODO: there is more....
-    //!!!!!!!!!!!!!!!!!!!!!!!!
+    int probes = cube->getMaxProbes();
+    int limit = cube->getMaxChecked();
+    int size = cube->getNumberOfVertices();
+    int probe_index = index;
+    int counter = 1;
 
+    *nnPoint = nullptr;
+    *distance = numeric_limits<double>::max();
+
+    while(limit > 0 && probes >= 0){
+        cout << probes << endl;
+        for(auto candidate : vertices[probe_index]){
+            Point* candidatePoint = dynamic_cast<Point*>(candidate);
+            double cur_dist;
+            if( (cur_dist = manhattan(*queryPoint, *candidatePoint)) < *distance){
+                *distance = cur_dist;
+                *nnPoint = candidatePoint;
+            }
+            limit--;
+            if(limit <= 0)
+                break;
+        }
+        //!!!!!!!!!!!!!!!!!!!!!!!!!
+        //TODO: probes need work!!!
+        //!!!!!!!!!!!!!!!!!!!!!!!!!
+        probe_index = index ^ counter;
+
+        if((counter*2) >= size ){
+
+        }else
+            counter *= 2;
+        probes--;
+    }
 }
 
 void search_points_LSH_vs_BruteForce(LSH* lsh) {
