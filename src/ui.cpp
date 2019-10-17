@@ -31,6 +31,10 @@ void readArgumentsLSH(LSH* lsh, int argc, char **argv) {
                 exit(-1);
         }
     }
+    if (!lsh->getNumOfFunctions())
+        lsh->setNumOfFunctions(4);
+    if  (!lsh->getNumOfHashTables())
+        lsh->setNumOfFunctions(5);
 }
 
 //TODO: check -probes argument

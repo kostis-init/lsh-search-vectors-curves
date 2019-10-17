@@ -13,8 +13,8 @@ private:
     Dataset* data;
     QueryDataset* queryData;
     HashTableStruct * tables;
-    int numOfFunctions = 4;
-    int numOfHashTables = 5;
+    int numOfFunctions = 0;
+    int numOfHashTables = 0;
 
 public:
     const string &getInputFilename() const {return inputFilename;}
