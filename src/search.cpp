@@ -1,6 +1,7 @@
 #include "search.h"
 #include "distance.h"
 #include <limits>
+#include <bitset>
 
 void search_points_Cube_vs_BruteForce(Cube* cube){
 
@@ -52,17 +53,17 @@ void search_points_Cube_vs_BruteForce(Cube* cube){
 void search_points_Cube(Point **nnPoint, double *distance, Point* queryPoint, Cube* cube) {
     random_device randomDevice;
     mt19937 mt(randomDevice());
-    uniform_int_distribution<int> dist(0,1);
+    uniform_int_distribution<unsigned int> dist(0,1);
 
     auto binaryMaps = cube->getBinaryMaps();
     auto hashers = cube->getLsh()->getHashTableStruct()->getHashers();
     auto vertices = cube->getVertices();
 
-    int index = 0;
+    size_t index = 0;
     //construct index
     for (int i = 0; i < cube->getDimension(); ++i) {
-        int hash = (*hashers.at(i))(queryPoint);
-        index <<= 1;
+        size_t hash = (*hashers.at(i))(queryPoint);
+        index <<= 1u;
         if(binaryMaps[i].find(hash) != binaryMaps[i].end()){
             index |= binaryMaps[i].at(hash);
         }
@@ -73,15 +74,18 @@ void search_points_Cube(Point **nnPoint, double *distance, Point* queryPoint, Cu
 
     int probes = cube->getMaxProbes();
     int limit = cube->getMaxChecked();
-    int size = cube->getNumberOfVertices();
-    int probe_index = index;
-    int counter = 1;
-
+    size_t size = cube->getNumberOfVertices();
+    size_t probe_index = index;
+    size_t counter = 1;
+    size_t basic_counter = 1;
+    int base = 1;
+    int adder = 0;
     *nnPoint = nullptr;
     *distance = numeric_limits<double>::max();
 
+    //search on index (vertex), starting from current
+    // and then go to vertices of hamming distance 1 (or 2, if 1 is exhausted)
     while(limit > 0 && probes >= 0){
-        cout << probes << endl;
         for(auto candidate : vertices[probe_index]){
             Point* candidatePoint = dynamic_cast<Point*>(candidate);
             double cur_dist;
@@ -89,19 +93,21 @@ void search_points_Cube(Point **nnPoint, double *distance, Point* queryPoint, Cu
                 *distance = cur_dist;
                 *nnPoint = candidatePoint;
             }
-            limit--;
-            if(limit <= 0)
+            if(--limit <= 0)
                 break;
         }
-        //!!!!!!!!!!!!!!!!!!!!!!!!!
-        //TODO: probes need work!!!
-        //!!!!!!!!!!!!!!!!!!!!!!!!!
+        // algorithm to change probe
+        // works only for hamming distance 1 and 2
+        //!!!WARNING: that means that max_probes must not be greater than (d' * (d'+1))/ 2
+        if((basic_counter*2) > size ){
+            adder = base;
+            base *=2;
+            basic_counter = base;
+        }
+        counter = basic_counter + adder;
+        basic_counter *= 2;
+        //bitset<30> x(counter); cout << x << endl;
         probe_index = index ^ counter;
-
-        if((counter*2) >= size ){
-
-        }else
-            counter *= 2;
         probes--;
     }
 }

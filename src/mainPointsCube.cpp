@@ -31,7 +31,7 @@ int main(int argc, char* argv[]){
      * parse input file into memory, set dimension if not given
      */
     lsh->setData(parseInputFilePoints(lsh->getInputFilename()));
-    //test_print_data(lsh->getData());
+    //test_print_data(lsh->getDataset());
     if(!cube->isDimensionGiven())
         cube->setDimension(log(lsh->getDataset()->getSize())/log(2));
 
@@ -45,7 +45,7 @@ int main(int argc, char* argv[]){
     * parse query file into memory
     */
     lsh->setQueryData(parseQueryFilePoints(lsh->getQueryFilename()));
-    test_print_query_data(lsh->getQueryData());
+    //test_print_query_data(lsh->getQueryData());
 
     /**
      * Init Cube, based on LSH

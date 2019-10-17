@@ -7,7 +7,7 @@ using namespace std;
 class Dataset {
     private:
         int dimension;
-        int size;
+        size_t size;
         double min;
         double max;
         int mean;
@@ -15,14 +15,14 @@ class Dataset {
     public:
         Dataset(vector<Object *> data);
         Dataset(){};
-        void setSize(int sz);
+        void setSize(size_t sz);
         void setMax(double max);
         void setMin(double min);
         void setMean(int mean);
         void setDimension(int d);
         void add(Object *obj);
         vector<Object *> getData();
-        int getSize();
+        size_t getSize();
         int getDimension();
         //min coordinate for points 
         //min length for curves

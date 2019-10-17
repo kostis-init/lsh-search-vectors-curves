@@ -4,7 +4,7 @@ Dataset::Dataset(vector<Object *> data) {
     this->data = data;
 }
 
-void Dataset::setSize(int sz) {
+void Dataset::setSize(size_t sz) {
     this->size = sz;
 }
 
@@ -24,7 +24,7 @@ int Dataset::getDimension() {
     return dimension;
 }
 
-int Dataset::getSize() {
+size_t Dataset::getSize() {
     return size;
 }
 

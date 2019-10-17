@@ -13,9 +13,9 @@ private:
 
     LSH* lsh;
 
-    unordered_map<int, bool> * binaryMaps;
+    unordered_map<size_t, bool> * binaryMaps;
 
-    int numberOfVertices;
+    size_t numberOfVertices;
     vector<Object *> * vertices;
 public:
 
@@ -27,7 +27,7 @@ public:
     int getMaxChecked() const {return max_checked;}
     int getMaxProbes() const {return max_probes;}
     auto getLsh() const {return lsh;}
-    auto getNumberOfVertices() const {return numberOfVertices;}
+    size_t getNumberOfVertices() const {return numberOfVertices;}
     auto getVertices() const {return vertices;}
     auto getBinaryMaps() const {return binaryMaps;}
 
@@ -53,7 +53,7 @@ public:
         mt19937 mt(randomDevice());
         uniform_int_distribution<int> dist(0,1);
 
-        binaryMaps = new unordered_map<int, bool>[dimension];
+        binaryMaps = new unordered_map<size_t, bool>[dimension];
         auto hashers = lsh->getHashTableStruct()->getHashers();
         auto data = lsh->getDataset()->getData();
         //for every item
@@ -81,10 +81,10 @@ public:
         auto hashers = lsh->getHashTableStruct()->getHashers();
         //for every item, insert it in the right vertex
         for(auto obj : data){
-            unsigned int index = 0;
+            size_t index = 0;
             //construct index
             for (int i = 0; i < dimension; ++i) {
-                index <<= 1;
+                index <<= 1u;
                 index |= binaryMaps[i].at((*hashers.at(i))(obj));
             }
             vertices[index].push_back(obj);
@@ -92,7 +92,7 @@ public:
     }
 
     void test_print_vertices(){
-        for (int i = 0; i < numberOfVertices; ++i) {
+        for (size_t i = 0; i < numberOfVertices; ++i) {
             cout << "VERTEX " << i << endl;
             for(auto obj : vertices[i]){
                 cout << obj->getId() << endl;
