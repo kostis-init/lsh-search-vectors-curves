@@ -85,12 +85,13 @@ void PointHasher::generateGrids() {
 int PointHasher::hash(Point* point,int hashIndex) const {
     vector<double> coordinates = point->getCoordinates();
     //or select coefficient randomly?
-    int coefficient = 0xffff;
+    unsigned int coefficient = 0xffffffff-5;
+    //unsigned int coefficient = 0xffff;
     unsigned int sum = 0,i = 0,j = numDimension;
     //sum may overflow if amplificationSize is too small and
     //if numDimension is too high but no fuss - uint will wrap around.
     for (auto c :coordinates) {
-        unsigned int gridCell = int((c - gridPool[selectedGrids[hashIndex]][i])/window);
+        int gridCell = int((c - gridPool[selectedGrids[hashIndex]][i])/window);
         if (!powModuloMem[j])
             powModuloMem[j] = powModulo(coefficient,j,partialHashRange);
         sum+= ((gridCell%partialHashRange)*(powModuloMem[j]))%partialHashRange;
