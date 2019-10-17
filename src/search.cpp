@@ -34,7 +34,7 @@ void search_points_Cube_vs_BruteForce(Cube* cube){
         cout << "Brute Force" << endl;
 
         begin = clock();
-        search_BruteForce(&nnPoint, &distance, data, queryPoint);
+        search_BruteForce_Cube(&nnPoint, &distance, data, queryPoint);
         end = clock();
 
         if(nnPoint==nullptr){
@@ -85,7 +85,7 @@ void search_points_Cube(Point **nnPoint, double *distance, Point* queryPoint, Cu
         for(auto candidate : vertices[probe_index]){
             Point* candidatePoint = dynamic_cast<Point*>(candidate);
             double cur_dist;
-            if( (cur_dist = manhattan(*queryPoint, *candidatePoint)) < *distance){
+            if( (cur_dist = manhattan(queryPoint, candidatePoint)) < *distance){
                 *distance = cur_dist;
                 *nnPoint = candidatePoint;
             }
@@ -106,26 +106,38 @@ void search_points_Cube(Point **nnPoint, double *distance, Point* queryPoint, Cu
     }
 }
 
-void search_points_LSH_vs_BruteForce(LSH* lsh) {
+void search_BruteForce_Cube(Object **nnObj, double *distance, const vector<Object *>& data, Object *queryObj) {
+    *nnObj = nullptr;
+    *distance = numeric_limits<double>::max();
+    for(auto candidate : data){
+        double cur_dist;
+        if( (cur_dist = manhattan(queryObj, candidate)) < *distance){
+            *distance = cur_dist;
+            *nnObj = candidate;
+        }
+    }
+}
+
+void search_LSH_vs_BruteForce(LSH* lsh) {
     auto hts = lsh->getHashTableStruct()->getAllHashTables();
     auto hashers = lsh->getHashTableStruct()->getHashers();
     int numOfHashTables = lsh->getNumOfHashTables();
     int querySize = lsh->getQueryData()->getSize();
-
+    auto metric = lsh->getMetric();
     auto data = lsh->getDataset()->getData();
     auto queryData = lsh->getQueryData()->getData();
 
     for (int i = 0; i < querySize; ++i) {
-        Point* queryPoint = (Point*)queryData.at(i);
+        Object* queryPoint = (Point*)queryData.at(i);
         cout << "Query: " << queryPoint->getId() << endl;
-        Point* nnPoint = nullptr;
+        Object* nnPoint = nullptr;
         double distance;
 
         //LSH
         cout << "LSH" << endl;
 
         clock_t begin = clock();
-        search_LSH(&nnPoint, &distance, numOfHashTables, hashers, queryPoint, hts);
+        search_LSH(&nnPoint, &distance, numOfHashTables, hashers, queryPoint, hts,metric);
         clock_t end = clock();
 
         if(nnPoint==nullptr){
@@ -140,7 +152,7 @@ void search_points_LSH_vs_BruteForce(LSH* lsh) {
         cout << "Brute Force" << endl;
 
         begin = clock();
-        search_BruteForce(&nnPoint, &distance, data, queryPoint);
+        search_BruteForce(&nnPoint, &distance, data, queryPoint,metric);
         end = clock();
 
         if(nnPoint==nullptr){
@@ -153,25 +165,25 @@ void search_points_LSH_vs_BruteForce(LSH* lsh) {
     }
 }
 
-void search_BruteForce(Point **nnPoint, double *distance, const vector<Object *>& data, Point *queryPoint) {
-    *nnPoint = nullptr;
+void search_BruteForce(Object **nnObj, double *distance, const vector<Object *>& data, Object *queryObj,DistanceMetric *dmetric) {
+    *nnObj = nullptr;
     *distance = numeric_limits<double>::max();
     for(auto candidate : data){
-        Point* candidatePoint = dynamic_cast<Point*>(candidate);
+        //Point* candidatePoint = dynamic_cast<Point*>(candidate);
         double cur_dist;
-        if( (cur_dist = manhattan(*queryPoint, *candidatePoint)) < *distance){
+        if( (cur_dist = dmetric->dist(queryObj, candidate)) < *distance){
             *distance = cur_dist;
-            *nnPoint = candidatePoint;
+            *nnObj = candidate;
         }
     }
 }
 
-void search_LSH(Point **nnPoint, double *distance, int numOfHashTables, vector<Hasher*> hashers, Point *queryPoint,
-                unordered_map<int, vector<Object *>> *hts) {
+void search_LSH(Object **nnPoint, double *distance, int numOfHashTables, vector<Hasher*> hashers, Object *queryPoint,
+                unordered_map<int, vector<Object *>> *hts,DistanceMetric *dmetric) {
     *nnPoint = nullptr;
     *distance = numeric_limits<double>::max();
     bool found = false;
-    int threshold = 3 * numOfHashTables;
+    int threshold = 50 * numOfHashTables;
     int thresholdCount = 0;
     for (int j = 0; j < numOfHashTables; ++j) {
         size_t hash = (*hashers.at(j))(queryPoint);
@@ -181,13 +193,12 @@ void search_LSH(Point **nnPoint, double *distance, int numOfHashTables, vector<H
         for(auto candidate : points){
             if (thresholdCount > threshold)
                 break;
-            Point* candidatePoint = dynamic_cast<Point*>(candidate);
             double cur_dist;
             //TODO: if large number of retrieved items (e.g. > 3L) then Break // exit loop
-            if((cur_dist = manhattan(*queryPoint, *candidatePoint)) < *distance){
+            if((cur_dist = dmetric->dist(queryPoint, candidate)) < *distance){
                 found = true;
                 *distance = cur_dist;
-                *nnPoint = candidatePoint;
+                *nnPoint = candidate;
             }
             thresholdCount++;
         }
@@ -196,4 +207,41 @@ void search_LSH(Point **nnPoint, double *distance, int numOfHashTables, vector<H
     //set dist to zero (otherwise AF calculation is useless)
     if (!found)
         *distance = 0.0;
+}
+
+void DoQueries(LSH *lsh) {
+    auto hts = lsh->getHashTableStruct()->getAllHashTables();
+    auto hashers = lsh->getHashTableStruct()->getHashers();
+    int numOfHashTables = lsh->getNumOfHashTables();
+    int querySize = lsh->getQueryData()->getSize();
+    auto data = lsh->getDataset()->getData();
+    auto queryData = lsh->getQueryData()->getData();
+    auto metric = lsh->getMetric();
+    clock_t meanSearchLSH = 0;
+    clock_t meanSearchBF = 0;
+    double maxAF = numeric_limits<double>::min();
+    double averageAF = 0;
+    int averageAFCount = 0;
+    for (int i = 0; i < querySize; ++i) {
+        Object* queryPoint = (Point*)queryData.at(i);
+        Object* nnPoint;
+        double distanceLSH;
+        double distanceBF;
+        clock_t begin = clock();
+        search_LSH(&nnPoint, &distanceLSH, numOfHashTables, hashers, queryPoint, hts,metric);
+        clock_t end = clock();
+        meanSearchLSH += (end-begin);
+        begin = clock();
+        search_BruteForce(&nnPoint, &distanceBF, data, queryPoint,metric);
+        end = clock();
+        meanSearchBF += (end-begin);
+        double AF;
+        if ((AF = distanceLSH/distanceBF) > maxAF) 
+            maxAF = AF;
+        if (distanceLSH) {//compute only if > 0
+            averageAF += distanceLSH/distanceBF;
+            averageAFCount++;
+        }
+    }
+    cout << "meanTimeSearchLSH " << meanSearchLSH/querySize << " meanTimeSearchBF " << meanSearchBF/querySize << " and maxAF = " << maxAF << " and averageAF " << averageAF/averageAFCount << endl;
 }

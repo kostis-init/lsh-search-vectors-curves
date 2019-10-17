@@ -2,6 +2,7 @@
 #define ALGORITHMS_PROJECT_LSH_H
 #include "Dataset.h"
 #include "HashTableStruct.h"
+#include "distance.h"
 
 class LSH {
 private:
@@ -13,10 +14,16 @@ private:
     Dataset* data;
     QueryDataset* queryData;
     HashTableStruct * tables;
+    DistanceMetric *distMetric;
     int numOfFunctions = 0;
     int numOfHashTables = 0;
 
 public:
+    LSH(DistanceMetric *metric) {
+        distMetric = metric;
+    }
+    LSH() {}
+    DistanceMetric *getMetric() { return distMetric;}
     const string &getInputFilename() const {return inputFilename;}
     const string &getQueryFilename() const {return queryFilename;}
     const string &getOutputFilename() const {return outputFilename;}
@@ -25,7 +32,6 @@ public:
     bool isOutputFileGiven() const {return outputFileGiven;}
     Dataset *getDataset() const {return data;}
     QueryDataset *getQueryData() const {return queryData;}
-
     void setInputFilename(const string &inputFilename){
         inputFileGiven = true;
         this->inputFilename = inputFilename;
