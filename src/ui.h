@@ -2,7 +2,8 @@
 #define ALGORITHMS_PROJECT_UI_H
 #include "Cube.h"
 
-void readArgumentsLSH(LSH* lsh, int argc, char **argv);
+void readArgumentsLSHPoints(LSH* lsh, int argc, char **argv);
+void readArgumentsLSHCurves(LSH* lsh, int argc, char **argv);
 void readArgumentsCube(Cube* cube, int argc, char **argv);
 string askInputFile();
 string askQueryFile();
