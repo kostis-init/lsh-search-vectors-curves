@@ -1,20 +1,21 @@
 #ifndef ALGORITHMS_PROJECT_CUBE_H
 #define ALGORITHMS_PROJECT_CUBE_H
 #include <cmath>
+#include <random>
 #include "LSH.h"
 
 class Cube {
 private:
 
-    unsigned int dimension = 3; bool dimension_given = false;
-    unsigned int max_checked = 10;
-    unsigned int max_probes = 2;
+    int dimension = 3; bool dimension_given = false;
+    int max_checked = 10;
+    int max_probes = 2;
 
     LSH* lsh;
 
     unordered_map<int, bool> * binaryMaps;
 
-    unsigned int numberOfVertices;
+    int numberOfVertices;
     vector<Object *> * vertices;
 public:
 
@@ -48,7 +49,10 @@ public:
 
     //creates random 0/1 mapping for every entry of hash tables
     void createBinaryMaps() {
-        srand(time(nullptr));
+        random_device randomDevice;
+        mt19937 mt(randomDevice());
+        uniform_int_distribution<int> dist(0,1);
+
         binaryMaps = new unordered_map<int, bool>[dimension];
         auto hashers = lsh->getHashTableStruct()->getHashers();
         auto data = lsh->getDataset()->getData();
@@ -56,7 +60,7 @@ public:
         for(auto obj : data){
             //insert it in every map
             for (int i = 0; i < dimension; ++i) {
-                binaryMaps[i].insert(make_pair((*hashers.at(i))(obj), rand() % 2 + 0));
+                binaryMaps[i].insert(make_pair((*hashers.at(i))(obj), dist(mt)));
             }
         }
     }
