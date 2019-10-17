@@ -10,8 +10,8 @@
 #include "Dataset.h"
 #include "parse_files.h"
 
-static FILE* temp_file = NULL;
 LSH *lsh;
+static FILE* temp_file = NULL;
 using namespace std;
 
 void test_meanOfMins() {
@@ -46,8 +46,8 @@ void test_HashNonAmplified(void) {
     int bucket = phasher->hash(point,1);
     CU_ASSERT(bucket < M && bucket > 0);
     Point *point2 = new Point("2");
-    point2->addCoordinateLast(-2002.1);
-    point2->addCoordinateLast(9005.1);
+    point2->addCoordinateLast(-2001.1);
+    point2->addCoordinateLast(9001.1);
     int bucket2 = phasher->hash(point2,1);
     CU_ASSERT(bucket2 < M && bucket2 > 0);
     //ensure they lie on the same bucket. This can fail with small
@@ -102,7 +102,7 @@ void test_HashAmplified(void) {
    //reset pool - we have another dataset, we reconstruct the pool.
    phasher->gridPool = nullptr;
    //////max-min - 40 is a good windows size ( max -min = 180 here).
-   phasher = new PointHasher(4,numDim,dataset->getMean());
+   phasher = new PointHasher(4,numDim,80);
    uniqueBuckets.clear();
    int i = 0;
    for (auto p: points) {
@@ -110,6 +110,28 @@ void test_HashAmplified(void) {
       i++;
    }
    printf("buckets in set = %d and data set size = %d\n",uniqueBuckets.size(),dataset->getSize());
+}
+
+void test_MultipleHashers(){
+   lsh = new LSH();
+   lsh->setInputFilename("../src/testdata/input_small_id");
+   lsh->setData(parseInputFilePoints(lsh->getInputFilename()));
+   auto dataset = lsh->getDataset();
+   auto numDim = dataset->getDimension();
+   auto points = dataset->getData();
+   PointHasher::gridPool = nullptr;
+   auto numTables = 4;
+   //vector<PointHasher > hashers (numTables,(*new PointHasher(4,numDim,20)));
+   PointHasher **hashers; 
+   hashers = new PointHasher*[numTables];
+   for (int i =0; i < numTables; i++) 
+      hashers[i] = new PointHasher(4,numDim,100);
+   auto equalHashesSum = 0;
+   for (auto p : dataset->getData()){
+      if (((*hashers[0])(p) == (*hashers[1])(p))  && (*hashers[3])(p) == (*hashers[2])(p) && (*hashers[3])(p) == (*hashers[1])(p))
+         equalHashesSum++;
+   }
+   CU_ASSERT(equalHashesSum < 100);
 }
 
 int init_suite1(void)
@@ -150,7 +172,8 @@ int main(int argc,char *argv[]) {
        (NULL == CU_add_test(pSuite, "test of hash(obj,hashIndex) ", test_HashNonAmplified)) || 
        (NULL == CU_add_test(pSuite,"test amplified hash func",test_HashAmplified)) ||  
        (NULL == CU_add_test(pSuite,"test determinism",test_Determinism)) ||
-       (NULL == CU_add_test(pSuite,"test mean of mins",test_meanOfMins)))
+       (NULL == CU_add_test(pSuite,"test mean of mins",test_meanOfMins)) || 
+       (NULL == CU_add_test(pSuite,"test multiple hashes",test_MultipleHashers))) 
          {
          CU_cleanup_registry();
       return CU_get_error();

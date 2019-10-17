@@ -54,12 +54,12 @@ PointHasher::PointHasher(int ampSize,int numDimension,int window) {
         generateGrids();
     }
     random_device r;
-    //do we need another engine?
-    default_random_engine e1(r());
+    default_random_engine re;
+    re.seed(r());
     uniform_int_distribution<int> uniform_dist(0,gridPoolSize-1);
     selectedGrids = (int *)malloc(amplificationSize * sizeof(int));
     for (int i = 0; i<amplificationSize; i++){
-        selectedGrids[i] = uniform_dist(e1);
+        selectedGrids[i] = uniform_dist(re);
     }
 }
 

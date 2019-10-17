@@ -42,10 +42,18 @@ void HashTableStruct::test_print_hashtable() {
     }
 }
 
-CurveHashTableStruct::CurveHashTableStruct(int numOfHTs,int sz,int numDimension,int min,int max,int pointHasherWindow) :HashTableStruct(numOfHTs,sz) {
-    hashers = vector<Hasher *>(numOfHTs,new CurveHasher(numDimension,min,max,pointHasherWindow));
+CurveHashTableStruct::CurveHashTableStruct(int numOfHTs,int sz,int ampSize,int numDimension,int min,int max,int pointHasherWindow) :HashTableStruct(numOfHTs,sz) {
+   CurveHasher **h; 
+   h = new CurveHasher*[numOfHTs];
+   for (int i =0; i < numOfHTs; i++) 
+      h[i] = new CurveHasher(numDimension,ampSize,min,max,pointHasherWindow);
+    hashers = vector<Hasher *>(h,h+numOfHTs);
 }
 
 PointHashTableStruct::PointHashTableStruct(int numOfHTs,int sz,int ampSize,int numDimension,int window) : HashTableStruct(numOfHTs,sz) {
-    hashers = vector<Hasher *> (numOfHTs,new PointHasher(ampSize,numDimension,window));
+   PointHasher **h; 
+   h = new PointHasher*[numOfHTs];
+   for (int i =0; i < numOfHTs; i++) 
+      h[i] = new PointHasher(ampSize,numDimension,window);
+    hashers = vector<Hasher *> (h,h+numOfHTs);
 }
