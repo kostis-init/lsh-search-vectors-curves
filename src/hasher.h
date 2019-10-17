@@ -1,5 +1,6 @@
 #ifndef HASHER_H
 #define HASHER_H 
+#include <random>
 #include "Object.h"
 #include "Point.h"
 #include "Curve.h"
@@ -60,7 +61,7 @@ class CurveHasher : public Hasher {
         //double roundCoordinateV2(Point *point,int i);
     public: 
         CurveHasher();
-        CurveHasher(int,int,int,int);
+        CurveHasher(int,int,int,int,int);
         ~CurveHasher();
         size_t operator() (Object *obj) const;
 };

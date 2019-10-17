@@ -28,12 +28,12 @@
 }*/
 
 //assume ai = 1 i =1,2,..d (from slides)
-CurveHasher::CurveHasher(int numDimension,int min,int max,int pointHasherWindow) {
+CurveHasher::CurveHasher(int numDimension,int ampSize,int min,int max,int pointHasherWindow) {
     this->numDimension = numDimension;
     this->max = max;
     gridSize = 4 * numDimension * min;
     //TODO:set variables properly
-    phasher = new PointHasher(3,max,pointHasherWindow);
+    phasher = new PointHasher(ampSize,max,pointHasherWindow);
     random_device r;
     //do we need another engine?
     default_random_engine e1(r());
@@ -62,7 +62,7 @@ size_t CurveHasher::operator() (Object *obj) const {
 Point *CurveHasher::vectorize(double **snapedCurve) {
     vector<double> vec;
     double sumCoordinates = 0;
-    int coefficient = 0xff;
+    int coefficient = 10;
     for (int i =0; i<max; i++) {
         if (i != 0 && isConsecutiveDuplitacate(snapedCurve,i))
             continue;
