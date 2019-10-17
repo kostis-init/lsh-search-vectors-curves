@@ -9,7 +9,7 @@
 #include "Curve.h"
 
 
-static FILE* temp_file = NULL;
+static FILE* omg = NULL;
 LSH *lsh;
 using namespace std;
 
@@ -29,16 +29,16 @@ struct point_compare {
 };
 
 void test_CurveHasher() {
-    auto chasher = new CurveHasher(2,10,10,0);
+    auto chasher = new CurveHasher(2,1,10,10,0);
     for (int i =0; i < 2; i++)
         CU_ASSERT(chasher->shiftedGrid[i] < 2.0);
-    chasher = new CurveHasher(7,10,10,0);
+    chasher = new CurveHasher(7,1,10,10,0);
     for (int i =0; i < 7; i++)
         CU_ASSERT(chasher->shiftedGrid[i] < 7.0);
 }
 
 void test_snap() {
-    auto chasher = new CurveHasher(2,3,3,0);    
+    auto chasher = new CurveHasher(2,1,3,3,0);    
     auto delta = 4 * 2 * 3 ;
     auto point = new Point("1");
     point->addCoordinateLast(90.4329482); point->addCoordinateLast(14.5342342);
@@ -90,7 +90,7 @@ void test_Vectorize() {
    pointVec.push_back(*(new Point(vector<double> {49.883,43.432})));
    auto curve = new Curve(pointVec);
    //delta = 4 * 2 * 7 = 56.
-   auto chasher = new CurveHasher(2,7,7,0);
+   auto chasher = new CurveHasher(2,1,7,7,0);
    auto point = chasher->vectorize(chasher->snap(curve));
    CU_ASSERT(point->getCoordinates().size() == 3);
 }
@@ -111,7 +111,7 @@ vector<Curve> generateDataset(int numCurves,int curveLen,int lower,int upper) {
 
 void runHasher(int numCurves,int curveLen,int window,vector<Curve> curveVec,int *bucketRes,int *vectoriseRes) {
     size_t bucket;
-    auto chasher = new CurveHasher(2,curveLen,curveLen,window);
+    auto chasher = new CurveHasher(2,1,curveLen,curveLen,window);
     set<size_t> buckets;
     set<Point,point_compare> pointSet;
     Point *prev = nullptr;
@@ -137,7 +137,7 @@ void test_Hash() {
    _pointVec2.push_back(*(new Point(vector<double> (48.777,20.777))));
    auto curve2 = new Curve(_pointVec2);
    //delta = 4 * 2 * 2 = 16
-   auto _chasher = new CurveHasher(2,2,2,20);
+   auto _chasher = new CurveHasher(2,1,2,2,20);
    auto point = _chasher->vectorize(_chasher->snap(curve));
    auto point2 = _chasher->vectorize(_chasher->snap(curve2));
    CU_ASSERT(*point == *point2);
@@ -148,18 +148,27 @@ void test_Hash() {
    //the success of this test depends on window of PointHasher 
    //that is created in CurveHashre constructor.
 
-   //delta = 4 * 2* 10 = 80
-   auto curveVec = generateDataset(3000,10,0,50);
+    //test 1
+   //coefficient = 10
+   auto delta = 4 * 2* 10;
+   auto curveLen = 10;
+   auto lower = 0.0;
+   auto upper = 50.0;
+   auto numCurves = 10000;
+   auto curveVec = generateDataset(numCurves,curveLen,lower,upper);
    int bucketRes, vectoriseRes;
-   int window = 20;
-   runHasher(3000,10,window,curveVec,&bucketRes,&vectoriseRes);
+   //delta * 10 + delta is (probably) a good formula.
+   runHasher(numCurves,curveLen,delta*10+delta,curveVec,&bucketRes,&vectoriseRes);
    printf("results: points = %d, buckets = %d\n",vectoriseRes,bucketRes);
+   CU_ASSERT(bucketRes < numCurves/100);
+   //create further test similar with test1
+   //test 2...
 }
 
 
 int init_suite1(void)
 {
-   if (NULL == (temp_file = fopen("testPoinHasher.txt", "w+"))) {
+   if (NULL == (omg = fopen("testPoinHasher.txt", "w+"))) {
       return -1;
    }
    else {
@@ -169,11 +178,11 @@ int init_suite1(void)
 
 int clean_suite1(void)
 {
-   if (0 != fclose(temp_file)) {
+   if (0 != fclose(omg)) {
       return -1;
    }
    else {
-      temp_file = NULL;
+      omg = NULL;
       return 0;
    }
 }

@@ -18,7 +18,7 @@ int main(int argc, char* argv[]){
     /**
      * read arguments
      */
-    readArgumentsLSH(lsh, argc, argv);
+    readArgumentsLSHPoints(lsh, argc, argv);
     /**
      * ask files (if not given as arguments)
      */
@@ -55,7 +55,7 @@ int main(int argc, char* argv[]){
     /**
      * search
      */
-    search_points_LSH_vs_BruteForce(lsh);
+    search_LSH_vs_BruteForce(lsh);
 
     //ask user if he wants another one
 
