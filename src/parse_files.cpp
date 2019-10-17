@@ -4,9 +4,11 @@
 #include <cfloat>
 #include <string.h>
 #include <limits>
+#include <assert.h>
 #include "parse_files.h"
 #include "utils.h"
 #include "distance.h"
+#include "Curve.h"
 
 using namespace std;
 
@@ -34,8 +36,6 @@ Dataset* parseInputFilePoints(string filename) {
         int dimension = 0;
         //add every coordinate to point
         while(line_stream >> token){
-            if(!is_number(token))
-                continue;
             auto coordinate = atof(token.c_str());
             minCoordinate = min(coordinate,minCoordinate);
             maxCoordinate = max(coordinate,maxCoordinate);
@@ -77,7 +77,7 @@ int meanOfMins(Dataset *dataset,int limit) {
             Point* candidatePoint = dynamic_cast<Point*>(candidate);
             double cur_dist;
             if(candidatePoint != queryPoint
-               && (cur_dist = manhattan(*queryPoint, *candidatePoint)) < distance){
+               && (cur_dist = manhattan(queryPoint, candidatePoint)) < distance){
                 distance = cur_dist;
             }
         }
@@ -88,34 +88,65 @@ int meanOfMins(Dataset *dataset,int limit) {
         }
     }
     return sum;
-//    auto data = dataset->getData();
-//    vector<Point *> points(data.begin(),data.end());
-//    double *mins = (double *)malloc(points.size()*sizeof(double));
-//    for(int i =0; i < points.size();i++)
-//        mins[i] = DBL_MAX;
-//    double dist;
-//    int NNindex = 0;
-//    double mean = 0;
-//    for(int i =0; i < points.size();i++) {
-//        if (mins[i] != DBL_MAX)
-//            continue;
-//        for(int j =0; j < points.size();j++) {
-//            if (i == j)
-//                continue;
-//            if ((dist = manhattan(*points.at(i),*points.at(j))) < mins[i]) {
-//                mins[i] = dist;
-//                NNindex = j;
-//            }
-//        }
-//        //if we find the NN of i, then i is the NN of j too
-//        if (mins[NNindex] != DBL_MAX) {
-//            mean += mins[i];  //compute mean on the fly
-//        } else {
-//            mins[NNindex] = mins[i];
-//            mean += 2.0 * mins[i];  //compute mean on the fly
-//        }
-//    }
-//    return int(mean) / points.size();
+}
+
+Dataset* parseInputFileCurves(string filename) {
+    if(!file_exists(filename.c_str())){
+        cout << "input file does not exist" << endl;
+        exit(-1);
+    };
+    auto data = new Dataset();
+    cout << "Parsing input file: " << filename << ", please wait..." << endl;
+    ifstream inputFile(filename.c_str());
+    string line;
+    int size = 0;
+    int minCurveLen = INT32_MAX;
+    int maxCurveLen = INT32_MIN;
+    while(getline(inputFile, line)){
+        //extract item_id
+        string item_id = line.substr(0, line.find('\t'));
+        vector<Point> curveVec;
+        line = line.substr(line.find_first_of("\t ") + 1);
+        string token;
+        stringstream line_stream(line);
+        int curveLen;
+        line_stream >> curveLen;
+        maxCurveLen = max(maxCurveLen,curveLen);
+        minCurveLen = min(minCurveLen,curveLen);
+        line = line.substr(line.find_first_of("\t ") + 1);
+        while(line_stream >> token){
+            //ensure the right format is given : (coordinate,coordinate)
+            assert(token[0] == '(');
+            token = token.substr(1);
+            size_t coordinateSz;
+            vector<double> pointVec;
+            pointVec.push_back(stod(token,&coordinateSz));
+            token = token.substr(coordinateSz);
+            assert(token[0] == ',');
+            //spec doesn't match with actual format so we make some workarounds
+            if (token[1] == ' ') 
+                token = token.substr(1);
+            token = token.substr(1);
+            pointVec.push_back(stod(token,&coordinateSz));
+            token = token.substr(coordinateSz);
+            assert(token[0] == ')');
+            token = token.substr(1);
+            curveVec.push_back((*new Point(pointVec)));
+        }
+        if (curveLen != curveVec.size()) {
+            cout << "expected curve length doesn't match with actual curve length." << endl;
+            exit(-1);
+        }
+        auto curve = new Curve(curveVec); 
+        curve->setId(item_id);
+        data->add(curve);
+        size++;
+    }
+    data->setSize(size);
+    data->setDimension(2);
+    data->setMax(maxCurveLen);
+    data->setMin(minCurveLen);
+    return data;
 }
 
 QueryDataset* parseQueryFilePoints(string filename){
@@ -126,13 +157,11 @@ QueryDataset* parseQueryFilePoints(string filename){
     auto data = new QueryDataset();
     cout << "Parsing query file: " << filename << endl;
     ifstream queryFile(filename.c_str());
-
     //get radius (bonus)
     string radius_line;
     getline(queryFile, radius_line);
     radius_line = radius_line.substr(radius_line.find(' ') + 1);
     data->setRadius(atof(radius_line.c_str()));
-
     string line;
     int size = 0;
     int current_dimension = -1;
@@ -147,8 +176,6 @@ QueryDataset* parseQueryFilePoints(string filename){
         int dimension = 0;
         //add every coordinate to point
         while(line_stream >> token){
-            if(!is_number(token))
-                continue;
             point->addCoordinateLast(atof(token.c_str()));
             dimension++;
         }
@@ -165,3 +192,57 @@ QueryDataset* parseQueryFilePoints(string filename){
     return data;
 }
 
+QueryDataset* parseQueryFileCurves(string filename) {
+    if(!file_exists(filename.c_str())){
+        cout << "input file does not exist" << endl;
+        exit(-1);
+    };
+    auto data = new QueryDataset();
+    cout << "Parsing input file: " << filename << ", please wait..." << endl;
+    ifstream inputFile(filename.c_str());
+    string line;
+    int size = 0;
+    int minCurveLen = INT32_MAX;
+    int maxCurveLen = INT32_MIN;
+    while(getline(inputFile, line)){
+        //extract item_id
+        string item_id = line.substr(0, line.find(' '));
+        vector<Point> curveVec;
+        line = line.substr(line.find(' ') + 1);
+        string token;
+        stringstream line_stream(line);
+        int curveLen;
+        line_stream >> curveLen;
+        maxCurveLen = max(maxCurveLen,curveLen);
+        minCurveLen = min(minCurveLen,curveLen);
+        while(line_stream >> token){
+            //ensure the right format is given : (coordinate,coordinate)
+            assert(token[0] == '(');
+            token = token.substr(1);
+            size_t coordinateSz;
+            vector<double> pointVec;
+            pointVec.push_back(stod(token,&coordinateSz));
+            token = token.substr(coordinateSz);
+            assert(token[0] == ',');
+            token = token.substr(1);
+            pointVec.push_back(stod(token,&coordinateSz));
+            token = token.substr(coordinateSz);
+            assert(token[0] == ')');
+            token = token.substr(1);
+            curveVec.push_back((*new Point(pointVec)));
+        }
+        if (curveLen != curveVec.size()) {
+            cout << "expected curve length doesn't match with actual curve length." << endl;
+            exit(-1);
+        }
+        auto curve = new Curve(curveVec); 
+        curve->setId(item_id);
+        data->add(curve);
+        size++;
+    }
+    data->setSize(size);
+    data->setDimension(2);
+    data->setMax(maxCurveLen);
+    data->setMin(minCurveLen);
+    return data;
+}
