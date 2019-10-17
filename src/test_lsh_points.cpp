@@ -11,12 +11,14 @@ using namespace std;
 
 
 LSH *LoadInput(string inputFilename,string queryFilename) {
-    auto lsh = new LSH();
+    auto lsh = new LSH(new Manhattan());
     lsh->setInputFilename(inputFilename);
     lsh->setData(parseInputFilePoints(lsh->getInputFilename()));
+    lsh->setNumOfFunctions(4);
+    lsh->setNumOfHashTables(5);
     //TODO: change this when we have a good formula for window.
     //change this value to experiment with performance of LSH.
-    lsh->getDataset()->setMean(112);
+    lsh->getDataset()->setMean(90);
     lsh->setHashTableStruct(new PointHashTableStruct(lsh->getNumOfHashTables(), lsh->getDataset()->getSize(),lsh->getNumOfFunctions(),lsh->getDataset()->getDimension(),lsh->getDataset()->getMean()));
     auto points = lsh->getDataset()->getData();
     for (auto & point : points)
@@ -26,41 +28,6 @@ LSH *LoadInput(string inputFilename,string queryFilename) {
     return lsh;
 }
 
-void DoQueries(LSH *lsh) {
-    auto hts = lsh->getHashTableStruct()->getAllHashTables();
-    auto hashers = lsh->getHashTableStruct()->getHashers();
-    int numOfHashTables = lsh->getNumOfHashTables();
-    int querySize = lsh->getQueryData()->getSize();
-    auto data = lsh->getDataset()->getData();
-    auto queryData = lsh->getQueryData()->getData();
-    clock_t meanSearchLSH = 0;
-    clock_t meanSearchBF = 0;
-    double maxAF = numeric_limits<double>::min();
-    double averageAF = 0;
-    int averageAFCount = 0;
-    for (int i = 0; i < querySize; ++i) {
-        Point* queryPoint = (Point*)queryData.at(i);
-        Point* nnPoint;
-        double distanceLSH;
-        double distanceBF;
-        clock_t begin = clock();
-        search_LSH(&nnPoint, &distanceLSH, numOfHashTables, hashers, queryPoint, hts);
-        clock_t end = clock();
-        meanSearchLSH += (end-begin);
-        begin = clock();
-        search_BruteForce(&nnPoint, &distanceBF, data, queryPoint);
-        end = clock();
-        meanSearchBF += (end-begin);
-        double AF;
-        if ((AF = distanceLSH/distanceBF) > maxAF) 
-            maxAF = AF;
-        if (distanceLSH) {//compute only if > 0
-            averageAF += distanceLSH/distanceBF;
-            averageAFCount++;
-        }
-    }
-    cout << "meanTimeSearchLSH " << meanSearchLSH/querySize << " meanTimeSearchBF " << meanSearchBF/querySize << " and maxAF = " << maxAF << " and averageAF " << averageAF/averageAFCount << endl;
-}
 
 void test_File(string inputFilename,string queryFilename) {
     auto lsh = LoadInput(inputFilename,queryFilename);
