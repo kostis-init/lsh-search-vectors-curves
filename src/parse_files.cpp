@@ -34,8 +34,6 @@ Dataset* parseInputFilePoints(string filename) {
         int dimension = 0;
         //add every coordinate to point
         while(line_stream >> token){
-            if(!is_number(token))
-                continue;
             auto coordinate = atof(token.c_str());
             minCoordinate = min(coordinate,minCoordinate);
             maxCoordinate = max(coordinate,maxCoordinate);
@@ -147,8 +145,6 @@ QueryDataset* parseQueryFilePoints(string filename){
         int dimension = 0;
         //add every coordinate to point
         while(line_stream >> token){
-            if(!is_number(token))
-                continue;
             point->addCoordinateLast(atof(token.c_str()));
             dimension++;
         }
