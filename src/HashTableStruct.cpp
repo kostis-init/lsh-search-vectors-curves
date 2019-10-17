@@ -1,7 +1,7 @@
 #include <vector>
 #include "HashTableStruct.h"
 
-HashTableStruct::HashTableStruct(int numOfHTs, int sz) {
+HashTableStruct::HashTableStruct(int numOfHTs, size_t sz) {
     //hashers = new [numOfHTs];
     this->numOfHTs = numOfHTs;
     this->size = sz/8;
@@ -42,10 +42,10 @@ void HashTableStruct::test_print_hashtable() {
     }
 }
 
-CurveHashTableStruct::CurveHashTableStruct(int numOfHTs,int sz,int numDimension,int min,int max,int pointHasherWindow) :HashTableStruct(numOfHTs,sz) {
+CurveHashTableStruct::CurveHashTableStruct(int numOfHTs,size_t sz,int numDimension,int min,int max,int pointHasherWindow) :HashTableStruct(numOfHTs,sz) {
     hashers = vector<Hasher *>(numOfHTs,new CurveHasher(numDimension,min,max,pointHasherWindow));
 }
 
-PointHashTableStruct::PointHashTableStruct(int numOfHTs,int sz,int ampSize,int numDimension,int window) : HashTableStruct(numOfHTs,sz) {
+PointHashTableStruct::PointHashTableStruct(int numOfHTs,size_t sz,int ampSize,int numDimension,int window) : HashTableStruct(numOfHTs,sz) {
     hashers = vector<Hasher *> (numOfHTs,new PointHasher(ampSize,numDimension,window));
 }

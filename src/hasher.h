@@ -36,7 +36,7 @@ class PointHasher : public Hasher {
         PointHasher(int,int,int);
         ~PointHasher();
         //compute the ith hash of Object obj
-        int hash(Point *point,int i) const;
+        size_t hash(Point *point,int i) const;
         //compute the concatenation of all hash functions i=0,1,..amplificationSize
         size_t operator() (Object* obj) const;
 };
