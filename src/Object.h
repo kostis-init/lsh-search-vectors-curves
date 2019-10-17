@@ -13,6 +13,9 @@ public:
     string getId() {
         return id;
     }
+    void setId(string id) {
+        this->id = id;
+    }
     virtual void foo() = 0;
 };
 
