@@ -13,10 +13,10 @@ private:
     Dataset* data;
     QueryDataset* queryData;
     HashTableStruct * tables;
-
-public:
     int numOfFunctions = 4;
     int numOfHashTables = 5;
+
+public:
     const string &getInputFilename() const {return inputFilename;}
     const string &getQueryFilename() const {return queryFilename;}
     const string &getOutputFilename() const {return outputFilename;}
