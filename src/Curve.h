@@ -10,7 +10,6 @@ class Curve : public Object{
 
 private:
 
-    string id;
     std::vector<Point> points;
 
 public:
@@ -20,7 +19,6 @@ public:
     ~Curve();
     std::vector<Point> getPoints();
     Point getPoint(int i);
-    string getId() {return id;}
     void foo(){}
 };
 
