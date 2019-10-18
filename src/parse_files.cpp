@@ -123,10 +123,9 @@ Dataset* parseInputFileCurves(string filename) {
             pointVec.push_back(stod(token,&coordinateSz));
             token = token.substr(coordinateSz);
             assert(token[0] == ',');
-            //spec doesn't match with actual format so we make some workarounds
-            if (token[1] == ' ') 
-                token = token.substr(1);
             token = token.substr(1);
+            //spec doesn't match with actual format so we make some workarounds
+            line_stream >> token;
             pointVec.push_back(stod(token,&coordinateSz));
             token = token.substr(coordinateSz);
             assert(token[0] == ')');
@@ -192,6 +191,8 @@ QueryDataset* parseQueryFilePoints(string filename){
     return data;
 }
 
+//TODO: remove this func - same with parseInputFileCurves except return 
+//types - avoid duplication.
 QueryDataset* parseQueryFileCurves(string filename) {
     if(!file_exists(filename.c_str())){
         cout << "input file does not exist" << endl;
@@ -206,15 +207,16 @@ QueryDataset* parseQueryFileCurves(string filename) {
     int maxCurveLen = INT32_MIN;
     while(getline(inputFile, line)){
         //extract item_id
-        string item_id = line.substr(0, line.find(' '));
+        string item_id = line.substr(0, line.find('\t'));
         vector<Point> curveVec;
-        line = line.substr(line.find(' ') + 1);
+        line = line.substr(line.find_first_of("\t ") + 1);
         string token;
         stringstream line_stream(line);
         int curveLen;
         line_stream >> curveLen;
         maxCurveLen = max(maxCurveLen,curveLen);
         minCurveLen = min(minCurveLen,curveLen);
+        line = line.substr(line.find_first_of("\t ") + 1);
         while(line_stream >> token){
             //ensure the right format is given : (coordinate,coordinate)
             assert(token[0] == '(');
@@ -225,6 +227,8 @@ QueryDataset* parseQueryFileCurves(string filename) {
             token = token.substr(coordinateSz);
             assert(token[0] == ',');
             token = token.substr(1);
+            //spec doesn't match with actual format so we make some workarounds
+            line_stream >> token;
             pointVec.push_back(stod(token,&coordinateSz));
             token = token.substr(coordinateSz);
             assert(token[0] == ')');

@@ -16,7 +16,7 @@ void test_DTW() {
    auto curv1 = new Curve(pointVec);
    auto curv2 = new Curve(pointVec2);
    auto dmetric = new DTW();
-   printf("%f\n",dmetric->dist(curv2,curv1));
+   CU_ASSERT(dmetric->dist(curv2,curv1) > 8 && dmetric->dist(curv2,curv1) < 9);
 }
 
 void test_ReadArgsCurves() {
@@ -38,7 +38,7 @@ void test_ReadArgsCurves() {
     CU_ASSERT(lsh->getNumOfHashTables() == 888);
 }
 
-void test_ParseFile(LSH *lsh) {
+void test_ParseTestFile(LSH *lsh) {
     auto dataset = lsh->getDataset();
     CU_ASSERT(dataset->getMax() == 3);
     CU_ASSERT(dataset->getMin() == 2);
@@ -70,21 +70,46 @@ void test_ParseCurves() {
     auto lsh = new LSH(new DTW());
     lsh->setInputFilename("../src/testdata/curves_loukas_small");
     lsh->setData(parseInputFileCurves(lsh->getInputFilename()));
-    test_ParseFile(lsh);
+    test_ParseTestFile(lsh);
     delete lsh;
     //----------------------
     lsh = new LSH(new DTW());
-    lsh->setInputFilename("../src/testdata/trajectories_dataset");
+    lsh->setInputFilename("../src/testdata/trajectories_input");
     lsh->setData(parseInputFileCurves(lsh->getInputFilename()));
-    test_ParseFile(lsh);
+    CU_ASSERT(lsh->getDataset()->getSize() == 7401);
     delete lsh;
     //----------------------
     lsh = new LSH(new DTW());
-    lsh->setQueryFilename("../src/testdata/curves_loukas_small");
+    lsh->setQueryFilename("../src/testdata/trajectories_query");
     lsh->setData(parseQueryFileCurves(lsh->getQueryFilename()));
-    test_ParseFile(lsh);
+    CU_ASSERT(lsh->getDataset()->getSize() == 86);
     delete lsh;
     //----------------------
+}
+
+LSH *LoadInputLSHCurves(string inputFilename,string queryFilename) {
+   auto lsh = new LSH(new DTW());
+    lsh->setInputFilename(inputFilename);
+    lsh->setData(parseInputFileCurves(lsh->getInputFilename()));
+    lsh->setNumOfFunctions(4);
+    lsh->setNumOfHashTables(5);
+    auto dataset = lsh->getDataset();
+    lsh->setHashTableStruct(new CurveHashTableStruct(lsh->getNumOfHashTables(), dataset->getSize(),lsh->getNumOfFunctions(),dataset->getDimension(),dataset->getMin(),dataset->getMax(),4000));
+    auto curves = dataset->getData();
+    for (auto & curve : curves)
+        lsh->getHashTableStruct()->addToAllHashTables(curve);
+    lsh->setQueryFilename(queryFilename);
+    lsh->setQueryData(parseQueryFileCurves(lsh->getQueryFilename()));
+   return lsh;
+}
+
+void test_File(string inputFilename,string queryFilename) {
+   auto lsh = LoadInputLSHCurves(inputFilename,queryFilename);
+   DoQueries(lsh);
+}
+
+void test_Files() {
+   test_File("../src/testdata/trajectories_input","../src/testdata/trajectories_query");
 }
 
 int init_suite1(void)
@@ -123,6 +148,7 @@ int main(int argc,char *argv[]) {
    }
    if ((NULL == CU_add_test(pSuite, "test of read curve args",test_ReadArgsCurves)) ||
     (NULL == CU_add_test(pSuite, "test of read curve args",test_ParseCurves)) ||
+    (NULL == CU_add_test(pSuite, "test of files - main test",test_Files)) ||
     (NULL == CU_add_test(pSuite, "test of read curve args",test_DTW))) 
          {
          CU_cleanup_registry();
