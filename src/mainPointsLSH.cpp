@@ -13,7 +13,7 @@
 
 int main(int argc, char* argv[]){
 
-    auto lsh = new LSH;
+    auto lsh = new LSH(new Manhattan());
 
     /**
      * read arguments

@@ -67,7 +67,7 @@ void test_Determinism(void) {
 
 void test_HashAmplified(void) {
    //first dataset (kostis)
-   lsh = new LSH();
+   lsh = new LSH(new Manhattan());
    //all points are around 0-120 approx
    lsh->setInputFilename("../src/very_small_input_for_testing");
    lsh->setData(parseInputFilePoints(lsh->getInputFilename()));
@@ -90,7 +90,7 @@ void test_HashAmplified(void) {
    printf("buckets in set = %d and data set size = %d\n",uniqueBuckets.size(),dataset->getSize());
    CU_ASSERT(uniqueBuckets.size() == 1);
    //second dataset (instructor's)
-   lsh = new LSH();
+   lsh = new LSH(new Manhattan());
    lsh->setInputFilename("../src/testdata/input_small_id");
    lsh->setData(parseInputFilePoints(lsh->getInputFilename()));
    dataset = lsh->getDataset();
@@ -113,7 +113,7 @@ void test_HashAmplified(void) {
 }
 
 void test_MultipleHashers(){
-   lsh = new LSH();
+   lsh = new LSH(new Manhattan());
    lsh->setInputFilename("../src/testdata/input_small_id");
    lsh->setData(parseInputFilePoints(lsh->getInputFilename()));
    auto dataset = lsh->getDataset();

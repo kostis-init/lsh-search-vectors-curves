@@ -50,16 +50,3 @@ double DTW::dist(Object *obj1,Object *obj2){
     }
     return arr[c1Len-1][c2Len-1];
 }
-
-//Cube depends on this func.
-double manhattan(Object *obj1,Object *obj2) {
-    auto p1 = dynamic_cast<Point *>(obj1);
-    auto p2 = dynamic_cast<Point *>(obj2);
-    if (p1->getCoordinates().size() != p2->getCoordinates().size())
-        return -1;
-    double sum = 0;
-    int sz = p1->getCoordinates().size();
-    for(int i =0; i < sz;i++)
-        sum += p1->getCoordinate(i) - p2->getCoordinate(i);
-    return sum;
-}

@@ -11,7 +11,7 @@ using namespace std;
 
 int main(int argc, char* argv[]){
 
-    auto cube = new Cube();
+    auto cube = new Cube(new Manhattan());
     auto lsh = cube->getLsh();
     /**
      * read arguments
@@ -58,7 +58,7 @@ int main(int argc, char* argv[]){
     /**
      * Search Cube
      */
-    search_points_Cube_vs_BruteForce(cube);
+    search_Cube_vs_BruteForce(cube);
 
     //ask user if he wants another one
 

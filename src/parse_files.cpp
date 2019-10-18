@@ -65,7 +65,7 @@ Dataset* parseInputFilePoints(string filename) {
 //We can use a better algorithm instead of bruteforce 
 //like kd-tree of octree but it needs some work.
 //Use this func only with a Dataset of Points.
-int meanOfMins(Dataset *dataset,int limit) {
+int meanOfMins(Dataset *dataset,int limit, DistanceMetric* distanceMetric) {
     double sum = 0;
     int size = dataset->getSize();
     int i=0;
@@ -77,7 +77,7 @@ int meanOfMins(Dataset *dataset,int limit) {
             Point* candidatePoint = dynamic_cast<Point*>(candidate);
             double cur_dist;
             if(candidatePoint != queryPoint
-               && (cur_dist = manhattan(queryPoint, candidatePoint)) < distance){
+               && (cur_dist = distanceMetric->dist(queryPoint, candidatePoint)) < distance){
                 distance = cur_dist;
             }
         }
