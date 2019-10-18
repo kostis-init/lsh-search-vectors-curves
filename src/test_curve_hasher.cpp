@@ -92,7 +92,7 @@ void test_Vectorize() {
    //delta = 4 * 2 * 7 = 56.
    auto chasher = new CurveHasher(2,1,7,7,0);
    auto point = chasher->vectorize(chasher->snap(curve));
-   CU_ASSERT(point->getCoordinates().size() == 3);
+   CU_ASSERT(point->getCoordinates().size() == 6);
 }
 
 vector<Curve> generateDataset(int numCurves,int curveLen,int lower,int upper) {
@@ -111,6 +111,7 @@ vector<Curve> generateDataset(int numCurves,int curveLen,int lower,int upper) {
 
 void runHasher(int numCurves,int curveLen,int window,vector<Curve> curveVec,int *bucketRes,int *vectoriseRes) {
     size_t bucket;
+    PointHasher::gridPool = nullptr;
     auto chasher = new CurveHasher(2,1,curveLen,curveLen,window);
     set<size_t> buckets;
     set<Point,point_compare> pointSet;
@@ -150,15 +151,15 @@ void test_Hash() {
 
     //test 1
    //coefficient = 10
-   auto delta = 4 * 2* 10;
    auto curveLen = 10;
+   auto delta = 4 * 2* curveLen;
    auto lower = 0.0;
    auto upper = 50.0;
    auto numCurves = 10000;
    auto curveVec = generateDataset(numCurves,curveLen,lower,upper);
    int bucketRes, vectoriseRes;
    //delta * 10 + delta is (probably) a good formula.
-   runHasher(numCurves,curveLen,delta*10+delta,curveVec,&bucketRes,&vectoriseRes);
+   runHasher(numCurves,curveLen,4000,curveVec,&bucketRes,&vectoriseRes);
    printf("results: points = %d, buckets = %d\n",vectoriseRes,bucketRes);
    CU_ASSERT(bucketRes < numCurves/100);
    //create further test similar with test1
