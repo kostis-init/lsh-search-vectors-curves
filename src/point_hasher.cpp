@@ -89,7 +89,7 @@ size_t PointHasher::hash(Point* point,int hashIndex) const {
     //sum may overflow if amplificationSize is too small and
     //if numDimension is too high but no fuss - uint will wrap around.
     for (auto c :coordinates) {
-        int gridCell = int((c - gridPool[selectedGrids[hashIndex]][i])/window);
+        int gridCell = floor((c - gridPool[selectedGrids[hashIndex]][i])/window);
         if (!powModuloMem[j])
             powModuloMem[j] = powModulo(coefficient,j,partialHashRange);
         sum+= ((gridCell%partialHashRange)*(powModuloMem[j]))%partialHashRange;
