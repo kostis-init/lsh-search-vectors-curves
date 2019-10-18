@@ -21,6 +21,7 @@ public:
 
     Cube(DistanceMetric * dmetric){
         lsh = new LSH(dmetric);
+        lsh->setNumOfFunctions(4);
     }
     ~Cube(){delete lsh;}
 

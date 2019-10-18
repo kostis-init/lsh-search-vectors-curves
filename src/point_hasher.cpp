@@ -98,7 +98,8 @@ size_t PointHasher::hash(Point* point,int hashIndex) const {
     }
     return sum % partialHashRange;
 }
-
+int counter = 0;
+int sz = 10000;
 size_t PointHasher::operator()(Object *obj) const {
     Point *point = dynamic_cast<Point *>(obj);
     int numPartialHashBits = 32/amplificationSize;
@@ -109,6 +110,8 @@ size_t PointHasher::operator()(Object *obj) const {
         partialHash = hash(point,i);
         res |= partialHash << i*4;
     }
-    return res;
+    if(res == 0){counter++;}
+    //cout << res << endl;
+    return res % (sz/8);
    //return atoi(obj->getId().c_str())%5000;
 }

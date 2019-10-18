@@ -39,13 +39,13 @@ int main(int argc, char* argv[]){
     * construct hash table struct
     */
     lsh->setHashTableStruct(new PointHashTableStruct(cube->getDimension(), lsh->getDataset()->getSize(),
-                                                     lsh->getNumOfFunctions(),lsh->getDataset()->getDimension(), 100));
+                                                     lsh->getNumOfFunctions(),lsh->getDataset()->getDimension(), 5));
 
     /**
     * parse query file into memory
     */
     lsh->setQueryData(parseQueryFilePoints(lsh->getQueryFilename()));
-    //test_print_query_data(lsh->getQueryData());
+    test_print_query_data(lsh->getQueryData());
 
     /**
      * Init Cube, based on LSH
@@ -53,7 +53,7 @@ int main(int argc, char* argv[]){
     cube->createBinaryMaps();
     //cube->test_print_binaryMaps();
     cube->createVertices();
-    //cube->test_print_vertices();
+    cube->test_print_vertices();
 
     /**
      * Search Cube
