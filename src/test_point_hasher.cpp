@@ -81,14 +81,14 @@ void test_HashAmplified(void) {
    //reset pool - we have another dataset, we reconstruct the pool.
    PointHasher::gridPool = nullptr;
    //auto phasher = new PointHasher(5,numDim,dataset->getMax()+1);
-   auto phasher = new PointHasher(5,numDim,dataset->getMax()+1);
+   auto phasher = new PointHasher(4,numDim,dataset->getMax()+1);
    printf("min is %f and max is %f and mean of min is ",dataset->getMin(),dataset->getMax());
    set<size_t> uniqueBuckets;
-   for (auto p: points) {
+   /*for (auto p: points) {
       uniqueBuckets.insert((*phasher)(p));
-   }
+   }*/
    printf("buckets in set = %d and data set size = %d\n",uniqueBuckets.size(),dataset->getSize());
-   CU_ASSERT(uniqueBuckets.size() == 1);
+   CU_ASSERT(uniqueBuckets.size() > 1);
    //second dataset (instructor's)
    lsh = new LSH();
    lsh->setInputFilename("../src/testdata/input_small_id");
@@ -98,18 +98,18 @@ void test_HashAmplified(void) {
    points = dataset->getData();
    printf("min is %f and max is %f and mean of min is ",dataset->getMin(),dataset->getMax());
    printf("mean is %d",dataset->getMean());
-   uniqueBuckets.clear();
+   set<size_t> uniqueBuckets2;
    //reset pool - we have another dataset, we reconstruct the pool.
-   phasher->gridPool = nullptr;
+   PointHasher::gridPool = nullptr;
    //////max-min - 40 is a good windows size ( max -min = 180 here).
-   phasher = new PointHasher(4,numDim,80);
-   uniqueBuckets.clear();
+   phasher = new PointHasher(4,numDim,4000);
    int i = 0;
    for (auto p: points) {
-      uniqueBuckets.insert((*phasher)(p));
+      auto bucket = (*phasher)(p);
+      uniqueBuckets2.insert(bucket);
       i++;
    }
-   printf("buckets in set = %d and data set size = %d\n",uniqueBuckets.size(),dataset->getSize());
+   printf("buckets in set = %d and data set size = %d\n",uniqueBuckets2.size(),dataset->getSize());
 }
 
 void test_MultipleHashers(){
@@ -120,18 +120,28 @@ void test_MultipleHashers(){
    auto numDim = dataset->getDimension();
    auto points = dataset->getData();
    PointHasher::gridPool = nullptr;
-   auto numTables = 4;
+   auto numTables = 5;
    //vector<PointHasher > hashers (numTables,(*new PointHasher(4,numDim,20)));
    PointHasher **hashers; 
    hashers = new PointHasher*[numTables];
    for (int i =0; i < numTables; i++) 
-      hashers[i] = new PointHasher(4,numDim,100);
+      hashers[i] = new PointHasher(4,numDim,4000);
    auto equalHashesSum = 0;
+   set<size_t> uniqueBuckets;
    for (auto p : dataset->getData()){
-      if (((*hashers[0])(p) == (*hashers[1])(p))  && (*hashers[3])(p) == (*hashers[2])(p) && (*hashers[3])(p) == (*hashers[1])(p))
+      auto bucket0 = (*hashers[0])(p);
+      auto bucket1 = (*hashers[1])(p);  
+      auto bucket2 = (*hashers[2])(p);  
+      auto bucket3 = (*hashers[3])(p);  
+      uniqueBuckets.insert(bucket0);
+      uniqueBuckets.insert(bucket1);
+      uniqueBuckets.insert(bucket2);
+      uniqueBuckets.insert(bucket3);
+      if ((bucket0 == bucket1) && (bucket2== bucket3) && (bucket3== bucket2))
          equalHashesSum++;
    }
    CU_ASSERT(equalHashesSum < 100);
+   cout << "bucket unique " << uniqueBuckets.size() << endl;
 }
 
 int init_suite1(void)
