@@ -18,6 +18,7 @@ public:
     Curve(vector<Point> points);
     ~Curve();
     std::vector<Point> getPoints();
+    void setPoints(vector<Point> pVec);
     Point getPoint(int i);
     void foo(){}
 };

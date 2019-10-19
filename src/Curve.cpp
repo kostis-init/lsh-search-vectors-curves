@@ -13,3 +13,7 @@ std::vector<Point> Curve::getPoints() {
 Point Curve::getPoint(int i) {
     return points.at(i);
 }
+
+void Curve::setPoints(vector<Point> pVec) {
+    points = pVec;
+}
