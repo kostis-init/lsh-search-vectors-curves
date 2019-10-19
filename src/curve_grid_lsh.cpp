@@ -24,10 +24,7 @@ LSH *LoadInput(int argc, char* argv[]) {
     cout << lsh->getDataset()->getMean() << endl;
     //TODO:find formula for window
     auto dataset = lsh->getDataset();
-    auto delta = 4 * dataset->getDimension() * dataset->getMin();
-    //Hardcoded in curveHasher
-    auto coefficient = 10;
-    lsh->setHashTableStruct(new CurveHashTableStruct(lsh->getNumOfHashTables(),dataset->getSize(),lsh->getNumOfFunctions(),dataset->getDimension(),dataset->getMin(),dataset->getMax(),delta * 10 + delta));
+    lsh->setHashTableStruct(new CurveHashTableStruct(lsh->getNumOfHashTables(),dataset->getSize(),lsh->getNumOfFunctions(),dataset->getDimension(),dataset->getMin(),dataset->getMax(),4000));
     auto points = lsh->getDataset()->getData();
     for (auto & point : points)
         lsh->getHashTableStruct()->addToAllHashTables(point);

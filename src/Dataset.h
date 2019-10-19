@@ -6,10 +6,14 @@ using namespace std;
 
 class Dataset {
     private:
+        //default to 2 for curves
         int dimension;
         size_t size;
+        //minLength of Curve for Curves - minCoordinate for Points
         double min;
+        //maxLength of Curve for Curves - maxCoordinate for Points
         double max;
+        //unecessary for Curves
         int mean;
         vector<Object *> data;
     public:

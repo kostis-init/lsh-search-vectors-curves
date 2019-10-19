@@ -15,7 +15,9 @@ private:
     QueryDataset* queryData;
     HashTableStruct * tables;
     DistanceMetric *distMetric;
+    //L_grid for Curves - L for Points
     int numOfFunctions = 0;
+    //k_vec for Curves - k for Points
     int numOfHashTables = 0;
 
 public:
