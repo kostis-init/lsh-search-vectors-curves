@@ -6,6 +6,7 @@
 void search_Cube_vs_BruteForce(Cube* cube){
     int querySize = cube->getLsh()->getQueryData()->getSize();
     auto queryData = cube->getLsh()->getQueryData()->getData();
+    double queryRadius = cube->getLsh()->getQueryData()->getRadius();
 
     for (int i = 0; i < querySize; ++i) {
         Object* queryObject = queryData.at(i);
@@ -27,6 +28,9 @@ void search_Cube_vs_BruteForce(Cube* cube){
             cout << "distance Cube: " << distance << endl;
             cout << "time Cube: " << end - begin << endl;
         }
+
+        //Radius Neighbors (Bonus)
+        //TODO
 
         //Brute Force
         cout << "Brute Force" << endl;
@@ -110,6 +114,7 @@ void search_Cube(Object **nearestNeighbor, double *distance, Object* queryObject
 void search_LSH_vs_BruteForce(LSH* lsh) {
     int querySize = lsh->getQueryData()->getSize();
     auto queryData = lsh->getQueryData()->getData();
+    double queryRadius = lsh->getQueryData()->getRadius();
 
     for (int i = 0; i < querySize; ++i) {
         Object* queryObject = queryData.at(i);
@@ -166,7 +171,8 @@ void search_LSH(Object **nearestNeighbor, double *distance, Object *queryObject,
     *nearestNeighbor = nullptr;
     *distance = numeric_limits<double>::max();
     bool found = false;
-    int threshold = 50 * lsh->getNumOfHashTables();
+    //int threshold = 50 * lsh->getNumOfHashTables();
+    int threshold = 150;
     int thresholdCount = 0;
     auto hashers = lsh->getHashTableStruct()->getHashers();
     auto hts = lsh->getHashTableStruct()->getAllHashTables();
@@ -175,6 +181,7 @@ void search_LSH(Object **nearestNeighbor, double *distance, Object *queryObject,
         if(hts[j].find(hash) == hts[j].end()) //empty bucket
             continue;
         auto points = hts[j].at(hash);
+        thresholdCount = 0;
         for(auto candidate : points){
             if (thresholdCount > threshold)
                 break;

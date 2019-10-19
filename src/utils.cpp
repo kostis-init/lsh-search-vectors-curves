@@ -10,7 +10,9 @@ using namespace std;
 // func ensures no overflow will occur during the above
 // computation.Optimized with a divided & conquer technique.
 int powModulo(int base,int exp,int div) {
-    if (exp == 1) {
+    if(exp == 0) {
+        return 1;
+    } else if (exp == 1) {
         return base % div;
     } else if (exp % 2 == 0) {
         return (powModulo(base,exp/2,div)*powModulo(base,exp/2,div)) % div;
@@ -65,4 +67,10 @@ void test_print_query_data(QueryDataset *data) {
         cout << endl;
     }
     cout << data->getDimension() << " " << data->getSize() << " " << data->getRadius() << endl;
+}
+
+int modulo(int a, int b){
+    if(a>=0)
+        return a%b;
+    return a%b + b;
 }

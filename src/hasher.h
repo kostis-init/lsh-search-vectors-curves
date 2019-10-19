@@ -4,10 +4,8 @@
 #include "Object.h"
 #include "Point.h"
 #include "Curve.h"
-//#define GRID_POOL 50
-#define WINDOW_SIZE 100
-#define GRID_POOL_SIZE 100
 
+#define WINDOW_SIZE 100
 
 class Hasher {
     public:
@@ -19,18 +17,14 @@ class Hasher {
 //the index of the bucket that Object should be stored.
 class PointHasher : public Hasher {
     private:
-        //we make only gridPool static (and not e.g window) so we can have
-        //multiple datasets with various windowsizes etc.
-        static double **gridPool ;
-        static const int gridPoolSize = GRID_POOL_SIZE;
+        vector<vector<double>> grids ;
         //we can set window based on dataset range of values.
         int window = WINDOW_SIZE;
         int amplificationSize;
         int numDimension;
         int partialHashRange;
-        int * selectedGrids;
         //Memoization for powModulo func.
-        int *powModuloMem;
+        int * powModuloMem;
         void generateGrids();
     public:
         PointHasher();

@@ -11,7 +11,7 @@
 #include "distance.h"
 #include "search.h"
 
-extern int counter;
+
 int main(int argc, char* argv[]){
 
     auto lsh = new LSH(new Manhattan());
@@ -41,12 +41,12 @@ int main(int argc, char* argv[]){
      * insert data into hash tables
      */
     cout << "Constructing hash table..." << endl;
-    lsh->setHashTableStruct(new PointHashTableStruct(lsh->getNumOfHashTables(), lsh->getDataset()->getSize(),lsh->getNumOfFunctions(),lsh->getDataset()->getDimension(),5));
+    lsh->setHashTableStruct(new PointHashTableStruct(lsh->getNumOfHashTables(),
+            lsh->getDataset()->getSize(),lsh->getNumOfFunctions(),lsh->getDataset()->getDimension(),4000));
     auto points = lsh->getDataset()->getData();
     for (auto & point : points)
         lsh->getHashTableStruct()->addToAllHashTables(point);
     lsh->getHashTableStruct()->test_print_hashtable();
-    cout << counter << endl;
 
     /**
      * parse query file into memory
@@ -57,8 +57,8 @@ int main(int argc, char* argv[]){
     /**
      * search
      */
-    search_LSH_vs_BruteForce(lsh);
-
+    //search_LSH_vs_BruteForce(lsh);
+    DoQueries(lsh);
     //ask user if he wants another one
 
     // +check memory leaks
