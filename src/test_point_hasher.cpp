@@ -18,19 +18,17 @@ void test_meanOfMins() {
    vector<Point*> points {new Point(vector<double> {2.0,2.0,2.0}),new Point(vector<double> {3.0,3.0,3.0}),new Point(vector<double> {4.0,4.0,4.0})};
    vector<Object *> objs (points.begin(),points.end());
    //mean dist = (3 + 3 + 3)/3 = 3
-   CU_ASSERT(meanOfMins(new Dataset(objs),3) == 3);
+   CU_ASSERT(meanOfMins(new Dataset(objs),3,new Manhattan()) == 3);
 }
 
 void test_PointHasher(void) {
     //check signleton and selectedGrids array size.
     auto phasher = new PointHasher(4,6,100);
     //ensure selected has 4 elements
-    CU_ASSERT(phasher->selectedGrids[3] < phasher->gridPoolSize);
-    auto temp = phasher->gridPool;
+    CU_ASSERT(phasher->grids[3][5] < 100);
     auto phasher2 = new PointHasher(6,9,100);
     //ensure selected has 6 elements
-    CU_ASSERT(phasher2->selectedGrids[5] < phasher->gridPoolSize);
-    CU_ASSERT(temp == phasher2->gridPool);
+    CU_ASSERT(phasher2->grids[5][8] < 100);
 }
 
 //check that near points lie on the same bucket.
@@ -67,7 +65,7 @@ void test_Determinism(void) {
 
 void test_HashAmplified(void) {
    //first dataset (kostis)
-   lsh = new LSH();
+   lsh = new LSH(new Manhattan());
    //all points are around 0-120 approx
    lsh->setInputFilename("../src/very_small_input_for_testing");
    lsh->setData(parseInputFilePoints(lsh->getInputFilename()));
@@ -79,7 +77,6 @@ void test_HashAmplified(void) {
    //because the window is bigger than the biggest coordinate of a
    // data point (131), all points should lie on the same bucket. 
    //reset pool - we have another dataset, we reconstruct the pool.
-   PointHasher::gridPool = nullptr;
    //auto phasher = new PointHasher(5,numDim,dataset->getMax()+1);
    auto phasher = new PointHasher(4,numDim,dataset->getMax()+1);
    printf("min is %f and max is %f and mean of min is ",dataset->getMin(),dataset->getMax());
@@ -90,7 +87,7 @@ void test_HashAmplified(void) {
    printf("buckets in set = %d and data set size = %d\n",uniqueBuckets.size(),dataset->getSize());
    CU_ASSERT(uniqueBuckets.size() > 1);
    //second dataset (instructor's)
-   lsh = new LSH();
+   lsh = new LSH(new Manhattan());
    lsh->setInputFilename("../src/testdata/input_small_id");
    lsh->setData(parseInputFilePoints(lsh->getInputFilename()));
    dataset = lsh->getDataset();
@@ -100,7 +97,6 @@ void test_HashAmplified(void) {
    printf("mean is %d",dataset->getMean());
    set<size_t> uniqueBuckets2;
    //reset pool - we have another dataset, we reconstruct the pool.
-   PointHasher::gridPool = nullptr;
    //////max-min - 40 is a good windows size ( max -min = 180 here).
    phasher = new PointHasher(4,numDim,4000);
    int i = 0;
@@ -113,13 +109,12 @@ void test_HashAmplified(void) {
 }
 
 void test_MultipleHashers(){
-   lsh = new LSH();
+   lsh = new LSH(new Manhattan());
    lsh->setInputFilename("../src/testdata/input_small_id");
    lsh->setData(parseInputFilePoints(lsh->getInputFilename()));
    auto dataset = lsh->getDataset();
    auto numDim = dataset->getDimension();
    auto points = dataset->getData();
-   PointHasher::gridPool = nullptr;
    auto numTables = 5;
    //vector<PointHasher > hashers (numTables,(*new PointHasher(4,numDim,20)));
    PointHasher **hashers; 

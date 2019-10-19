@@ -11,12 +11,12 @@ using namespace std;
 
 int main(int argc, char* argv[]){
 
-    auto cube = new Cube();
+    auto cube = new Cube(new Manhattan());
     auto lsh = cube->getLsh();
     /**
      * read arguments
      */
-    readArgumentsCube(cube, argc, argv);
+    readArgumentsCubePoints(cube, argc, argv);
     /**
      * ask files (if not given as arguments)
      */
@@ -39,7 +39,7 @@ int main(int argc, char* argv[]){
     * construct hash table struct
     */
     lsh->setHashTableStruct(new PointHashTableStruct(cube->getDimension(), lsh->getDataset()->getSize(),
-                                                     lsh->getNumOfFunctions(),lsh->getDataset()->getDimension(), 100));
+                                                     lsh->getNumOfFunctions(),lsh->getDataset()->getDimension(), 4000));
 
     /**
     * parse query file into memory
@@ -58,7 +58,8 @@ int main(int argc, char* argv[]){
     /**
      * Search Cube
      */
-    search_points_Cube_vs_BruteForce(cube);
+    search_Cube_vs_BruteForce(cube);
+    DoQueries(cube);
 
     //ask user if he wants another one
 

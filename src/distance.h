@@ -17,8 +17,4 @@ class DTW : public DistanceMetric {
     double dist(Object *obj1,Object *obj2);
 };
 
-//leave this here because Cube depends on this 
-//to be removed soon
-double manhattan(Object *obj1,Object *obj2);
-
 #endif

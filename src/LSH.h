@@ -22,7 +22,6 @@ public:
     LSH(DistanceMetric *metric) {
         distMetric = metric;
     }
-    LSH() {}
     DistanceMetric *getMetric() { return distMetric;}
     const string &getInputFilename() const {return inputFilename;}
     const string &getQueryFilename() const {return queryFilename;}

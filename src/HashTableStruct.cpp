@@ -17,7 +17,7 @@ void HashTableStruct::addToAllHashTables(Object *obj) {
         size_t hash = (*hashers.at(i))(obj);
         auto item = hashTables[i].find(hash);
         if(item != hashTables[i].end()){ //found
-            hashTables[i].at((*hashers.at(i))(obj)).push_back(obj);
+            hashTables[i].at(hash).push_back(obj);
         }
         else{ //not found
             vector<Object *> arg;
@@ -53,7 +53,8 @@ CurveHashTableStruct::CurveHashTableStruct(int numOfHTs,size_t sz,int ampSize,in
 PointHashTableStruct::PointHashTableStruct(int numOfHTs,size_t sz,int ampSize,int numDimension,int window) : HashTableStruct(numOfHTs,sz) {
    PointHasher **h; 
    h = new PointHasher*[numOfHTs];
-   for (int i =0; i < numOfHTs; i++) 
+   for (int i =0; i < numOfHTs; i++)
       h[i] = new PointHasher(ampSize,numDimension,window);
     hashers = vector<Hasher *> (h,h+numOfHTs);
+
 }

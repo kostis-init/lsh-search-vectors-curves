@@ -9,95 +9,68 @@
 using namespace std;
 
 class InputParser{
+    private:
+        vector <string> tokens;
     public:
         InputParser (int &argc, char **argv){
             for (int i=1; i < argc; ++i)
-                this->tokens.push_back(std::string(argv[i]));
+                this->tokens.push_back(string(argv[i]));
         }
-        const std::string& getCmdOption(const std::string &option) const{
-            std::vector<std::string>::const_iterator itr;
-            itr =  std::find(this->tokens.begin(), this->tokens.end(), option);
+        const string& getCmdOption(const string &option) const{
+            vector<string>::const_iterator itr;
+            itr =  find(this->tokens.begin(), this->tokens.end(), option);
             if (itr != this->tokens.end() && ++itr != this->tokens.end()){
                 return *itr;
             }
-            static const std::string empty_string("");
+            static const string empty_string("");
             return empty_string;
         }
-        bool cmdOptionExists(const std::string &option) const{
-            return std::find(this->tokens.begin(), this->tokens.end(), option)
+        bool cmdOptionExists(const string &option) const{
+            return find(this->tokens.begin(), this->tokens.end(), option)
                    != this->tokens.end();
         }
-    private:
-        std::vector <std::string> tokens;
 };
 
 void readArgumentsLSHPoints(LSH* lsh, int argc, char **argv) {
-    int c;
-    while((c = getopt(argc, argv, "d:q:k:L:o:")) != -1){
-        switch (c){
-            case 'd':
-                lsh->setInputFilename(optarg);
-                break;
-            case 'q':
-                lsh->setQueryFilename(optarg);
-                break;
-            case 'k':
-                lsh->setNumOfFunctions(stoi(optarg));
-                break;
-            case 'L':
-                lsh->setNumOfHashTables(stoi(optarg));
-                break;
-            case 'o':
-                lsh->setOutputFilename(optarg);
-                break;
-            default:
-                cout << "Non acceptable argument, exiting..." << endl;
-                exit(-1);
-        }
-    }
-    if (!lsh->getNumOfFunctions())
+    auto parser = new InputParser(argc,argv);
+    if (parser->cmdOptionExists("-d"))
+        lsh->setInputFilename(parser->getCmdOption("-d"));
+    if (parser->cmdOptionExists("-q"))
+        lsh->setQueryFilename(parser->getCmdOption("-q"));
+    if (parser->cmdOptionExists("-o"))
+        lsh->setOutputFilename(parser->getCmdOption("-o"));
+    if (parser->cmdOptionExists("-k"))
+        lsh->setNumOfFunctions(stoi(parser->getCmdOption("-k")));
+    else
         lsh->setNumOfFunctions(4);
-    if  (!lsh->getNumOfHashTables())
+    if (parser->cmdOptionExists("-L"))
+        lsh->setNumOfHashTables(stoi(parser->getCmdOption("-L")));
+    else
         lsh->setNumOfHashTables(5);
 }
 
-//TODO: check -probes argument
-void readArgumentsCube(Cube* cube, int argc, char **argv) {
-    int c; int n;
-    while((c = getopt(argc, argv, "d:q:k:M:p:o:")) != -1){
-        switch (c){
-            case 'd':
-                cube->getLsh()->setInputFilename(optarg);
-                break;
-            case 'q':
-                cube->getLsh()->setQueryFilename(optarg);
-                break;
-            case 'k':
-                n = stoi(optarg);
-                cube->setDimensionGiven(true);
-                cube->setDimension(n);
-                cube->getLsh()->setNumOfHashTables(n);
-                break;
-            case 'M':
-                cube->setMaxChecked(stoi(optarg));
-                break;
-            case 'p':
-                cube->setMaxProbes(stoi(optarg));
-                break;
-            case 'o':
-                cube->getLsh()->setOutputFilename(optarg);
-                break;
-            default:
-                cout << "Non acceptable argument, exiting..." << endl;
-                exit(-1);
-        }
+void readArgumentsCubePoints(Cube* cube, int argc, char **argv) {
+    auto parser = new InputParser(argc,argv);
+    if (parser->cmdOptionExists("-d"))
+        cube->getLsh()->setInputFilename(parser->getCmdOption("-d"));
+    if (parser->cmdOptionExists("-q"))
+        cube->getLsh()->setQueryFilename(parser->getCmdOption("-q"));
+    if (parser->cmdOptionExists("-o"))
+        cube->getLsh()->setOutputFilename(parser->getCmdOption("-o"));
+    if (parser->cmdOptionExists("-k")){
+        cube->setDimensionGiven(true);
+        cube->setDimension(stoi(parser->getCmdOption("-k")));
+        cube->getLsh()->setNumOfHashTables(stoi(parser->getCmdOption("-k")));
     }
-    if (!cube->getLsh()->getNumOfHashTables())
-       cube->getLsh()->setNumOfHashTables(3);
+    else
+        cube->getLsh()->setNumOfHashTables(3);
+    if (parser->cmdOptionExists("-M"))
+        cube->setMaxChecked(stoi(parser->getCmdOption("-M")));
+    if (parser->cmdOptionExists("-probes"))
+        cube->setMaxProbes(stoi(parser->getCmdOption("-probes")));
 }   
 
 void readArgumentsLSHCurves(LSH* lsh, int argc, char **argv) {
-
     auto parser = new InputParser(argc,argv);
     if (parser->cmdOptionExists("-d"))
         lsh->setInputFilename(parser->getCmdOption("-d"));

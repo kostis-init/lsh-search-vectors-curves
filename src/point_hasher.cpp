@@ -4,6 +4,7 @@
 #include <vector>
 #include  <stdio.h>
 #include  <string.h>
+#include <bitset>
 #include "hasher.h"
 //#include "Object.h"
 #include "Point.h"
@@ -13,102 +14,62 @@
 
 using namespace std;
 
-
-double **PointHasher::gridPool;
-
 //TODO: set window size based on dataset (for better point grouping).
 //needs to be done inside lsh. We could set it based on some metrics e.g. 
 //based on the highest coordinate of a point and minimum (generally based 
 //on change-variation of points).
 
-
-/*PointHasher::PointHasher() {
-    amplificationSize = lsh->getNumOfFunctions();
-    numDimension = lsh->getDataset()->getDimension();
-    powModuloMem = (int *)malloc(numDimension * sizeof(int));
-    memset(powModuloMem,0,numDimension);
-    //window = 4 * lsh->getDataset()->getMean();
-    partialHashRange = pow(2,int(32/amplificationSize));
-    if (gridPool == nullptr) {
-        generateGrids();
-    }
-    random_device r;
-    //do we need another engine?
-    default_random_engine e1(r());
-    uniform_int_distribution<int> uniform_dist(0,gridPoolSize-1);
-    selectedGrids = (int *)malloc(amplificationSize * sizeof(int));
-    for (int i = 0; i<amplificationSize; i++){
-        selectedGrids[i] = uniform_dist(e1);
-    }
-}*/
-
 PointHasher::PointHasher(int ampSize,int numDimension,int window) {
     this->amplificationSize = ampSize;
     this->numDimension = numDimension;
-    powModuloMem = (int *)malloc(numDimension * sizeof(int));
-    memset(powModuloMem,0,numDimension);
-    //window = lsh->getDataset()->getMean();
     this->window = window;
     partialHashRange = pow(2,int(32/amplificationSize));
-    if (gridPool == nullptr) {
-        generateGrids();
-    }
-    random_device r;
-    default_random_engine re;
-    re.seed(r());
-    uniform_int_distribution<int> uniform_dist(0,gridPoolSize-1);
-    selectedGrids = (int *)malloc(amplificationSize * sizeof(int));
-    for (int i = 0; i<amplificationSize; i++){
-        selectedGrids[i] = uniform_dist(re);
-    }
+    generateGrids();
+    powModuloMem = new int[numDimension];
+    memset(powModuloMem, 0, numDimension);
 }
-
-//dont free gridPool (static)
 PointHasher::~PointHasher() {
-    free(selectedGrids);
+    delete[] powModuloMem;
 }
 
 void PointHasher::generateGrids() {
     random_device r;
-    //do we need another engine?
     default_random_engine e1(r());
-    uniform_real_distribution<float> uniform_dist(0, window);
-    gridPool = (double **) malloc(gridPoolSize * sizeof(double *));
-    for (int i = 0; i < gridPoolSize; i++)
-        gridPool[i] = (double *) malloc(numDimension * sizeof(double));
-    for (int i = 0; i < gridPoolSize; i++)
+    uniform_real_distribution<double> uniform_dist(0, window);
+    for(int i = 0; i < amplificationSize ; i++){
+        vector<double> grid;
         for (int j = 0; j < numDimension; j++) {
-            gridPool[i][j] = uniform_dist(e1);
+            grid.push_back(uniform_dist(e1));
         }
+        grids.push_back(grid);
+    }
 }
 
 size_t PointHasher::hash(Point* point,int hashIndex) const {
     vector<double> coordinates = point->getCoordinates();
-    size_t coefficient = 0xffffffff-5;
-    size_t sum = 0,i = 0,j = numDimension;
-    //sum may overflow if amplificationSize is too small and
-    //if numDimension is too high but no fuss - uint will wrap around.
+    int coefficient = 0xffffffff-5;
+    int sum = 0,i = 0,j = numDimension - 1;
     for (auto c :coordinates) {
-        int gridCell = floor((c - gridPool[selectedGrids[hashIndex]][i])/window);
+        int gridCell = floor( double(c - grids.at(hashIndex).at(i)) / double(window) );
         if (!powModuloMem[j])
             powModuloMem[j] = powModulo(coefficient,j,partialHashRange);
-        sum+= ((gridCell%partialHashRange)*(powModuloMem[j]))%partialHashRange;
+        sum += gridCell * powModuloMem[j];
         i++;
         j--;
     }
-    return sum % partialHashRange;
+    return modulo(sum, partialHashRange);
 }
 
 size_t PointHasher::operator()(Object *obj) const {
     Point *point = dynamic_cast<Point *>(obj);
     int numPartialHashBits = 32/amplificationSize;
-    size_t res = 0;
-    size_t partialHash;
+    int res = 0;
+    int partialHash;
     //calculate each partial hash and concatenate them in res
     for (int i =0; i < amplificationSize; i++) {
         partialHash = hash(point,i);
-        res |= partialHash << i*4;
+        res |= partialHash << i*numPartialHashBits;
     }
+
     return res;
-   //return atoi(obj->getId().c_str())%5000;
 }

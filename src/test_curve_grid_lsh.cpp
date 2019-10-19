@@ -111,7 +111,7 @@ void test_NumBuckets() {
     lsh->setNumOfHashTables(5);
     auto dataset = lsh->getDataset();
     //cout << dataset->getMax() << " " <<  dataset->getMin() << endl;
-    lsh->setHashTableStruct(new CurveHashTableStruct(lsh->getNumOfHashTables(), dataset->getSize(),lsh->getNumOfFunctions(),dataset->getDimension(),dataset->getMin(),dataset->getMax(),20));
+    lsh->setHashTableStruct(new CurveHashTableStruct(lsh->getNumOfHashTables(), dataset->getSize(),lsh->getNumOfFunctions(),dataset->getDimension(),dataset->getMin(),dataset->getMax(),4000));
     auto curves = dataset->getData();
     for (auto & curve : curves)
         lsh->getHashTableStruct()->addToAllHashTables(curve);
@@ -121,7 +121,6 @@ void test_NumBuckets() {
    for (int i = 0; i < numTables; i++)
       sum += tables[i].bucket_count();
    cout << " bucket count in all tables: " << sum << endl;
-
 }
 
 void test_File(string inputFilename,string queryFilename) {

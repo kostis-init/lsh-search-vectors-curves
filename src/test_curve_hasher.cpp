@@ -112,7 +112,6 @@ vector<Curve*> generateDataset(int numCurves,int curveLen,int lower,int upper) {
 
 void runHasher(int numCurves,int curveLen,int minCurveLen,int window,vector<Curve*> curveVec,int *bucketRes,int *vectoriseRes) {
     size_t bucket;
-    PointHasher::gridPool = nullptr;
     auto chasher = new CurveHasher(2,4,curveLen,curveLen,window);
     set<size_t> buckets;
     set<Point,point_compare> pointSet;
@@ -164,6 +163,8 @@ void test_Hash() {
    CU_ASSERT(bucketRes < numCurves/100);
    //create further test similar with test1
    //test 2...
+   //conclusion: when t < 0.2, we have more than 2 unique points after 
+   //vectorize
    auto lsh = new LSH(new DTW());
    lsh->setInputFilename("../src/testdata/trajectories_input");
    lsh->setData(parseInputFileCurves(lsh->getInputFilename()));
@@ -171,8 +172,6 @@ void test_Hash() {
    lsh->setNumOfHashTables(5);
    int bucketRes2, vectoriseRes2;
    auto dataset = lsh->getDataset();
-   //vector<Curve *> curves (dataset->getData().begin(),dataset->getData().end());
-    PointHasher::gridPool = nullptr;
     auto chasher = new CurveHasher(dataset->getDimension(),lsh->getNumOfFunctions(),dataset->getMin(),dataset->getMax(),4000);
     set<size_t> buckets;
     set<Point,point_compare> pointSet;
@@ -183,6 +182,11 @@ void test_Hash() {
         pointSet.insert(*point);
         bucket = (*chasher)(curve);
         buckets.insert(bucket);
+    }
+    for (auto point : pointSet) {
+        cout << "point in set:" << endl;
+        for (auto c : point.getCoordinates())
+            cout << c << "," << endl;
     }
    printf("results: points = %d, buckets = %d\n",pointSet.size(),buckets.size());
 }

@@ -19,7 +19,10 @@ private:
     vector<Object *> * vertices;
 public:
 
-    Cube(){lsh = new LSH();}
+    Cube(DistanceMetric * dmetric){
+        lsh = new LSH(dmetric);
+        lsh->setNumOfFunctions(4);
+    }
     ~Cube(){delete lsh;}
 
     bool isDimensionGiven() const {return dimension_given;}
