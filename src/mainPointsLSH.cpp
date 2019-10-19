@@ -57,7 +57,7 @@ int main(int argc, char* argv[]){
     /**
      * search
      */
-    //search_LSH_vs_BruteForce(lsh);
+    search_LSH_vs_BruteForce(lsh);
     DoQueries(lsh);
     //ask user if he wants another one
 

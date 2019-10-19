@@ -13,12 +13,13 @@ void search_Cube_vs_BruteForce(Cube* cube){
         cout << "Query: " << queryObject->getId() << endl;
         Object* nearestNeighbor = nullptr;
         double distance;
+        vector<Object*> radiusNeighbors;
 
         //Cube
         cout << "Cube" << endl;
 
         clock_t begin = clock();
-        search_Cube(&nearestNeighbor, &distance, queryObject, cube);
+        search_Cube(&nearestNeighbor, &distance, queryObject, cube, radiusNeighbors, queryRadius);
         clock_t end = clock();
 
         if(nearestNeighbor == nullptr){
@@ -29,9 +30,6 @@ void search_Cube_vs_BruteForce(Cube* cube){
             cout << "time Cube: " << end - begin << endl;
         }
 
-        //Radius Neighbors (Bonus)
-        //TODO
-
         //Brute Force
         cout << "Brute Force" << endl;
 
@@ -39,17 +37,19 @@ void search_Cube_vs_BruteForce(Cube* cube){
         search_BruteForce(&nearestNeighbor, &distance, cube->getLsh()->getDataset()->getData(), queryObject, cube->getLsh()->getMetric());
         end = clock();
 
-        if(nearestNeighbor == nullptr){
-            cout << "Nearest neighbor: Not Found" << endl;
-        } else {
-            cout << "Nearest neighbor Brute Force: " << nearestNeighbor->getId() << endl;
-            cout << "distance Brute Force: " << distance << endl;
-            cout << "time Brute Force: " << end - begin << endl << endl << endl;
+        cout << "Nearest neighbor Brute Force: " << nearestNeighbor->getId() << endl;
+        cout << "distance Brute Force: " << distance << endl;
+        cout << "time Brute Force: " << end - begin << endl;
+        cout << "R-near neighbors:" << endl;
+        for(auto n : radiusNeighbors){
+            cout << n->getId() << endl;
         }
+        cout << endl << endl;
+
     }
 }
 
-void search_Cube(Object **nearestNeighbor, double *distance, Object* queryObject, Cube* cube) {
+void search_Cube(Object **nearestNeighbor, double *distance, Object* queryObject, Cube* cube, vector<Object*>& radiusNeighbors, double radius) {
     random_device randomDevice;
     mt19937 mt(randomDevice());
     uniform_int_distribution<unsigned int> dist(0,1);
@@ -87,8 +87,10 @@ void search_Cube(Object **nearestNeighbor, double *distance, Object* queryObject
     // and then go to vertices of hamming distance 1 (or 2, if 1 is exhausted)
     while(limit > 0 && probes >= 0){
         for(auto candidate : vertices[probe_index]){
-            double cur_dist;
-            if((cur_dist = metric->dist(queryObject, candidate)) < *distance){
+            double cur_dist = metric->dist(queryObject, candidate);
+            if(cur_dist <= radius)
+                radiusNeighbors.push_back(candidate);
+            if(cur_dist < *distance){
                 *distance = cur_dist;
                 *nearestNeighbor = candidate;
             }
@@ -121,12 +123,13 @@ void search_LSH_vs_BruteForce(LSH* lsh) {
         cout << "Query: " << queryObject->getId() << endl;
         Object* nearestNeighbor = nullptr;
         double distance;
+        vector<Object *> radiusNeighbors;
 
         //LSH
         cout << "LSH" << endl;
 
         clock_t begin = clock();
-        search_LSH(&nearestNeighbor, &distance, queryObject, lsh);
+        search_LSH(&nearestNeighbor, &distance, queryObject, lsh, radiusNeighbors, queryRadius);
         clock_t end = clock();
 
         if(nearestNeighbor == nullptr){
@@ -144,13 +147,14 @@ void search_LSH_vs_BruteForce(LSH* lsh) {
         search_BruteForce(&nearestNeighbor, &distance, lsh->getDataset()->getData(), queryObject, lsh->getMetric());
         end = clock();
 
-        if(nearestNeighbor == nullptr){
-            cout << "Nearest neighbor: Not Found" << endl;
-        } else {
-            cout << "Nearest neighbor Brute Force: " << nearestNeighbor->getId() << endl;
-            cout << "distance Brute Force: " << distance << endl;
-            cout << "time Brute Force: " << end - begin << endl << endl << endl;
+        cout << "Nearest neighbor Brute Force: " << nearestNeighbor->getId() << endl;
+        cout << "distance Brute Force: " << distance << endl;
+        cout << "time Brute Force: " << end - begin << endl;
+        cout << "R-near neighbors:" << endl;
+        for(auto n : radiusNeighbors){
+            cout << n->getId() << endl;
         }
+        cout << endl << endl;
     }
 }
 
@@ -167,7 +171,7 @@ void search_BruteForce(Object **nnObj, double *distance, const vector<Object *>&
     }
 }
 
-void search_LSH(Object **nearestNeighbor, double *distance, Object *queryObject, LSH* lsh) {
+void search_LSH(Object **nearestNeighbor, double *distance, Object *queryObject, LSH* lsh, vector<Object*>& radiusNeighbors, double radius) {
     *nearestNeighbor = nullptr;
     *distance = numeric_limits<double>::max();
     bool found = false;
@@ -185,8 +189,10 @@ void search_LSH(Object **nearestNeighbor, double *distance, Object *queryObject,
         for(auto candidate : points){
             if (thresholdCount > threshold)
                 break;
-            double cur_dist;
-            if((cur_dist = lsh->getMetric()->dist(queryObject, candidate)) < *distance){
+            double cur_dist = lsh->getMetric()->dist(queryObject, candidate);
+            if(cur_dist <= radius)
+                radiusNeighbors.push_back(candidate);
+            if(cur_dist < *distance){
                 found = true;
                 *distance = cur_dist;
                 *nearestNeighbor = candidate;
@@ -203,6 +209,7 @@ void search_LSH(Object **nearestNeighbor, double *distance, Object *queryObject,
 void DoQueries(LSH *lsh) {
     int querySize = lsh->getQueryData()->getSize();
     auto queryData = lsh->getQueryData()->getData();
+    double queryRadius = lsh->getQueryData()->getRadius();
 
     clock_t meanSearchLSH = 0;
     clock_t meanSearchBF = 0;
@@ -213,10 +220,11 @@ void DoQueries(LSH *lsh) {
     for (int i = 0; i < querySize; ++i) {
         Object* queryPoint = (Point*)queryData.at(i);
         Object* nnPoint;
+        vector<Object*> radiusNeighbors;
         double distanceLSH;
         double distanceBF;
         clock_t begin = clock();
-        search_LSH(&nnPoint, &distanceLSH, queryPoint, lsh);
+        search_LSH(&nnPoint, &distanceLSH, queryPoint, lsh, radiusNeighbors, queryRadius);
         clock_t end = clock();
         meanSearchLSH += (end-begin);
         begin = clock();
@@ -226,10 +234,46 @@ void DoQueries(LSH *lsh) {
         double AF;
         if ((AF = distanceLSH/distanceBF) > maxAF) 
             maxAF = AF;
-        if (distanceLSH) {//compute only if > 0
+        if (distanceLSH > 0) {//compute only if > 0
             averageAF += distanceLSH/distanceBF;
             averageAFCount++;
         }
     }
     cout << "meanTimeSearchLSH " << meanSearchLSH/querySize << " meanTimeSearchBF " << meanSearchBF/querySize << " and maxAF = " << maxAF << " and averageAF " << averageAF/averageAFCount << endl;
+}
+
+void DoQueries(Cube *cube) {
+    int querySize = cube->getLsh()->getQueryData()->getSize();
+    auto queryData = cube->getLsh()->getQueryData()->getData();
+    double queryRadius = cube->getLsh()->getQueryData()->getRadius();
+
+    clock_t meanSearchCube = 0;
+    clock_t meanSearchBF = 0;
+    double maxAF = numeric_limits<double>::min();
+    double averageAF = 0;
+    int averageAFCount = 0;
+
+    for (int i = 0; i < querySize; ++i) {
+        Object* queryPoint = (Point*)queryData.at(i);
+        Object* nnPoint;
+        vector<Object*> radiusNeighbors;
+        double distanceCube;
+        double distanceBF;
+        clock_t begin = clock();
+        search_Cube(&nnPoint, &distanceCube, queryPoint, cube, radiusNeighbors, queryRadius);
+        clock_t end = clock();
+        meanSearchCube += (end-begin);
+        begin = clock();
+        search_BruteForce(&nnPoint, &distanceBF, cube->getLsh()->getDataset()->getData(), queryPoint, cube->getLsh()->getMetric());
+        end = clock();
+        meanSearchBF += (end-begin);
+        double AF;
+        if ((AF = distanceCube / distanceBF) > maxAF)
+            maxAF = AF;
+        if (distanceCube > 0) {//compute only if > 0
+            averageAF += distanceCube / distanceBF;
+            averageAFCount++;
+        }
+    }
+    cout << "meanTimeSearchCube " << meanSearchCube/querySize << " meanTimeSearchBF " << meanSearchBF/querySize << " and maxAF = " << maxAF << " and averageAF " << averageAF/averageAFCount << endl;
 }
