@@ -16,7 +16,7 @@ int main(int argc, char* argv[]){
     /**
      * read arguments
      */
-    readArgumentsCube(cube, argc, argv);
+    readArgumentsCubePoints(cube, argc, argv);
     /**
      * ask files (if not given as arguments)
      */
