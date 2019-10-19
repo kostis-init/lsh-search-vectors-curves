@@ -217,6 +217,7 @@ void DoQueries(LSH *lsh) {
     double maxAF = numeric_limits<double>::min();
     double averageAF = 0;
     int averageAFCount = 0;
+    int notFound = 0;
 
     for (int i = 0; i < querySize; ++i) {
         Object* queryPoint = (Point*)queryData.at(i);
@@ -238,9 +239,10 @@ void DoQueries(LSH *lsh) {
         if (distanceLSH > 0) {//compute only if > 0
             averageAF += distanceLSH/distanceBF;
             averageAFCount++;
-        }
+        } else
+            notFound++;
     }
-    cout << "meanTimeSearchLSH " << meanSearchLSH/querySize << " meanTimeSearchBF " << meanSearchBF/querySize << " and maxAF = " << maxAF << " and averageAF " << averageAF/averageAFCount << endl;
+    cout << "meanTimeSearchLSH " << meanSearchLSH/querySize << " meanTimeSearchBF " << meanSearchBF/querySize << " and maxAF = " << maxAF << " and averageAF " << averageAF/averageAFCount << "and not found: " << notFound << endl;
 }
 
 void DoQueries(Cube *cube) {
