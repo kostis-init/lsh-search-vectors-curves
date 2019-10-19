@@ -7,6 +7,7 @@
 #include "LSH.h"
 #include "Point.h"
 #include "Curve.h"
+#include "parse_files.h"
 
 
 static FILE* omg = NULL;
@@ -95,32 +96,32 @@ void test_Vectorize() {
    CU_ASSERT(point->getCoordinates().size() == 6);
 }
 
-vector<Curve> generateDataset(int numCurves,int curveLen,int lower,int upper) {
+vector<Curve*> generateDataset(int numCurves,int curveLen,int lower,int upper) {
     vector<Point> *pointVec;
     pointVec = new vector<Point>[numCurves];
-    vector<Curve> curveVec;
+    vector<Curve*> curveVec;
     uniform_real_distribution<double> dist(lower,upper);
     default_random_engine re;
     for (int i=0; i < numCurves; i++) {
         for (int j=0; j < curveLen; j++) 
             pointVec[i].push_back(*(new Point(vector<double> {dist(re),dist(re)})));
-        curveVec.push_back(*(new Curve(pointVec[i])));
+        curveVec.push_back((new Curve(pointVec[i])));
     }
     return curveVec;
 }
 
-void runHasher(int numCurves,int curveLen,int window,vector<Curve> curveVec,int *bucketRes,int *vectoriseRes) {
+void runHasher(int numCurves,int curveLen,int minCurveLen,int window,vector<Curve*> curveVec,int *bucketRes,int *vectoriseRes) {
     size_t bucket;
     PointHasher::gridPool = nullptr;
-    auto chasher = new CurveHasher(2,1,curveLen,curveLen,window);
+    auto chasher = new CurveHasher(2,4,curveLen,curveLen,window);
     set<size_t> buckets;
     set<Point,point_compare> pointSet;
     Point *prev = nullptr;
     Point *curr = nullptr;
     for (int i=0; i < numCurves; i++) {
-        auto point = chasher->vectorize(chasher->snap(&curveVec.at(i)));
+        auto point = chasher->vectorize(chasher->snap(curveVec.at(i)));
         pointSet.insert(*point);
-        bucket = (*chasher)(&curveVec.at(i));
+        bucket = (*chasher)(curveVec.at(i));
         buckets.insert(bucket);
     }
     *bucketRes = buckets.size();
@@ -130,12 +131,12 @@ void runHasher(int numCurves,int curveLen,int window,vector<Curve> curveVec,int 
 void test_Hash() {
    //test two curves that should lie on the same bucket.
    vector<Point> _pointVec;
-   _pointVec.push_back(*(new Point(vector<double> (10.4324,100.4328))));
-   _pointVec.push_back(*(new Point(vector<double> (49.89,22.489))));
+   _pointVec.push_back(*(new Point(vector<double> {10.4324,100.4328})));
+   _pointVec.push_back(*(new Point(vector<double> {49.89,22.489})));
    auto curve = new Curve(_pointVec);
    vector<Point> _pointVec2;
-   _pointVec2.push_back(*(new Point(vector<double> (11.4324,98.2391))));
-   _pointVec2.push_back(*(new Point(vector<double> (48.777,20.777))));
+   _pointVec2.push_back(*(new Point(vector<double> {11.4324,98.2391})));
+   _pointVec2.push_back(*(new Point(vector<double> {48.777,20.777})));
    auto curve2 = new Curve(_pointVec2);
    //delta = 4 * 2 * 2 = 16
    auto _chasher = new CurveHasher(2,1,2,2,20);
@@ -154,18 +155,58 @@ void test_Hash() {
    auto curveLen = 10;
    auto delta = 4 * 2* curveLen;
    auto lower = 0.0;
-   auto upper = 50.0;
+   auto upper = 100.0;
    auto numCurves = 10000;
    auto curveVec = generateDataset(numCurves,curveLen,lower,upper);
    int bucketRes, vectoriseRes;
-   //delta * 10 + delta is (probably) a good formula.
-   runHasher(numCurves,curveLen,4000,curveVec,&bucketRes,&vectoriseRes);
+   runHasher(numCurves,curveLen,curveLen,4000,curveVec,&bucketRes,&vectoriseRes);
    printf("results: points = %d, buckets = %d\n",vectoriseRes,bucketRes);
    CU_ASSERT(bucketRes < numCurves/100);
    //create further test similar with test1
    //test 2...
+   auto lsh = new LSH(new DTW());
+   lsh->setInputFilename("../src/testdata/trajectories_input");
+   lsh->setData(parseInputFileCurves(lsh->getInputFilename()));
+   lsh->setNumOfFunctions(4);
+   lsh->setNumOfHashTables(5);
+   int bucketRes2, vectoriseRes2;
+   auto dataset = lsh->getDataset();
+   //vector<Curve *> curves (dataset->getData().begin(),dataset->getData().end());
+    PointHasher::gridPool = nullptr;
+    auto chasher = new CurveHasher(dataset->getDimension(),lsh->getNumOfFunctions(),dataset->getMin(),dataset->getMax(),4000);
+    set<size_t> buckets;
+    set<Point,point_compare> pointSet;
+    for (auto c : dataset->getData()) {
+        auto curve = dynamic_cast<Curve *>(c);
+        chasher->pad(curve);
+        auto point = chasher->vectorize(chasher->snap(curve));
+        pointSet.insert(*point);
+        bucket = (*chasher)(curve);
+        buckets.insert(bucket);
+    }
+   printf("results: points = %d, buckets = %d\n",pointSet.size(),buckets.size());
 }
 
+void test_Padding() {
+   auto curveLen = 10;
+   auto lower = 0.0;
+   auto upper = 100.0;
+   auto numCurves = 50;
+   //generate curves with len 10.
+   auto curveVec = generateDataset(numCurves,curveLen,lower,upper);
+   //add one curve with len 2 - we expect padding.
+   vector<Point> _pointVec;
+   _pointVec.push_back(*(new Point(vector<double> {10.4324,100.4328})));
+   _pointVec.push_back(*(new Point(vector<double> {49.89,22.489})));
+   auto curve = new Curve(_pointVec);
+   curveVec.push_back(curve);
+   //we care only for max
+   auto chasher = new CurveHasher(2,1,0,10,0);
+   for (auto c : curveVec) {
+       chasher->pad(c);
+       CU_ASSERT(c->getPoints().size() == curveLen);
+   }
+}
 
 int init_suite1(void)
 {
@@ -200,6 +241,7 @@ int main(int argc,char *argv[]) {
    if ((NULL == CU_add_test(pSuite, "test of CurveHasher constructor", test_CurveHasher))||
        (NULL == CU_add_test(pSuite, "test of round Coordinate", test_snap)) || 
        (NULL == CU_add_test(pSuite,"test_Vectorize",test_Vectorize)) ||
+       (NULL == CU_add_test(pSuite,"test_Padding",test_Padding)) ||
        (NULL == CU_add_test(pSuite,"test_Hash",test_Hash)))
       {
       CU_cleanup_registry();

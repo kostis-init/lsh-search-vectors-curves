@@ -189,7 +189,7 @@ void search_LSH(Object **nnPoint, double *distance, int numOfHashTables, vector<
     *nnPoint = nullptr;
     *distance = numeric_limits<double>::max();
     bool found = false;
-    int threshold = 50 * numOfHashTables;
+    int threshold = 20 * numOfHashTables;
     int thresholdCount = 0;
     for (int j = 0; j < numOfHashTables; ++j) {
         size_t hash = (*hashers.at(j))(queryPoint);

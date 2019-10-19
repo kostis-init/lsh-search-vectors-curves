@@ -10,30 +10,13 @@
 
 
 
-/*CurveHasher::CurveHasher() {
-    numDimension = lsh->getDataset()->getDimension();
-    int min = int(lsh->getDataset()->getMin());
-    this->max = int(lsh->getDataset()->getMax());
-    gridSize = 4 * numDimension * min;
-    //TODO:set window properly
-    phasher = new PointHasher(lsh->getNumOfFunctions(),max,1000);
-    random_device r;
-    //do we need another engine?
-    default_random_engine e1(r());
-    uniform_real_distribution<double> uniform_dist(0,numDimension);
-    shiftedGrid = (double *)malloc(numDimension * sizeof(double));
-    for (int i = 0; i < numDimension;i++) {
-        shiftedGrid[i] = uniform_dist(e1);
-    }
-}*/
-
 //assume ai = 1 i =1,2,..d (from slides)
 CurveHasher::CurveHasher(int numDimension,int ampSize,int min,int max,int pointHasherWindow) {
     this->numDimension = numDimension;
     this->max = max;
     gridSize = 4 * numDimension * min;
     //TODO:set variables properly
-    phasher = new PointHasher(ampSize,max,pointHasherWindow);
+    phasher = new PointHasher(ampSize,max*numDimension,pointHasherWindow);
     random_device r;
     //do we need another engine?
     default_random_engine e1(r());
@@ -51,10 +34,21 @@ CurveHasher::~CurveHasher() {
 
 size_t CurveHasher::operator() (Object *obj) const {
     Curve *curve = dynamic_cast<Curve *>(obj);
+    pad(curve);
     auto point = vectorize(snap(curve));
     auto bucket =  (*phasher)(point);
     free(point);
     return bucket;
+}
+
+//TODO: pad more efficiently without using a temp vector (pointVec)
+void CurveHasher::pad(Curve *curve) {
+    vector<Point> pointVec (curve->getPoints());
+    auto sz = pointVec.size();
+    for (int i=0; i < max-sz; i++)
+        pointVec.push_back((*new Point(vector<double> (numDimension,0))));
+    sz = pointVec.size();
+    curve->setPoints(pointVec);
 }
 
 //transform grid curve (snapedCurve) to a vector which is 
@@ -64,22 +58,10 @@ Point *CurveHasher::vectorize(double **snapedCurve) {
     double sumCoordinates = 0;
     int coefficient = 10;
     for (int i =0; i<max; i++) {
-        if (i != 0 && isConsecutiveDuplitacate(snapedCurve,i))
+        if (i != 0 && isConsecutiveDuplicate(snapedCurve,i))
             continue;
-        for (int j =0; j < numDimension; j++) {
-                //no fuss if overflows. Actually, we care only if 
-                //we have two neighbours and one overflows e.g -1
-                //and the other not e.g DBL_MAX. Then, despite they are 
-                //neighbours, they will not be in the same bucket 
-                //but this case is rare.
-                //Moreover, we put some weight coefficient ^ j for every
-                //coordinate. The spec doesn't mention this, but imo it 
-                //is a good decision with the con that we increase propability
-                //for overflow.
-                sumCoordinates+= pow(coefficient,j) * snapedCurve[i][j]; 
-            }
-        vec.push_back(sumCoordinates);
-        sumCoordinates = 0;
+        for (int j =0; j < numDimension; j++) 
+            vec.push_back(snapedCurve[i][j]);
     }
     //free memory allocated in snap.
     for (int i =0; i < max; i++) 
@@ -88,7 +70,7 @@ Point *CurveHasher::vectorize(double **snapedCurve) {
     return new Point(vec);
 }
 
-int CurveHasher::isConsecutiveDuplitacate(double **snapedCurve,int i) {
+int CurveHasher::isConsecutiveDuplicate(double **snapedCurve,int i) {
     for (int j =0; j < numDimension; j++) {
         if (snapedCurve[i][j] != snapedCurve[i-1][j])
             return 0;
@@ -126,15 +108,3 @@ double CurveHasher::snap(double coordinate,int i) {
     }
     return shiftDown;
 }
-
-/*//not tested.
-//round coordinate i of point(obj) to the nearest multiple
-//of gridSize (starting from shiftedGrid[i]) and return the nearest multiple.
-double CurveHasher::roundCoordinateV2(Point *point,int i) {
-    double _gridSize = double(gridSize);
-    auto remainder = abs(fmod(point->getCoordinate(i),_gridSize) - shiftedGrid[i]);
-    auto minDist =  remainder < _gridSize/2.0 ? remainder : _gridSize - remainder;
-    auto roundUp = minDist + point->getCoordinate(i);
-    auto roundDown = minDist - point->getCoordinate(i);
-    return fmod(roundUp,_gridSize) == 0.0 ? roundUp : roundDown;
-}*/

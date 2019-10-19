@@ -54,10 +54,11 @@ class CurveHasher : public Hasher {
         int max;
         PointHasher *phasher;
         Point *vectorize(double **snapedCurve);
-        int isConsecutiveDuplitacate(double **snapedCurve,int i);
+        int isConsecutiveDuplicate(double **snapedCurve,int i);
         double *snap(Point *point);
         double **snap(Curve *curve);
         double snap(double coordinate,int i);
+        void CurveHasher::pad(Curve *curve);
         //double roundCoordinateV2(Point *point,int i);
     public: 
         CurveHasher();
