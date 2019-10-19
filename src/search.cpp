@@ -2,6 +2,7 @@
 #include "distance.h"
 #include <limits>
 #include <bitset>
+#include <set>
 
 void search_Cube_vs_BruteForce(Cube* cube){
     int querySize = cube->getLsh()->getQueryData()->getSize();
@@ -13,7 +14,7 @@ void search_Cube_vs_BruteForce(Cube* cube){
         cout << "Query: " << queryObject->getId() << endl;
         Object* nearestNeighbor = nullptr;
         double distance;
-        vector<Object*> radiusNeighbors;
+        set<Object*> radiusNeighbors;
 
         //Cube
         cout << "Cube" << endl;
@@ -49,7 +50,7 @@ void search_Cube_vs_BruteForce(Cube* cube){
     }
 }
 
-void search_Cube(Object **nearestNeighbor, double *distance, Object* queryObject, Cube* cube, vector<Object*>& radiusNeighbors, double radius) {
+void search_Cube(Object **nearestNeighbor, double *distance, Object* queryObject, Cube* cube, set<Object*>& radiusNeighbors, double radius) {
     random_device randomDevice;
     mt19937 mt(randomDevice());
     uniform_int_distribution<unsigned int> dist(0,1);
@@ -89,7 +90,7 @@ void search_Cube(Object **nearestNeighbor, double *distance, Object* queryObject
         for(auto candidate : vertices[probe_index]){
             double cur_dist = metric->dist(queryObject, candidate);
             if(cur_dist <= radius)
-                radiusNeighbors.push_back(candidate);
+                radiusNeighbors.insert(candidate);
             if(cur_dist < *distance){
                 *distance = cur_dist;
                 *nearestNeighbor = candidate;
@@ -123,7 +124,7 @@ void search_LSH_vs_BruteForce(LSH* lsh) {
         cout << "Query: " << queryObject->getId() << endl;
         Object* nearestNeighbor = nullptr;
         double distance;
-        vector<Object *> radiusNeighbors;
+        set<Object *> radiusNeighbors;
 
         //LSH
         cout << "LSH" << endl;
@@ -171,7 +172,7 @@ void search_BruteForce(Object **nnObj, double *distance, const vector<Object *>&
     }
 }
 
-void search_LSH(Object **nearestNeighbor, double *distance, Object *queryObject, LSH* lsh, vector<Object*>& radiusNeighbors, double radius) {
+void search_LSH(Object **nearestNeighbor, double *distance, Object *queryObject, LSH* lsh, set<Object*>& radiusNeighbors, double radius) {
     *nearestNeighbor = nullptr;
     *distance = numeric_limits<double>::max();
     bool found = false;
@@ -191,7 +192,7 @@ void search_LSH(Object **nearestNeighbor, double *distance, Object *queryObject,
                 break;
             double cur_dist = lsh->getMetric()->dist(queryObject, candidate);
             if(cur_dist <= radius)
-                radiusNeighbors.push_back(candidate);
+                radiusNeighbors.insert(candidate);
             if(cur_dist < *distance){
                 found = true;
                 *distance = cur_dist;
@@ -220,7 +221,7 @@ void DoQueries(LSH *lsh) {
     for (int i = 0; i < querySize; ++i) {
         Object* queryPoint = (Point*)queryData.at(i);
         Object* nnPoint;
-        vector<Object*> radiusNeighbors;
+        set<Object*> radiusNeighbors;
         double distanceLSH;
         double distanceBF;
         clock_t begin = clock();
@@ -256,7 +257,7 @@ void DoQueries(Cube *cube) {
     for (int i = 0; i < querySize; ++i) {
         Object* queryPoint = (Point*)queryData.at(i);
         Object* nnPoint;
-        vector<Object*> radiusNeighbors;
+        set<Object*> radiusNeighbors;
         double distanceCube;
         double distanceBF;
         clock_t begin = clock();
