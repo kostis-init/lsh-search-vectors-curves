@@ -195,11 +195,11 @@ QueryDataset* parseQueryFilePoints(string filename){
 //types - avoid duplication.
 QueryDataset* parseQueryFileCurves(string filename) {
     if(!file_exists(filename.c_str())){
-        cout << "input file does not exist" << endl;
+        cout << "query file does not exist" << endl;
         exit(-1);
     };
     auto data = new QueryDataset();
-    cout << "Parsing input file: " << filename << ", please wait..." << endl;
+    cout << "Parsing query file: " << filename << ", please wait..." << endl;
     ifstream inputFile(filename.c_str());
     string line;
     int size = 0;

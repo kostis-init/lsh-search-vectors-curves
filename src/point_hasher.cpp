@@ -1,16 +1,9 @@
-#include <stdlib.h>
 #include <random>
-#include <iostream>
 #include <vector>
-#include  <stdio.h>
 #include  <string.h>
-#include <bitset>
 #include "hasher.h"
-//#include "Object.h"
 #include "Point.h"
 #include "utils.h"
-#include "Dataset.h"
-#include "LSH.h"
 
 using namespace std;
 
@@ -45,7 +38,7 @@ void PointHasher::generateGrids() {
     }
 }
 
-size_t PointHasher::hash(Point* point,int hashIndex) const {
+int PointHasher::hash(Point* point,int hashIndex) const {
     vector<double> coordinates = point->getCoordinates();
     int coefficient = 0xffffffff-5;
     int sum = 0,i = 0,j = numDimension - 1;
@@ -60,7 +53,7 @@ size_t PointHasher::hash(Point* point,int hashIndex) const {
     return modulo(sum, partialHashRange);
 }
 
-size_t PointHasher::operator()(Object *obj) const {
+int PointHasher::operator()(Object *obj) const {
     Point *point = dynamic_cast<Point *>(obj);
     int numPartialHashBits = 32/amplificationSize;
     int res = 0;
