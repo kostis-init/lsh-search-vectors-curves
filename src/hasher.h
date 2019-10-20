@@ -9,7 +9,7 @@
 
 class Hasher {
     public:
-        virtual size_t operator()(Object *obj) const {};
+        virtual int operator()(Object *obj) const {};
 };
 
 //Create an instance per LSHHashtable.
@@ -31,9 +31,9 @@ class PointHasher : public Hasher {
         PointHasher(int,int,int);
         ~PointHasher();
         //compute the ith hash of Object obj
-        size_t hash(Point *point,int i) const;
+        int hash(Point *point,int i) const;
         //compute the concatenation of all hash functions i=0,1,..amplificationSize
-        size_t operator() (Object* obj) const;
+        int operator() (Object* obj) const;
 };
 
 class CurveHasher : public Hasher {
@@ -58,7 +58,7 @@ class CurveHasher : public Hasher {
         CurveHasher();
         CurveHasher(int,int,double,int,int);
         ~CurveHasher();
-        size_t operator() (Object *obj) const;
+        int operator() (Object *obj) const;
 };
 
 

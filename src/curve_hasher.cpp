@@ -32,7 +32,7 @@ CurveHasher::~CurveHasher() {
     free(phasher);
 }
 
-size_t CurveHasher::operator() (Object *obj) const {
+int CurveHasher::operator() (Object *obj) const {
     Curve *curve = dynamic_cast<Curve *>(obj);
     pad(curve);
     auto point = vectorize(snap(curve));
