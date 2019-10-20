@@ -219,7 +219,7 @@ void DoQueries(LSH *lsh) {
     int averageAFCount = 0;
     int notFound = 0;
 
-    for (int i = 0; i < 5; ++i) {
+    for (int i = 0; i < querySize; ++i) {
         Object* queryPoint = (Point*)queryData.at(i);
         Object* nnPoint;
         set<Object*> radiusNeighbors;
