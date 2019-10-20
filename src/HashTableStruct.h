@@ -41,6 +41,6 @@ class PointHashTableStruct : public HashTableStruct {
 
 class CurveHashTableStruct : public HashTableStruct {
     public:
-        CurveHashTableStruct(int numOfHTs,size_t sz,int ampSize,int numDimension,int min,int max,int pointHasherWindow);
+        CurveHashTableStruct(int numOfHTs,size_t sz,int ampSize,int numDimension,double min,int max,int pointHasherWindow);
 };
 #endif //ALGORITHMS_PROJECT_HASHTABLESTRUCT_H

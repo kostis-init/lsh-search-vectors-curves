@@ -166,13 +166,13 @@ void test_Hash() {
    //conclusion: when t < 0.2, we have more than 2 unique points after 
    //vectorize
    auto lsh = new LSH(new DTW());
-   lsh->setInputFilename("../src/testdata/trajectories_input");
+   lsh->setInputFilename("../src/testdata/trajectories_input_small");
    lsh->setData(parseInputFileCurves(lsh->getInputFilename()));
    lsh->setNumOfFunctions(4);
    lsh->setNumOfHashTables(5);
    int bucketRes2, vectoriseRes2;
    auto dataset = lsh->getDataset();
-    auto chasher = new CurveHasher(dataset->getDimension(),lsh->getNumOfFunctions(),0.02,dataset->getMax(),4000);
+    auto chasher = new CurveHasher(dataset->getDimension(),lsh->getNumOfFunctions(),0.002,dataset->getMax(),1);
     set<size_t> buckets;
     set<Point,point_compare> pointSet;
     for (auto c : dataset->getData()) {
@@ -182,11 +182,6 @@ void test_Hash() {
         pointSet.insert(*point);
         bucket = (*chasher)(curve);
         buckets.insert(bucket);
-    }
-    for (auto point : pointSet) {
-        cout << "point in set:" << endl;
-        for (auto c : point.getCoordinates())
-            cout << c << "," << endl;
     }
    printf("results: points = %d, buckets = %d\n",pointSet.size(),buckets.size());
 }
