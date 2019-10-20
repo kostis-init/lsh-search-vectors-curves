@@ -17,6 +17,12 @@ void test_DTW() {
    auto curv2 = new Curve(pointVec2);
    auto dmetric = new DTW();
    CU_ASSERT(dmetric->dist(curv2,curv1) > 8 && dmetric->dist(curv2,curv1) < 9);
+   vector<Point> pointVec3 {(*new Point(vector<double> {-5.42398,63.432432})),(*new Point(vector<double> {-5.43242,63.64324})),(*new Point(vector<double> {-5.55577,63.5678}))};
+   vector<Point> pointVec4 {(*new Point(vector<double> {-5.14324,63.23132})),(*new Point(vector<double> {-5.778832,63.69978}))};
+   auto curv3 = new Curve(pointVec3);
+   auto curv4 = new Curve(pointVec4);
+   dmetric = new DTW();
+   cout << " dist is " << dmetric->dist(curv3,curv4) << endl;
 }
 
 void test_ReadArgsCurves() {
@@ -94,7 +100,9 @@ LSH *LoadInputLSHCurves(string inputFilename,string queryFilename) {
     lsh->setNumOfFunctions(4);
     lsh->setNumOfHashTables(5);
     auto dataset = lsh->getDataset();
-    lsh->setHashTableStruct(new CurveHashTableStruct(lsh->getNumOfHashTables(), dataset->getSize(),lsh->getNumOfFunctions(),dataset->getDimension(),dataset->getMin(),dataset->getMax(),4000));
+
+    //TODO:set min appropirately - 
+    lsh->setHashTableStruct(new CurveHashTableStruct(lsh->getNumOfHashTables(), dataset->getSize(),lsh->getNumOfFunctions(),dataset->getDimension(),0.5,dataset->getMax(),4000));
     auto curves = dataset->getData();
     for (auto & curve : curves)
         lsh->getHashTableStruct()->addToAllHashTables(curve);
