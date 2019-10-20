@@ -241,6 +241,7 @@ void DoQueries(LSH *lsh) {
             averageAFCount++;
         } else
             notFound++;
+        cout << " i : " << i << " AF " << AF << endl;
     }
     cout << "meanTimeSearchLSH " << meanSearchLSH/querySize << " meanTimeSearchBF " << meanSearchBF/querySize << " and maxAF = " << maxAF << " and averageAF " << averageAF/averageAFCount << "and not found: " << notFound << endl;
 }
@@ -249,13 +250,11 @@ void DoQueries(Cube *cube) {
     int querySize = cube->getLsh()->getQueryData()->getSize();
     auto queryData = cube->getLsh()->getQueryData()->getData();
     double queryRadius = cube->getLsh()->getQueryData()->getRadius();
-
     clock_t meanSearchCube = 0;
     clock_t meanSearchBF = 0;
     double maxAF = numeric_limits<double>::min();
     double averageAF = 0;
     int averageAFCount = 0;
-
     for (int i = 0; i < querySize; ++i) {
         Object* queryPoint = (Point*)queryData.at(i);
         Object* nnPoint;
