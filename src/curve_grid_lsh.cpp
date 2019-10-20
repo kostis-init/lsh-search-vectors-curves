@@ -22,9 +22,9 @@ LSH *LoadInput(int argc, char* argv[]) {
         lsh->setOutputFilename(askOutputFile());
     lsh->setData(parseQueryFileCurves(lsh->getInputFilename()));
     cout << lsh->getDataset()->getMean() << endl;
-    //TODO:find formula for window
+    //TODO:find formula for window and min
     auto dataset = lsh->getDataset();
-    lsh->setHashTableStruct(new CurveHashTableStruct(lsh->getNumOfHashTables(),dataset->getSize(),lsh->getNumOfFunctions(),dataset->getDimension(),dataset->getMin(),dataset->getMax(),4000));
+    lsh->setHashTableStruct(new CurveHashTableStruct(lsh->getNumOfHashTables(),dataset->getSize(),lsh->getNumOfFunctions(),dataset->getDimension(),0.02,dataset->getMax(),4000));
     auto points = lsh->getDataset()->getData();
     for (auto & point : points)
         lsh->getHashTableStruct()->addToAllHashTables(point);

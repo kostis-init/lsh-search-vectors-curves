@@ -177,7 +177,7 @@ void search_LSH(Object **nearestNeighbor, double *distance, Object *queryObject,
     *distance = numeric_limits<double>::max();
     bool found = false;
     //int threshold = 50 * lsh->getNumOfHashTables();
-    int threshold = 150;
+    int threshold = 3 * lsh->getNumOfHashTables();
     int thresholdCount = 0;
     auto hashers = lsh->getHashTableStruct()->getHashers();
     auto hts = lsh->getHashTableStruct()->getAllHashTables();
@@ -219,7 +219,7 @@ void DoQueries(LSH *lsh) {
     int averageAFCount = 0;
     int notFound = 0;
 
-    for (int i = 0; i < querySize; ++i) {
+    for (int i = 0; i < 5; ++i) {
         Object* queryPoint = (Point*)queryData.at(i);
         Object* nnPoint;
         set<Object*> radiusNeighbors;

@@ -11,10 +11,10 @@
 
 
 //assume ai = 1 i =1,2,..d (from slides)
-CurveHasher::CurveHasher(int numDimension,int ampSize,int min,int max,int pointHasherWindow) {
+CurveHasher::CurveHasher(int numDimension,int ampSize,double min,int max,int pointHasherWindow) {
     this->numDimension = numDimension;
     this->max = max;
-    gridSize = 4 * numDimension * min;
+    gridSize = 4.0 * double(numDimension) * min;
     //TODO:set variables properly
     phasher = new PointHasher(ampSize,max*numDimension,pointHasherWindow);
     random_device r;
@@ -101,7 +101,7 @@ double CurveHasher::snap(double coordinate,int i) {
     double _gridSize = double(gridSize);
     double round =  coordinate + _gridSize/2.0;
     round -= fmod(round,_gridSize);
-    double shiftDown = round - (_gridSize - shiftedGrid[i]);
+    double shiftDown = round - fabs(_gridSize - shiftedGrid[i]);
     double shiftUp = round + shiftedGrid[i];
     if (fabs(coordinate - shiftUp) < fabs(coordinate - shiftDown)) {
         return shiftUp;

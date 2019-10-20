@@ -172,7 +172,7 @@ void test_Hash() {
    lsh->setNumOfHashTables(5);
    int bucketRes2, vectoriseRes2;
    auto dataset = lsh->getDataset();
-    auto chasher = new CurveHasher(dataset->getDimension(),lsh->getNumOfFunctions(),dataset->getMin(),dataset->getMax(),4000);
+    auto chasher = new CurveHasher(dataset->getDimension(),lsh->getNumOfFunctions(),0.02,dataset->getMax(),4000);
     set<size_t> buckets;
     set<Point,point_compare> pointSet;
     for (auto c : dataset->getData()) {

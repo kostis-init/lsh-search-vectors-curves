@@ -40,7 +40,7 @@ class CurveHasher : public Hasher {
     private:
         int numDimension;
         //delta in slides
-        int gridSize;
+        double gridSize;
         //vector t in slides
         double *shiftedGrid;
         //max length of curve (maybe all have the same length
@@ -52,13 +52,14 @@ class CurveHasher : public Hasher {
         double *snap(Point *point);
         double **snap(Curve *curve);
         double snap(double coordinate,int i);
-        void CurveHasher::pad(Curve *curve);
+        void pad(Curve *curve);
         //double roundCoordinateV2(Point *point,int i);
     public: 
         CurveHasher();
-        CurveHasher(int,int,int,int,int);
+        CurveHasher(int,int,double,int,int);
         ~CurveHasher();
         size_t operator() (Object *obj) const;
 };
+
 
 #endif
