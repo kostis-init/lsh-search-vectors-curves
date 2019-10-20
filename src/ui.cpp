@@ -5,6 +5,7 @@
 #include "Dataset.h"
 #include "LSH.h"
 #include "Cube.h"
+#include "ui.h"
 
 using namespace std;
 
@@ -86,6 +87,18 @@ void readArgumentsLSHCurves(LSH* lsh, int argc, char **argv) {
         lsh->setNumOfHashTables(stoi(parser->getCmdOption("-L_grid")));
     else 
         lsh->setNumOfHashTables(4);
+}
+
+void readArgumentsLSHProjectionCurves(Projection* projection, int argc, char **argv){
+    auto parser = new InputParser(argc,argv);
+//    if (parser->cmdOptionExists("-d"))
+//        lsh->setInputFilename(parser->getCmdOption("-d"));
+//    if (parser->cmdOptionExists("-q"))
+//        lsh->setQueryFilename(parser->getCmdOption("-q"));
+//    if (parser->cmdOptionExists("-o"))
+//        lsh->setOutputFilename(parser->getCmdOption("-o"));
+
+
 }
 
 string askInputFile(){
