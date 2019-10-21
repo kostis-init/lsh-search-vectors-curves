@@ -91,12 +91,14 @@ void readArgumentsLSHCurves(LSH* lsh, int argc, char **argv) {
 
 void readArgumentsLSHProjectionCurves(Projection* projection, int argc, char **argv){
     auto parser = new InputParser(argc,argv);
-//    if (parser->cmdOptionExists("-d"))
-//        lsh->setInputFilename(parser->getCmdOption("-d"));
-//    if (parser->cmdOptionExists("-q"))
-//        lsh->setQueryFilename(parser->getCmdOption("-q"));
-//    if (parser->cmdOptionExists("-o"))
-//        lsh->setOutputFilename(parser->getCmdOption("-o"));
+    if (parser->cmdOptionExists("-d"))
+        projection->setInputFilename(parser->getCmdOption("-d"));
+    if (parser->cmdOptionExists("-q"))
+        projection->setQueryFilename(parser->getCmdOption("-q"));
+    if (parser->cmdOptionExists("-o"))
+        projection->setOutputFilename(parser->getCmdOption("-o"));
+
+    //TODO
 
 
 }
