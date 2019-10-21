@@ -20,6 +20,10 @@ int main(int argc, char* argv[]){
     projection->setData(parseInputFileCurves(projection->getInputFilename()));
     projection->setQueryData(parseQueryFileCurves(projection->getQueryFilename()));
 
+    //WARNING! bigger size may crash your pc
+    projection->buildTraversalsMatrix(8);
+
+    //TODO: hashing and searching
 
     return 0;
 }
