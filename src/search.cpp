@@ -177,7 +177,7 @@ void search_LSH(Object **nearestNeighbor, double *distance, Object *queryObject,
     *distance = numeric_limits<double>::max();
     bool found = false;
     //int threshold = 50 * lsh->getNumOfHashTables();
-    int threshold = 3 * lsh->getNumOfHashTables();
+    int threshold = 10 * lsh->getNumOfHashTables();
     int thresholdCount = 0;
     auto hashers = lsh->getHashTableStruct()->getHashers();
     auto hts = lsh->getHashTableStruct()->getAllHashTables();

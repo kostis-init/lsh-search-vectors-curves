@@ -3,6 +3,8 @@
 #include "ui.h"
 #include "parse_files.h"
 
+#define MAX_LENGTH 9
+
 using namespace std;
 
 int main(int argc, char* argv[]){
@@ -17,11 +19,11 @@ int main(int argc, char* argv[]){
     if(!projection->isOutputFileGiven())
         projection->setOutputFilename(askOutputFile());
 
-    projection->setData(parseInputFileCurves(projection->getInputFilename()));
-    projection->setQueryData(parseQueryFileCurves(projection->getQueryFilename()));
+    projection->setData(parseInputFileCurvesMaxLength(projection->getInputFilename(), MAX_LENGTH));
+    projection->setQueryData(parseQueryFileCurvesMaxLength(projection->getQueryFilename(), MAX_LENGTH));
 
     //WARNING! bigger size may crash your pc
-    projection->buildTraversalsMatrix(8);
+    projection->buildTraversalsMatrix(MAX_LENGTH);
 
     //TODO: hashing and searching
 

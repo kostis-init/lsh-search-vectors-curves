@@ -6,9 +6,9 @@ RelevantTraversals::RelevantTraversals(int length1, int length2){
     this->length1 = length1;
     this->length2 = length2;
     createTraversalsMatrix();
-    printTraversalsMatrix();
+    //printTraversalsMatrix();
     createRelevantTraversals();
-    printRelevantTraversals();
+    //printRelevantTraversals();
     deleteTraversalsMatrix();
 }
 
@@ -33,8 +33,8 @@ void RelevantTraversals::createTraversalsMatrix(){
             // Diagonal squares
             traversalsMatrix[i][i] = true;
             // Relevant squares
-//            traversalsMatrix[i-1][i+1] = true;
-//            traversalsMatrix[i+1][i-1] = true;
+            //traversalsMatrix[i-1][i+1] = true;
+            //traversalsMatrix[i+1][i-1] = true;
             traversalsMatrix[i][i+1]   = true;
             traversalsMatrix[i+1][i]   = true;
         }
@@ -54,8 +54,8 @@ void RelevantTraversals::createTraversalsMatrix(){
             // Diagonal squares
             traversalsMatrix[i][j] = true;
             // Relevant squares
-//            if((i-1 >= 0) && (j+1 < length2)) traversalsMatrix[i-1][j+1] = true;
-//            if((i+1 < length1) && (j-1 >= 0)) traversalsMatrix[i+1][j-1] = true;
+            //if((i-1 >= 0) && (j+1 < length2)) traversalsMatrix[i-1][j+1] = true;
+            //if((i+1 < length1) && (j-1 >= 0)) traversalsMatrix[i+1][j-1] = true;
             if(j+1 < length2) traversalsMatrix[i][j+1] = true;
             if(i+1 < length1) traversalsMatrix[i+1][j] = true;
             double changeRowFactor = double(j + 1) / double(i + 1 + 1);
