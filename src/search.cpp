@@ -299,7 +299,7 @@ void search_LSH_Projection(Object **nearestNeighbor, double *distance, Object *q
             auto hashers = lsh->getHashTableStruct()->getHashers();
             auto hts = lsh->getHashTableStruct()->getAllHashTables();
             for (int j = 0; j < lsh->getNumOfHashTables(); ++j) {
-                size_t hash = (*hashers.at(j))(queryObject);
+                size_t hash = (*hashers.at(j))(queryObject, false);
                 if(hts[j].find(hash) == hts[j].end()) //empty bucket
                     continue;
                 auto points = hts[j].at(hash);
@@ -367,7 +367,6 @@ void search_LSH_vs_BruteForce_Projection(Projection* projection){
 void DoQueries(Projection* projection){
     int querySize = projection->getQueryData()->getSize();
     auto queryData = projection->getQueryData()->getData();
-    double queryRadius = projection->getQueryData()->getRadius();
 
     clock_t meanSearchLSH = 0;
     clock_t meanSearchBF = 0;

@@ -45,6 +45,6 @@ class CurveHashTableStruct : public HashTableStruct {
 
 class CurveProjectionHashTableStruct : public HashTableStruct {
 public:
-    CurveProjectionHashTableStruct(int numOfHTs,int ampSize,int numDimension,int window,const vector<vector<double>>& normalMatrix);
+    CurveProjectionHashTableStruct(int numOfHTs,int ampSize,int numDimension,int window,const vector<vector<double>>& normalMatrix, vector<tuple<int, int>> traversal);
 };
 #endif //ALGORITHMS_PROJECT_HASHTABLESTRUCT_H

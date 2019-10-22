@@ -12,7 +12,7 @@ HashTableStruct::~HashTableStruct() {
 void HashTableStruct::addToAllHashTables(Object *obj) {
     counter++ ;
     for (int i = 0; i < numOfHTs; ++i) {
-        size_t hash = (*hashers.at(i))(obj);
+        size_t hash = (*hashers.at(i))(obj, true);
         auto item = hashTables[i].find(hash);
         if(item != hashTables[i].end()){ //found
             hashTables[i].at(hash).push_back(obj);
@@ -57,10 +57,10 @@ PointHashTableStruct::PointHashTableStruct(int numOfHTs, int ampSize,int numDime
 
 }
 
-CurveProjectionHashTableStruct::CurveProjectionHashTableStruct(int numOfHTs, int ampSize,int numDimension,int window, const vector<vector<double>>& normalMatrix) : HashTableStruct(numOfHTs) {
+CurveProjectionHashTableStruct::CurveProjectionHashTableStruct(int numOfHTs, int ampSize,int numDimension,int window, const vector<vector<double>>& normalMatrix, vector<tuple<int, int>> traversal) : HashTableStruct(numOfHTs) {
     CurveProjectionHasher **h;
     h = new CurveProjectionHasher*[numOfHTs];
     for (int i = 0; i < numOfHTs; ++i)
-        h[i] = new CurveProjectionHasher(ampSize, numDimension, window, normalMatrix);
+        h[i] = new CurveProjectionHasher(ampSize, numDimension, window, normalMatrix, traversal);
     hashers = vector<Hasher *> (h, h+numOfHTs);
 }
