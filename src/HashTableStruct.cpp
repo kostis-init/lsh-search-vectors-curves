@@ -1,10 +1,8 @@
 #include <vector>
 #include "HashTableStruct.h"
 
-HashTableStruct::HashTableStruct(int numOfHTs, size_t sz) {
-    //hashers = new [numOfHTs];
+HashTableStruct::HashTableStruct(int numOfHTs) {
     this->numOfHTs = numOfHTs;
-    this->size = sz/8;
     this->hashTables = new unordered_map<int, vector<Object *>>[numOfHTs];
 }
 HashTableStruct::~HashTableStruct() {
@@ -42,7 +40,7 @@ void HashTableStruct::test_print_hashtable() {
     }
 }
 
-CurveHashTableStruct::CurveHashTableStruct(int numOfHTs,size_t sz,int ampSize,int numDimension,double min,int max,int pointHasherWindow) :HashTableStruct(numOfHTs,sz) {
+CurveHashTableStruct::CurveHashTableStruct(int numOfHTs, int ampSize,int numDimension,double min,int max,int pointHasherWindow) :HashTableStruct(numOfHTs) {
    CurveHasher **h; 
    h = new CurveHasher*[numOfHTs];
    for (int i =0; i < numOfHTs; i++) 
@@ -50,11 +48,19 @@ CurveHashTableStruct::CurveHashTableStruct(int numOfHTs,size_t sz,int ampSize,in
     hashers = vector<Hasher *>(h,h+numOfHTs);
 }
 
-PointHashTableStruct::PointHashTableStruct(int numOfHTs,size_t sz,int ampSize,int numDimension,int window) : HashTableStruct(numOfHTs,sz) {
+PointHashTableStruct::PointHashTableStruct(int numOfHTs, int ampSize,int numDimension,int window) : HashTableStruct(numOfHTs) {
    PointHasher **h; 
    h = new PointHasher*[numOfHTs];
    for (int i =0; i < numOfHTs; i++)
       h[i] = new PointHasher(ampSize,numDimension,window);
     hashers = vector<Hasher *> (h,h+numOfHTs);
 
+}
+
+CurveProjectionHashTableStruct::CurveProjectionHashTableStruct(int numOfHTs, int ampSize,int numDimension,int window, const vector<vector<double>>& normalMatrix) : HashTableStruct(numOfHTs) {
+    CurveProjectionHasher **h;
+    h = new CurveProjectionHasher*[numOfHTs];
+    for (int i = 0; i < numOfHTs; ++i)
+        h[i] = new CurveProjectionHasher(ampSize, numDimension, window, normalMatrix);
+    hashers = vector<Hasher *> (h, h+numOfHTs);
 }

@@ -15,13 +15,12 @@ private:
     //for debug
     int counter = 0;
     int numOfHTs;
-    size_t size; //size of every hash table;
     unordered_map<int, vector<Object *>> * hashTables;
 protected:
     //Hasher* hashers;
     vector<Hasher *> hashers;
 public:
-    HashTableStruct(int numOfHTs, size_t sz);
+    HashTableStruct(int numOfHTs);
     ~HashTableStruct();
 
     int getNumOfHTs() {return numOfHTs;}
@@ -36,11 +35,16 @@ public:
 
 class PointHashTableStruct : public HashTableStruct {
     public:
-        PointHashTableStruct(int numOfHTs,size_t sz,int ampSize,int numDimension,int window);
+        PointHashTableStruct(int numOfHTs,int ampSize,int numDimension,int window);
 };
 
 class CurveHashTableStruct : public HashTableStruct {
     public:
-        CurveHashTableStruct(int numOfHTs,size_t sz,int ampSize,int numDimension,double min,int max,int pointHasherWindow);
+        CurveHashTableStruct(int numOfHTs,int ampSize,int numDimension,double min,int max,int pointHasherWindow);
+};
+
+class CurveProjectionHashTableStruct : public HashTableStruct {
+public:
+    CurveProjectionHashTableStruct(int numOfHTs,int ampSize,int numDimension,int window,const vector<vector<double>>& normalMatrix);
 };
 #endif //ALGORITHMS_PROJECT_HASHTABLESTRUCT_H

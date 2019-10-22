@@ -5,7 +5,7 @@
 #include "distance.h"
 #include "GenericAlgorithm.h"
 
-class LSH : public GenericAlgorithm {
+class LSH : public GenericAlgorithm, public ANN_Structure {
 private:
 
     HashTableStruct * tables;
@@ -25,7 +25,7 @@ public:
 
     int getNumOfFunctions() const {return numOfFunctions;}
     int getNumOfHashTables() const {return numOfHashTables;}
-    auto getHashTableStruct() {return tables;}
+    HashTableStruct * getHashTableStruct() {return tables;}
 
     void setNumOfFunctions(int numOfFunctions){
         this->numOfFunctions = numOfFunctions;

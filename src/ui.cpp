@@ -6,6 +6,7 @@
 #include "LSH.h"
 #include "Cube.h"
 #include "ui.h"
+#include "Projection.h"
 
 using namespace std;
 
@@ -58,13 +59,8 @@ void readArgumentsCubePoints(Cube* cube, int argc, char **argv) {
         cube->getLsh()->setQueryFilename(parser->getCmdOption("-q"));
     if (parser->cmdOptionExists("-o"))
         cube->getLsh()->setOutputFilename(parser->getCmdOption("-o"));
-    if (parser->cmdOptionExists("-k")){
-        cube->setDimensionGiven(true);
+    if (parser->cmdOptionExists("-k"))
         cube->setDimension(stoi(parser->getCmdOption("-k")));
-        cube->getLsh()->setNumOfHashTables(stoi(parser->getCmdOption("-k")));
-    }
-    else
-        cube->getLsh()->setNumOfHashTables(3);
     if (parser->cmdOptionExists("-M"))
         cube->setMaxChecked(stoi(parser->getCmdOption("-M")));
     if (parser->cmdOptionExists("-probes"))
@@ -97,10 +93,18 @@ void readArgumentsLSHProjectionCurves(Projection* projection, int argc, char **a
         projection->setQueryFilename(parser->getCmdOption("-q"));
     if (parser->cmdOptionExists("-o"))
         projection->setOutputFilename(parser->getCmdOption("-o"));
-
-    //TODO
-
-
+    if (parser->cmdOptionExists("-k_vec"))
+        projection->getAnn()->setNumOfFunctions(stoi(parser->getCmdOption("-k_vec")));
+    else
+        projection->getAnn()->setNumOfFunctions(4);
+    if (parser->cmdOptionExists("-L_vec"))
+        projection->getAnn()->setNumOfHashTables(stoi(parser->getCmdOption("-L_vec")));
+    else
+        projection->getAnn()->setNumOfHashTables(5);
+    if (parser->cmdOptionExists("-e"))
+        projection->setNormalMatrix(stod(parser->getCmdOption("-e")));
+    else
+        projection->setNormalMatrix(0.5);
 }
 
 string askInputFile(){

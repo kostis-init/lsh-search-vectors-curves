@@ -1,10 +1,13 @@
 #include "RelevantTraversals.h"
+#include "LSH.h"
 #include <string.h>
+
 using namespace std;
 
-RelevantTraversals::RelevantTraversals(int length1, int length2){
+RelevantTraversals::RelevantTraversals(int length1, int length2, Projection* proj){
     this->length1 = length1;
     this->length2 = length2;
+    this->projection = proj;
     createTraversalsMatrix();
     //printTraversalsMatrix();
     createRelevantTraversals();
@@ -80,7 +83,19 @@ void RelevantTraversals::constructTraversalsRecursively(vector<tuple<int, int>> 
     if (i == length1 - 1){
         for (int k = j; k < length2; k++)
             traversal.push_back(make_tuple(i,k));
+        // New traversal & ANN
         traversals.push_back(traversal);
+        if(!projection->getAlgorithm().compare("lsh")){
+            auto lsh = new LSH(new DTW);
+            lsh->setNumOfHashTables(projection->getAnn()->getNumOfHashTables());
+            lsh->setNumOfFunctions(projection->getAnn()->getNumOfFunctions());
+            lsh->setHashTableStruct(new CurveProjectionHashTableStruct(lsh->getNumOfHashTables(), lsh->getNumOfFunctions(),
+                    projection->getNormalMatrix().size()*traversal.size(), 1, projection->getNormalMatrix()));
+            ann_structs.push_back(lsh);
+        } else if (!projection->getAlgorithm().compare("cube")){
+
+        }
+
         return;
     }
 
@@ -89,7 +104,19 @@ void RelevantTraversals::constructTraversalsRecursively(vector<tuple<int, int>> 
     if (j == length2 - 1){
         for (int k = i; k < length1; k++)
             traversal.push_back(make_tuple(k,j));
+        // New traversal & ANN
         traversals.push_back(traversal);
+        if(!projection->getAlgorithm().compare("lsh")){
+            auto lsh = new LSH(new DTW);
+            lsh->setNumOfHashTables(projection->getAnn()->getNumOfHashTables());
+            lsh->setNumOfFunctions(projection->getAnn()->getNumOfFunctions());
+            lsh->setHashTableStruct(new CurveProjectionHashTableStruct(lsh->getNumOfHashTables(), lsh->getNumOfFunctions(),
+                    projection->getNormalMatrix().size()*traversal.size(), 1, projection->getNormalMatrix()));
+            ann_structs.push_back(lsh);
+        } else if (!projection->getAlgorithm().compare("cube")){
+
+        }
+
         return;
     }
 
@@ -130,4 +157,15 @@ void RelevantTraversals::printRelevantTraversals() {
         cout << endl;
     }
     cout << "There were " << traversals.size() << " different relevant traversals" << endl << endl;
+
+    for(auto a : ann_structs){
+        cout << a->getNumOfHashTables() << endl;
+    }
+}
+
+void RelevantTraversals::addToHashTables(Curve *curve) {
+    for(auto ann : ann_structs){
+        ann->getHashTableStruct()->addToAllHashTables(curve);
+    }
+
 }

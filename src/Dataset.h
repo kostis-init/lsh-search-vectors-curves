@@ -39,7 +39,7 @@ class Dataset {
 
 class QueryDataset : public Dataset {
 private:
-    double radius;
+    double radius = -1;
 public:
     double getRadius();
     void setRadius(double radius);

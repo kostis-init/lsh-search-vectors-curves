@@ -38,8 +38,7 @@ int main(int argc, char* argv[]){
     /**
     * construct hash table struct
     */
-    lsh->setHashTableStruct(new PointHashTableStruct(cube->getDimension(), lsh->getDataset()->getSize(),
-                                                     lsh->getNumOfFunctions(),lsh->getDataset()->getDimension(), 4000));
+    lsh->setHashTableStruct(new PointHashTableStruct(cube->getDimension(), lsh->getNumOfFunctions(),lsh->getDataset()->getDimension(), 4000));
 
     /**
     * parse query file into memory

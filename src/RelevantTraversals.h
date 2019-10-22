@@ -4,14 +4,20 @@
 #include <iostream>
 #include <tuple>
 #include <vector>
+#include "GenericAlgorithm.h"
+#include "Projection.h"
 
 using namespace std;
-
+class Projection;
 class RelevantTraversals {
 private:
     int length1, length2;
+
     vector<vector<tuple<int, int>>> traversals;
 
+    vector<ANN_Structure *> ann_structs;
+
+    Projection* projection;
     /**
      * This matrix is used as a helper to create
      * relevant traversals. The cells that are
@@ -29,7 +35,11 @@ private:
     void printRelevantTraversals();
 public:
 
-    RelevantTraversals(int length1, int length2);
+    RelevantTraversals(int length1, int length2, Projection* proj);
+
+    void addToHashTables(Curve *curve);
+    vector<vector<tuple<int, int>>> getTraversals(){return traversals;}
+    vector<ANN_Structure *> getAnnStructs(){return ann_structs;}
 
 };
 

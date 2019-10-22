@@ -4,7 +4,7 @@
 #include <random>
 #include "LSH.h"
 
-class Cube {
+class Cube : public ANN_Structure {
 private:
 
     int dimension = 3; bool dimension_given = false;
@@ -35,11 +35,10 @@ public:
     auto getVertices() const {return vertices;}
     auto getBinaryMaps() const {return binaryMaps;}
 
-    void setDimensionGiven(bool given){
-        this->dimension_given = given;
-    }
     void setDimension(int dimension) {
+        dimension_given = true;
         this->dimension = dimension;
+        lsh->setNumOfHashTables(dimension);
     }
     void setMaxChecked(int maxChecked) {
         max_checked = maxChecked;

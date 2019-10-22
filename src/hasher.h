@@ -61,5 +61,30 @@ class CurveHasher : public Hasher {
         int operator() (Object *obj) const;
 };
 
+class CurveProjectionHasher : public PointHasher {
+private:
+    vector<vector<double>> normalMatrix;
+public:
+    CurveProjectionHasher(int ampSize,int numDimension,int window, const vector<vector<double>>& normalMatrix)
+                        : PointHasher(ampSize, numDimension, window){
+        this->normalMatrix = normalMatrix;
+    }
+    int operator() (Object* obj) const override{
+        //construct point from curve
+        Curve* curve = dynamic_cast<Curve *>(obj);
+        Point* curvePoint = new Point("");
+        for(auto point : curve->getPoints()){
+            for(auto normal1 : normalMatrix){
+                double coordinate = 0;
+                int i = 0;
+                for(double normal2 : normal1)
+                    coordinate += normal2 * point.getCoordinate(i++);
+                curvePoint->addCoordinateLast(coordinate);
+            }
+        }
+        //call super
+        return PointHasher::operator()(curvePoint);
+    }
+};
 
 #endif

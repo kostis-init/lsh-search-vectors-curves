@@ -279,3 +279,83 @@ void DoQueries(Cube *cube) {
     }
     cout << "meanTimeSearchCube " << meanSearchCube/querySize << " meanTimeSearchBF " << meanSearchBF/querySize << " and maxAF = " << maxAF << " and averageAF " << averageAF/averageAFCount << endl;
 }
+
+void search_LSH_Projection(Object **nearestNeighbor, double *distance, Object *queryObject, Projection* projection){
+    Curve* queryCurve = dynamic_cast<Curve*>(queryObject);
+    *nearestNeighbor = nullptr;
+    *distance = numeric_limits<double>::max();
+    bool found = false;
+    int threshold = 10000;
+    int thresholdCount = 0;
+    for (int i = 0; i < projection->getTraversalsMatrix().size(); ++i) {
+        auto traversals = projection->getTraversalsMatrix().at(i).at(queryCurve->getPoints().size());
+        for (int j = 0; j < traversals->getTraversals().size(); ++j) {
+            LSH* lsh = dynamic_cast<LSH*>(traversals->getAnnStructs().at(i));
+
+            auto hashers = lsh->getHashTableStruct()->getHashers();
+            auto hts = lsh->getHashTableStruct()->getAllHashTables();
+            for (int j = 0; j < lsh->getNumOfHashTables(); ++j) {
+                size_t hash = (*hashers.at(j))(queryObject);
+                if(hts[j].find(hash) == hts[j].end()) //empty bucket
+                    continue;
+                auto points = hts[j].at(hash);
+                thresholdCount = 0;
+                for(auto candidate : points){
+                    if (thresholdCount > threshold)
+                        break;
+                    double cur_dist = lsh->getMetric()->dist(queryObject, candidate);
+                    if(cur_dist < *distance){
+                        found = true;
+                        *distance = cur_dist;
+                        *nearestNeighbor = candidate;
+                    }
+                    thresholdCount++;
+                }
+            }
+
+        }
+    }
+
+    //if we fall in empty backet for all htables
+    //set dist to zero (otherwise AF calculation is useless)
+    if (!found)
+        *distance = 0.0;
+}
+
+void search_LSH_vs_BruteForce_Projection(Projection* projection){
+    int querySize = projection->getQueryData()->getSize();
+    auto queryData = projection->getQueryData()->getData();
+
+    for (int i = 0; i < querySize; ++i) {
+        Object* queryObject = queryData.at(i);
+        cout << "Query: " << queryObject->getId() << endl;
+        Object* nearestNeighbor = nullptr;
+        double distance;
+
+        //LSH
+        cout << "LSH" << endl;
+
+        clock_t begin = clock();
+        search_LSH_Projection(&nearestNeighbor, &distance, queryObject, projection);
+        clock_t end = clock();
+
+        if(nearestNeighbor == nullptr){
+            cout << "Nearest neighbor: Not Found" << endl;
+        } else {
+            cout << "Nearest neighbor LSH: " << nearestNeighbor->getId() << endl;
+            cout << "distance LSH: " << distance << endl;
+            cout << "time LSH: " << end - begin << endl;
+        }
+
+        //Brute Force
+        cout << "Brute Force" << endl;
+
+        begin = clock();
+        search_BruteForce(&nearestNeighbor, &distance, projection->getDataset()->getData(), queryObject, new DTW);
+        end = clock();
+
+        cout << "Nearest neighbor Brute Force: " << nearestNeighbor->getId() << endl;
+        cout << "distance Brute Force: " << distance << endl;
+        cout << "time Brute Force: " << end - begin << endl << endl;
+    }
+}

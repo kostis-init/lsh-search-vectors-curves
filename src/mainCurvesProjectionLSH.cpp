@@ -2,14 +2,16 @@
 #include "Projection.h"
 #include "ui.h"
 #include "parse_files.h"
+#include "search.h"
 
-#define MAX_LENGTH 9
+//WARNING! bigger size may crash your pc
+#define MAX_LENGTH 8
 
 using namespace std;
 
 int main(int argc, char* argv[]){
 
-    auto projection = new Projection();
+    auto projection = new Projection(new LSH(new DTW), "lsh");
 
     readArgumentsLSHProjectionCurves(projection, argc, argv);
     if(!projection->isInputFileGiven())
@@ -22,10 +24,14 @@ int main(int argc, char* argv[]){
     projection->setData(parseInputFileCurvesMaxLength(projection->getInputFilename(), MAX_LENGTH));
     projection->setQueryData(parseQueryFileCurvesMaxLength(projection->getQueryFilename(), MAX_LENGTH));
 
-    //WARNING! bigger size may crash your pc
+    cout << "Building traversals matrix..." << endl;
     projection->buildTraversalsMatrix(MAX_LENGTH);
 
-    //TODO: hashing and searching
+    cout << "Putting data to hash tables..." << endl;
+    projection->putDataToHashTables();
+
+    cout << "Starting queries..." << endl;
+    search_LSH_vs_BruteForce_Projection(projection);
 
     return 0;
 }

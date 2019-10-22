@@ -8,29 +8,41 @@
 #include "RelevantTraversals.h"
 #include "Dataset.h"
 #include "GenericAlgorithm.h"
+#include "LSH.h"
 
 using namespace std;
-
+class RelevantTraversals;
 class Projection : public GenericAlgorithm{
 private:
     vector<vector<RelevantTraversals *>> traversalsMatrix;
-    //G matrix
+
+    //G Matrix
+    vector<vector<double>> normalMatrix;
+
+    //ANN to be used in traversals
+    ANN_Structure* ann;
+    string algorithm;
+public:
+    const string &getAlgorithm() const;
+
 public:
 
-    auto getTraversalsMatrix(){ return traversalsMatrix;}
-
-    void buildTraversalsMatrix(int size){
-        for (int i = 0; i < size; ++i) {
-            vector<RelevantTraversals *> line;
-            // Create traversals for two curves with lengths i + 1, j + 1 respectively.
-            // Save memory by starting j from i, as i,j and j,i have the same traversals
-            for (int j = i; j < size; ++j)
-                line.push_back(new RelevantTraversals(i + 1, j + 1));
-            traversalsMatrix.push_back(line);
-        }
+    Projection(ANN_Structure *ann, string alg){
+        this->ann = ann;
+        this->algorithm = alg;
     }
 
+    auto getTraversalsMatrix(){ return traversalsMatrix;}
+    auto getNormalMatrix() { return normalMatrix;}
+    auto getAnn() { return ann;}
 
+    void buildTraversalsMatrix(int size);
+
+    void setNormalMatrix(double epsilon);
+
+    void printNormalMatrix();
+
+    void putDataToHashTables();
 };
 
 

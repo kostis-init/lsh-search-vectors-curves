@@ -55,7 +55,8 @@ add_executable(cube
         src/LSH.h
         src/parse_files.cpp src/parse_files.h
         src/Cube.h src/search.cpp src/search.h
-        src/GenericAlgorithm.h src/Cube.cpp)
+        src/GenericAlgorithm.h src/Cube.cpp
+        src/Projection.cpp src/Projection.h src/RelevantTraversals.cpp src/RelevantTraversals.h)
 
 add_executable(lsh
         src/mainPointsLSH.cpp
@@ -79,7 +80,8 @@ add_executable(lsh
         src/ui.h 
         src/LSH.h
         src/parse_files.cpp src/parse_files.h
-        src/Cube.h src/search.cpp src/search.h src/GenericAlgorithm.h src/Cube.cpp)
+        src/Cube.h src/search.cpp src/search.h src/GenericAlgorithm.h src/Cube.cpp
+        src/Projection.cpp src/Projection.h src/RelevantTraversals.cpp src/RelevantTraversals.h)
 
 add_executable(curve_grid_lsh
         src/curve_grid_lsh.cpp

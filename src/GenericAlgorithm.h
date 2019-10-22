@@ -1,8 +1,23 @@
 #ifndef ALGORITHMS_PROJECT_GENERICALGORITHM_H
 #define ALGORITHMS_PROJECT_GENERICALGORITHM_H
-
 #include "Dataset.h"
+#include "HashTableStruct.h"
 using namespace std;
+
+class ANN_Structure {
+public:
+
+    virtual int getNumOfFunctions() const {}
+    virtual int getNumOfHashTables() const {}
+    virtual void setNumOfFunctions(int numOfFunctions){}
+    virtual void setNumOfHashTables(int numOfHashTables){}
+    virtual HashTableStruct * getHashTableStruct(){}
+    virtual void setHashTableStruct(HashTableStruct *ht) {}
+
+    virtual void setDimension(int dimension) {}
+    virtual void setMaxChecked(int maxChecked) {}
+    virtual void setMaxProbes(int maxProbes) {}
+};
 
 class GenericAlgorithm {
 private:
