@@ -243,7 +243,8 @@ void DoQueries(LSH *lsh) {
             notFound++;
         cout << " i : " << i << " AF " << AF << endl;
     }
-    cout << "meanTimeSearchLSH " << meanSearchLSH/querySize << " meanTimeSearchBF " << meanSearchBF/querySize << " and maxAF = " << maxAF << " and averageAF " << averageAF/averageAFCount << "and not found: " << notFound << endl;
+    cout << "meanTimeSearchLSH " << meanSearchLSH/querySize << " meanTimeSearchBF " << meanSearchBF/querySize
+        << " and maxAF = " << maxAF << " and averageAF " << averageAF/averageAFCount << " and not found: " << notFound << endl;
 }
 
 void DoQueries(Cube *cube) {
@@ -255,6 +256,7 @@ void DoQueries(Cube *cube) {
     double maxAF = numeric_limits<double>::min();
     double averageAF = 0;
     int averageAFCount = 0;
+    int notFound = 0;
     for (int i = 0; i < querySize; ++i) {
         Object* queryPoint = (Point*)queryData.at(i);
         Object* nnPoint;
@@ -275,9 +277,11 @@ void DoQueries(Cube *cube) {
         if (distanceCube > 0) {//compute only if > 0
             averageAF += distanceCube / distanceBF;
             averageAFCount++;
-        }
+        }else
+            notFound++;
     }
-    cout << "meanTimeSearchCube " << meanSearchCube/querySize << " meanTimeSearchBF " << meanSearchBF/querySize << " and maxAF = " << maxAF << " and averageAF " << averageAF/averageAFCount << endl;
+    cout << "meanTimeSearchCube " << meanSearchCube/querySize << " meanTimeSearchBF " << meanSearchBF/querySize
+        << " and maxAF = " << maxAF << " and averageAF " << averageAF/averageAFCount << " and not found: " << notFound << endl;
 }
 
 void search_LSH_Projection(Object **nearestNeighbor, double *distance, Object *queryObject, Projection* projection){
@@ -288,9 +292,9 @@ void search_LSH_Projection(Object **nearestNeighbor, double *distance, Object *q
     int threshold = 10000;
     int thresholdCount = 0;
     for (int i = 0; i < projection->getTraversalsMatrix().size(); ++i) {
-        auto traversals = projection->getTraversalsMatrix().at(i).at(queryCurve->getPoints().size());
+        auto traversals = projection->getTraversalsMatrix().at(i).at(queryCurve->getPoints().size()-1);
         for (int j = 0; j < traversals->getTraversals().size(); ++j) {
-            LSH* lsh = dynamic_cast<LSH*>(traversals->getAnnStructs().at(i));
+            LSH* lsh = dynamic_cast<LSH*>(traversals->getAnnStructs().at(j));
 
             auto hashers = lsh->getHashTableStruct()->getHashers();
             auto hts = lsh->getHashTableStruct()->getAllHashTables();
@@ -358,4 +362,43 @@ void search_LSH_vs_BruteForce_Projection(Projection* projection){
         cout << "distance Brute Force: " << distance << endl;
         cout << "time Brute Force: " << end - begin << endl << endl;
     }
+}
+
+void DoQueries(Projection* projection){
+    int querySize = projection->getQueryData()->getSize();
+    auto queryData = projection->getQueryData()->getData();
+    double queryRadius = projection->getQueryData()->getRadius();
+
+    clock_t meanSearchLSH = 0;
+    clock_t meanSearchBF = 0;
+    double maxAF = numeric_limits<double>::min();
+    double averageAF = 0;
+    int averageAFCount = 0;
+    int notFound = 0;
+
+    for (int i = 0; i < querySize; ++i) {
+        Object* queryObject = queryData.at(i);
+        Object* nnPoint;
+        double distanceLSH;
+        double distanceBF;
+        clock_t begin = clock();
+        search_LSH_Projection(&nnPoint, &distanceLSH, queryObject, projection);
+        clock_t end = clock();
+        meanSearchLSH += (end-begin);
+        begin = clock();
+        search_BruteForce(&nnPoint, &distanceBF, projection->getDataset()->getData(), queryObject, new DTW);
+        end = clock();
+        meanSearchBF += (end-begin);
+        double AF;
+        if ((AF = distanceLSH/distanceBF) > maxAF)
+            maxAF = AF;
+        if (distanceLSH > 0) {//compute only if > 0
+            averageAF += distanceLSH/distanceBF;
+            averageAFCount++;
+        } else
+            notFound++;
+        cout << " i : " << i << " AF " << AF << endl;
+    }
+    cout << "meanTimeSearchLSH " << meanSearchLSH/querySize << " meanTimeSearchBF " << meanSearchBF/querySize << " and maxAF = "
+        << maxAF << " and averageAF " << averageAF/averageAFCount << " and not found: " << notFound << endl;
 }

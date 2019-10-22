@@ -5,7 +5,7 @@
 #include "search.h"
 
 //WARNING! bigger size may crash your pc
-#define MAX_LENGTH 8
+#define MAX_LENGTH 7
 
 using namespace std;
 
@@ -32,6 +32,7 @@ int main(int argc, char* argv[]){
 
     cout << "Starting queries..." << endl;
     search_LSH_vs_BruteForce_Projection(projection);
+    DoQueries(projection);
 
     return 0;
 }

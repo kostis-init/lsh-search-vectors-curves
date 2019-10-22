@@ -42,13 +42,10 @@ const string &Projection::getAlgorithm() const {
 
 void Projection::putDataToHashTables() {
     for(auto obj : getDataset()->getData()){
-        cout << "IN";
         Curve *curve = dynamic_cast<Curve *>(obj);
         int index = curve->getPoints().size();
-        for(auto traversals : traversalsMatrix.at(index)){
-            cout<<"HELLO"<<endl;
+        for(auto traversals : traversalsMatrix.at(index-1)){
             traversals->addToHashTables(curve);
-            cout << "ASDASDASDASD"<<endl;
         }
     }
 }
