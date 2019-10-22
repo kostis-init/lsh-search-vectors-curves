@@ -16,8 +16,12 @@ void Projection::setNormalMatrix(double epsilon) {
     random_device rd;
     mt19937 gen(rd());
     normal_distribution<double> distribution(0, 1);
-    //TODO: find K
-    int k = 2, dimension = 2;
+
+    int dimension = 2;
+    int k = round((-2.0 * (log(epsilon)/log(2))) / epsilon);
+
+    if(k<0)
+        k = 4;
 
     for (int i = 0; i < k; ++i) {
         vector<double> v;

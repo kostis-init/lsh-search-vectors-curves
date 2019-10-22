@@ -11,9 +11,9 @@ using namespace std;
 
 int main(int argc, char* argv[]){
 
-    auto projection = new Projection(new LSH(new DTW), "lsh");
+    auto projection = new Projection(new Cube(new DTW), "cube");
 
-    readArgumentsLSHProjectionCurves(projection, argc, argv);
+    readArgumentsCubeProjectionCurves(projection, argc, argv);
     if(!projection->isInputFileGiven())
         projection->setInputFilename(askInputFile());
     if(!projection->isQueryFileGiven())
@@ -27,11 +27,13 @@ int main(int argc, char* argv[]){
     cout << "Building traversals matrix..." << endl;
     projection->buildTraversalsMatrix(MAX_LENGTH);
 
+    //TODO:...
+
     cout << "Putting data to hash tables..." << endl;
     projection->putDataToHashTables();
 
     cout << "Starting queries..." << endl;
-    search_LSH_vs_BruteForce_Projection(projection);
+    search_Cube_vs_BruteForce_Projection(projection);
     DoQueries(projection);
 
     return 0;

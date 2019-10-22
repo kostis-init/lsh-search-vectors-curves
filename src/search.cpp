@@ -289,21 +289,26 @@ void search_LSH_Projection(Object **nearestNeighbor, double *distance, Object *q
     *nearestNeighbor = nullptr;
     *distance = numeric_limits<double>::max();
     bool found = false;
-    int threshold = 10000;
+    int threshold = 20 * projection->getAnn()->getNumOfHashTables();
     int thresholdCount = 0;
     for (int i = 0; i < projection->getTraversalsMatrix().size(); ++i) {
+        if(fabs(i - (queryCurve->getPoints().size()-1)) > 4){
+            continue;
+        }
         auto traversals = projection->getTraversalsMatrix().at(i).at(queryCurve->getPoints().size()-1);
         for (int j = 0; j < traversals->getTraversals().size(); ++j) {
             LSH* lsh = dynamic_cast<LSH*>(traversals->getAnnStructs().at(j));
 
             auto hashers = lsh->getHashTableStruct()->getHashers();
             auto hts = lsh->getHashTableStruct()->getAllHashTables();
+            thresholdCount = 0;
             for (int j = 0; j < lsh->getNumOfHashTables(); ++j) {
+                if (thresholdCount > threshold)
+                    break;
                 size_t hash = (*hashers.at(j))(queryObject, false);
                 if(hts[j].find(hash) == hts[j].end()) //empty bucket
                     continue;
                 auto points = hts[j].at(hash);
-                thresholdCount = 0;
                 for(auto candidate : points){
                     if (thresholdCount > threshold)
                         break;

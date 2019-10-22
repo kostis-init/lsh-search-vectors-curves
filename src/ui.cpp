@@ -107,6 +107,26 @@ void readArgumentsLSHProjectionCurves(Projection* projection, int argc, char **a
         projection->setNormalMatrix(0.5);
 }
 
+void readArgumentsCubeProjectionCurves(Projection* projection, int argc, char **argv) {
+    auto parser = new InputParser(argc,argv);
+    if (parser->cmdOptionExists("-d"))
+        projection->setInputFilename(parser->getCmdOption("-d"));
+    if (parser->cmdOptionExists("-q"))
+        projection->setQueryFilename(parser->getCmdOption("-q"));
+    if (parser->cmdOptionExists("-o"))
+        projection->setOutputFilename(parser->getCmdOption("-o"));
+    if (parser->cmdOptionExists("-k_hypercube"))
+        projection->getAnn()->setDimension(stoi(parser->getCmdOption("-k_hypercube")));
+    if (parser->cmdOptionExists("-M"))
+        projection->getAnn()->setMaxChecked(stoi(parser->getCmdOption("-M")));
+    if (parser->cmdOptionExists("-probes"))
+        projection->getAnn()->setMaxProbes(stoi(parser->getCmdOption("-probes")));
+    if (parser->cmdOptionExists("-e"))
+        projection->setNormalMatrix(stod(parser->getCmdOption("-e")));
+    else
+        projection->setNormalMatrix(0.5);
+}
+
 string askInputFile(){
     string filename;
     cout << "Please give input filename" << endl;
