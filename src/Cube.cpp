@@ -65,7 +65,7 @@ void Cube::addToBinaryMap(Object* obj){
     auto hashers = lsh->getHashTableStruct()->getHashers();
     //insert it in every map
     for (int i = 0; i < dimension; ++i) {
-        binaryMaps[i].insert(make_pair((*hashers.at(i))(obj), dist(mt)));
+        binaryMaps[i].insert(make_pair((*hashers.at(i))(obj, true), dist(mt)));
     }
 }
 void Cube::allocateVertices(){
@@ -78,7 +78,7 @@ void Cube::addToVertices(Object* obj){
     //construct index
     for (int i = 0; i < dimension; ++i) {
         index <<= 1u;
-        index |= binaryMaps[i].at((*hashers.at(i))(obj));
+        index |= binaryMaps[i].at((*hashers.at(i))(obj, true));
     }
     vertices[index].push_back(obj);
 }

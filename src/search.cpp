@@ -461,7 +461,6 @@ void search_Cube_Projection(Object **nearestNeighbor, double *distance, Object* 
         }
         auto traversals = projection->getTraversalsMatrix().at(i).at(queryCurve->getPoints().size()-1);
         for (int j = 0; j < traversals->getTraversals().size(); ++j) {
-            //cout <<"SADASD "<< i<<" ASDA "<<j << endl;
             Cube* cube = dynamic_cast<Cube*>(traversals->getAnnStructs().at(j));
 
             auto binaryMaps = cube->getBinaryMaps();
@@ -471,7 +470,7 @@ void search_Cube_Projection(Object **nearestNeighbor, double *distance, Object* 
             size_t index = 0;
             //construct index
             for (int k = 0; k < cube->getDimension(); ++k) {
-                size_t hash = (*hashers.at(k))(queryObject);
+                size_t hash = (*hashers.at(k))(queryObject, false);
                 index <<= 1u;
                 if(binaryMaps[k].find(hash) != binaryMaps[k].end()){
                     index |= binaryMaps[k].at(hash);
@@ -480,7 +479,6 @@ void search_Cube_Projection(Object **nearestNeighbor, double *distance, Object* 
                     index |= dist(mt);
                 }
             }
-            cout << index << endl;
             int probes = cube->getMaxProbes();
             size_t size = cube->getNumberOfVertices();
             size_t probe_index = index;
@@ -515,8 +513,6 @@ void search_Cube_Projection(Object **nearestNeighbor, double *distance, Object* 
                 probe_index = index ^ counter;
                 probes--;
             }
-
-
         }
     }
 
