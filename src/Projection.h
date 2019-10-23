@@ -43,6 +43,8 @@ public:
     void printNormalMatrix();
 
     void putDataToHashTables();
+
+    void putDataToCubes();
 };
 
 

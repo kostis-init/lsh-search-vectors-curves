@@ -1,5 +1,6 @@
 #include "RelevantTraversals.h"
 #include "LSH.h"
+#include "Cube.h"
 #include <string.h>
 
 using namespace std;
@@ -93,7 +94,17 @@ void RelevantTraversals::constructTraversalsRecursively(vector<tuple<int, int>> 
                     projection->getNormalMatrix().size()*traversal.size(), 1, projection->getNormalMatrix(), traversal));
             ann_structs.push_back(lsh);
         } else if (!projection->getAlgorithm().compare("cube")){
-
+            auto cube = new Cube(new DTW);
+            auto lsh = cube->getLsh();
+            cube->setDimension(projection->getAnn()->getDimension());
+            cube->setMaxProbes(projection->getAnn()->getMaxProbes());
+            cube->setMaxChecked(projection->getAnn()->getMaxChecked());
+            lsh->setData(projection->getDataset());
+            lsh->setHashTableStruct(new CurveProjectionHashTableStruct(cube->getDimension(), lsh->getNumOfFunctions(),
+                    projection->getNormalMatrix().size()*traversal.size(), 1, projection->getNormalMatrix(), traversal));
+            cube->allocateBinaryMaps();
+            cube->allocateVertices();
+            ann_structs.push_back(cube);
         }
 
         return;
@@ -114,7 +125,17 @@ void RelevantTraversals::constructTraversalsRecursively(vector<tuple<int, int>> 
                     projection->getNormalMatrix().size()*traversal.size(), 1, projection->getNormalMatrix(), traversal));
             ann_structs.push_back(lsh);
         } else if (!projection->getAlgorithm().compare("cube")){
-
+            auto cube = new Cube(new DTW);
+            auto lsh = cube->getLsh();
+            cube->setDimension(projection->getAnn()->getDimension());
+            cube->setMaxProbes(projection->getAnn()->getMaxProbes());
+            cube->setMaxChecked(projection->getAnn()->getMaxChecked());
+            lsh->setData(projection->getDataset());
+            lsh->setHashTableStruct(new CurveProjectionHashTableStruct(cube->getDimension(), lsh->getNumOfFunctions(),
+                    projection->getNormalMatrix().size()*traversal.size(), 1, projection->getNormalMatrix(), traversal));
+            cube->allocateBinaryMaps();
+            cube->allocateVertices();
+            ann_structs.push_back(cube);
         }
 
         return;
@@ -167,5 +188,11 @@ void RelevantTraversals::addToHashTables(Curve *curve) {
     for(auto ann : ann_structs){
         ann->getHashTableStruct()->addToAllHashTables(curve);
     }
+}
 
+void RelevantTraversals::addToCubes(Curve *curve) {
+    for(auto ann : ann_structs){
+        ann->addToBinaryMap(curve);
+        ann->addToVertices(curve);
+    }
 }

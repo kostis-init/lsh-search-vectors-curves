@@ -14,9 +14,15 @@ public:
     virtual HashTableStruct * getHashTableStruct(){}
     virtual void setHashTableStruct(HashTableStruct *ht) {}
 
+    virtual bool isDimensionGiven() const {}
+    virtual int getDimension() const {}
+    virtual int getMaxChecked() const {}
+    virtual int getMaxProbes() const {}
     virtual void setDimension(int dimension) {}
     virtual void setMaxChecked(int maxChecked) {}
     virtual void setMaxProbes(int maxProbes) {}
+    virtual void addToBinaryMap(Object* obj){}
+    virtual void addToVertices(Object* obj){}
 };
 
 class GenericAlgorithm {

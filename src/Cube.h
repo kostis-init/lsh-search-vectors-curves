@@ -53,6 +53,14 @@ public:
 
     void test_print_binaryMaps();
     void test_print_vertices();
+
+    void allocateBinaryMaps();
+
+    void addToBinaryMap(Object *obj);
+
+    void allocateVertices();
+
+    void addToVertices(Object *obj);
 };
 
 #endif //ALGORITHMS_PROJECT_CUBE_H

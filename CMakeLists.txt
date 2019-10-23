@@ -7,7 +7,7 @@ add_compile_options(-O3)
 link_libraries(cunit)
 project (algorithms_project)
 
-add_executable(curve_projection_cube
+add_executable(curve_projection_hypercube
         src/mainCurvesProjectionCube.cpp
         src/Curve.cpp
         src/Curve.h

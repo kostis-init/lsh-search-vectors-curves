@@ -41,6 +41,7 @@ public:
     vector<vector<tuple<int, int>>> getTraversals(){return traversals;}
     vector<ANN_Structure *> getAnnStructs(){return ann_structs;}
 
+    void addToCubes(Curve *curve);
 };
 
 #endif //ALGORITHMS_PROJECT_RELEVANTTRAVERSALS_H

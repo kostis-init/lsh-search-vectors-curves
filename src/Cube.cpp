@@ -54,3 +54,32 @@ void Cube::test_print_vertices(){
     }
 }
 
+
+void Cube::allocateBinaryMaps(){
+    binaryMaps = new unordered_map<size_t, bool>[dimension];
+}
+void Cube::addToBinaryMap(Object* obj){
+    random_device randomDevice;
+    mt19937 mt(randomDevice());
+    uniform_int_distribution<int> dist(0,1);
+    auto hashers = lsh->getHashTableStruct()->getHashers();
+    //insert it in every map
+    for (int i = 0; i < dimension; ++i) {
+        binaryMaps[i].insert(make_pair((*hashers.at(i))(obj), dist(mt)));
+    }
+}
+void Cube::allocateVertices(){
+    numberOfVertices = pow(2,dimension);
+    vertices = new vector<Object *>[numberOfVertices];
+}
+void Cube::addToVertices(Object* obj){
+    auto hashers = lsh->getHashTableStruct()->getHashers();
+    size_t index = 0;
+    //construct index
+    for (int i = 0; i < dimension; ++i) {
+        index <<= 1u;
+        index |= binaryMaps[i].at((*hashers.at(i))(obj));
+    }
+    vertices[index].push_back(obj);
+}
+

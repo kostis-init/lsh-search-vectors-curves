@@ -5,7 +5,7 @@
 #include "search.h"
 
 //WARNING! bigger size may crash your pc
-#define MAX_LENGTH 6
+#define MAX_LENGTH 4
 
 using namespace std;
 
@@ -24,17 +24,18 @@ int main(int argc, char* argv[]){
     projection->setData(parseInputFileCurvesMaxLength(projection->getInputFilename(), MAX_LENGTH));
     projection->setQueryData(parseQueryFileCurvesMaxLength(projection->getQueryFilename(), MAX_LENGTH));
 
+    if(!projection->getAnn()->isDimensionGiven())
+        projection->getAnn()->setDimension(log(projection->getDataset()->getSize())/log(2));
+
     cout << "Building traversals matrix..." << endl;
     projection->buildTraversalsMatrix(MAX_LENGTH);
 
-    //TODO:...
-
-    cout << "Putting data to hash tables..." << endl;
-    projection->putDataToHashTables();
+    cout << "Putting data to cubes..." << endl;
+    projection->putDataToCubes();
 
     cout << "Starting queries..." << endl;
     search_Cube_vs_BruteForce_Projection(projection);
-    DoQueries(projection);
+//    DoQueries(projection);
 
     return 0;
 }

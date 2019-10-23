@@ -302,13 +302,13 @@ void search_LSH_Projection(Object **nearestNeighbor, double *distance, Object *q
             auto hashers = lsh->getHashTableStruct()->getHashers();
             auto hts = lsh->getHashTableStruct()->getAllHashTables();
             thresholdCount = 0;
-            for (int j = 0; j < lsh->getNumOfHashTables(); ++j) {
+            for (int k = 0; k < lsh->getNumOfHashTables(); ++k) {
                 if (thresholdCount > threshold)
                     break;
-                size_t hash = (*hashers.at(j))(queryObject, false);
-                if(hts[j].find(hash) == hts[j].end()) //empty bucket
+                size_t hash = (*hashers.at(k))(queryObject, false);
+                if(hts[k].find(hash) == hts[k].end()) //empty bucket
                     continue;
-                auto points = hts[j].at(hash);
+                auto points = hts[k].at(hash);
                 for(auto candidate : points){
                     if (thresholdCount > threshold)
                         break;
@@ -405,4 +405,119 @@ void DoQueries(Projection* projection){
     }
     cout << "meanTimeSearchLSH " << meanSearchLSH/querySize << " meanTimeSearchBF " << meanSearchBF/querySize << " and maxAF = "
         << maxAF << " and averageAF " << averageAF/averageAFCount << " and not found: " << notFound << endl;
+}
+
+void search_Cube_vs_BruteForce_Projection(Projection* projection){
+    int querySize = projection->getQueryData()->getSize();
+    auto queryData = projection->getQueryData()->getData();
+
+    for (int i = 0; i < querySize; ++i) {
+        Object* queryObject = queryData.at(i);
+        cout << "Query: " << queryObject->getId() << endl;
+        Object* nearestNeighbor = nullptr;
+        double distance;
+
+        //Cube
+        cout << "Cube" << endl;
+
+        clock_t begin = clock();
+        search_Cube_Projection(&nearestNeighbor, &distance, queryObject, projection);
+        clock_t end = clock();
+
+        if(nearestNeighbor == nullptr){
+            cout << "Nearest neighbor: Not Found" << endl;
+        } else {
+            cout << "Nearest neighbor Cube: " << nearestNeighbor->getId() << endl;
+            cout << "distance Cube: " << distance << endl;
+            cout << "time Cube: " << end - begin << endl;
+        }
+
+        //Brute Force
+        cout << "Brute Force" << endl;
+
+        begin = clock();
+        search_BruteForce(&nearestNeighbor, &distance, projection->getDataset()->getData(), queryObject, new DTW);
+        end = clock();
+
+        cout << "Nearest neighbor Brute Force: " << nearestNeighbor->getId() << endl;
+        cout << "distance Brute Force: " << distance << endl;
+        cout << "time Brute Force: " << end - begin << endl << endl;
+    }
+}
+
+void search_Cube_Projection(Object **nearestNeighbor, double *distance, Object* queryObject, Projection* projection){
+    Curve* queryCurve = dynamic_cast<Curve*>(queryObject);
+    random_device randomDevice;
+    mt19937 mt(randomDevice());
+    uniform_int_distribution<unsigned int> dist(0,1);
+    auto metric = new DTW;
+    *nearestNeighbor = nullptr;
+    *distance = numeric_limits<double>::max();
+    int limit = projection->getAnn()->getMaxChecked();
+
+    for (int i = 0; i < projection->getTraversalsMatrix().size(); ++i) {
+        if(labs(i - ((int)queryCurve->getPoints().size()-1)) > 4){
+            continue;
+        }
+        auto traversals = projection->getTraversalsMatrix().at(i).at(queryCurve->getPoints().size()-1);
+        for (int j = 0; j < traversals->getTraversals().size(); ++j) {
+            //cout <<"SADASD "<< i<<" ASDA "<<j << endl;
+            Cube* cube = dynamic_cast<Cube*>(traversals->getAnnStructs().at(j));
+
+            auto binaryMaps = cube->getBinaryMaps();
+            auto hashers = cube->getLsh()->getHashTableStruct()->getHashers();
+            auto vertices = cube->getVertices();
+
+            size_t index = 0;
+            //construct index
+            for (int k = 0; k < cube->getDimension(); ++k) {
+                size_t hash = (*hashers.at(k))(queryObject);
+                index <<= 1u;
+                if(binaryMaps[k].find(hash) != binaryMaps[k].end()){
+                    index |= binaryMaps[k].at(hash);
+                }
+                else{ //not found, produce random 0/1
+                    index |= dist(mt);
+                }
+            }
+            cout << index << endl;
+            int probes = cube->getMaxProbes();
+            size_t size = cube->getNumberOfVertices();
+            size_t probe_index = index;
+            size_t counter = 1;
+            size_t basic_counter = 1;
+            int base = 1;
+            int adder = 0;
+
+            //search on index (vertex), starting from current
+            // and then go to vertices of hamming distance 1 (or 2, if 1 is exhausted)
+            while(limit > 0 && probes >= 0){
+                for(auto candidate : vertices[probe_index]){
+                    double cur_dist = metric->dist(queryObject, candidate);
+                    if(cur_dist < *distance){
+                        *distance = cur_dist;
+                        *nearestNeighbor = candidate;
+                    }
+                    if(--limit <= 0)
+                        break;
+                }
+                // algorithm to change probe
+                // works only for hamming distance 1 and 2
+                //!!!WARNING: that means that max_probes must not be greater than (d' * (d'+1))/ 2
+                if((basic_counter*2) > size ){
+                    adder = base;
+                    base *=2;
+                    basic_counter = base;
+                }
+                counter = basic_counter + adder;
+                basic_counter *= 2;
+                //bitset<30> x(counter); cout << x << endl;
+                probe_index = index ^ counter;
+                probes--;
+            }
+
+
+        }
+    }
+
 }
