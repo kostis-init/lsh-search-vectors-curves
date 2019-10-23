@@ -21,5 +21,6 @@ void search_Cube_Projection(Object **nearestNeighbor, double *distance, Object* 
 void DoQueries(LSH *lsh);
 void DoQueries(Cube *cube);
 void DoQueries(Projection* projection);
+void DoQueriesProjCube(Projection* projection);
 
 #endif //ALGORITHMS_PROJECT_SEARCH_H

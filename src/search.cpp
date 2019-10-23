@@ -515,5 +515,42 @@ void search_Cube_Projection(Object **nearestNeighbor, double *distance, Object* 
             }
         }
     }
+}
 
+void DoQueriesProjCube(Projection* projection){
+    int querySize = projection->getQueryData()->getSize();
+    auto queryData = projection->getQueryData()->getData();
+
+    clock_t meanSearchLSH = 0;
+    clock_t meanSearchBF = 0;
+    double maxAF = numeric_limits<double>::min();
+    double averageAF = 0;
+    int averageAFCount = 0;
+    int notFound = 0;
+
+    for (int i = 0; i < querySize; ++i) {
+        Object* queryObject = queryData.at(i);
+        Object* nnPoint;
+        double distanceLSH;
+        double distanceBF;
+        clock_t begin = clock();
+        search_Cube_Projection(&nnPoint, &distanceLSH, queryObject, projection);
+        clock_t end = clock();
+        meanSearchLSH += (end-begin);
+        begin = clock();
+        search_BruteForce(&nnPoint, &distanceBF, projection->getDataset()->getData(), queryObject, new DTW);
+        end = clock();
+        meanSearchBF += (end-begin);
+        double AF;
+        if ((AF = distanceLSH/distanceBF) > maxAF)
+            maxAF = AF;
+        if (distanceLSH > 0) {//compute only if > 0
+            averageAF += distanceLSH/distanceBF;
+            averageAFCount++;
+        } else
+            notFound++;
+        cout << " i : " << i << " AF " << AF << endl;
+    }
+    cout << "meanTimeSearchLSH " << meanSearchLSH/querySize << " meanTimeSearchBF " << meanSearchBF/querySize << " and maxAF = "
+         << maxAF << " and averageAF " << averageAF/averageAFCount << " and not found: " << notFound << endl;
 }

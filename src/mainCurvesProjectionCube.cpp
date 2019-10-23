@@ -5,7 +5,7 @@
 #include "search.h"
 
 //WARNING! bigger size may crash your pc
-#define MAX_LENGTH 4
+#define MAX_LENGTH 5
 
 using namespace std;
 
@@ -35,7 +35,7 @@ int main(int argc, char* argv[]){
 
     cout << "Starting queries..." << endl;
     search_Cube_vs_BruteForce_Projection(projection);
-//    DoQueries(projection);
+    DoQueriesProjCube(projection);
 
     return 0;
 }
