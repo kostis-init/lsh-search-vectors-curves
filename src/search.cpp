@@ -171,7 +171,7 @@ void search_LSH(Object **nearestNeighbor, double *distance, Object *queryObject,
     *distance = numeric_limits<double>::max();
     bool found = false;
     //int threshold = 50 * lsh->getNumOfHashTables();
-    int threshold = 10 * lsh->getNumOfHashTables();
+    int threshold = 20 * lsh->getNumOfHashTables();
     int thresholdCount = 0;
     auto hashers = lsh->getHashTableStruct()->getHashers();
     auto hts = lsh->getHashTableStruct()->getAllHashTables();
@@ -284,7 +284,7 @@ void search_LSH_Projection(Object **nearestNeighbor, double *distance, Object *q
     *nearestNeighbor = nullptr;
     *distance = numeric_limits<double>::max();
     bool found = false;
-    int threshold = 20 * projection->getAnn()->getNumOfHashTables();
+    int threshold = 40 * projection->getAnn()->getNumOfHashTables();
     int thresholdCount = 0;
     for (int i = 0; i < projection->getTraversalsMatrix().size(); ++i) {
         if(fabs(i - (queryCurve->getPoints().size()-1)) > 4){
@@ -296,7 +296,6 @@ void search_LSH_Projection(Object **nearestNeighbor, double *distance, Object *q
 
             auto hashers = lsh->getHashTableStruct()->getHashers();
             auto hts = lsh->getHashTableStruct()->getAllHashTables();
-            thresholdCount = 0;
             for (int k = 0; k < lsh->getNumOfHashTables(); ++k) {
                 if (thresholdCount > threshold)
                     break;
