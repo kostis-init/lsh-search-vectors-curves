@@ -47,20 +47,14 @@ public:
         max_probes = maxProbes;
     }
 
-    //creates random 0/1 mapping for every entry of hash tables
     void createBinaryMaps();
     void createVertices();
-
+    void allocateBinaryMaps();
+    void addToBinaryMap(Object *obj);
+    void allocateVertices();
+    void addToVertices(Object *obj);
     void test_print_binaryMaps();
     void test_print_vertices();
-
-    void allocateBinaryMaps();
-
-    void addToBinaryMap(Object *obj);
-
-    void allocateVertices();
-
-    void addToVertices(Object *obj);
 };
 
 #endif //ALGORITHMS_PROJECT_CUBE_H
