@@ -185,6 +185,7 @@ void search_LSH(Object **nearestNeighbor, double *distance, Object *queryObject,
         size_t hash = (*hashers.at(j))(queryObject);
         if(hts[j].find(hash) == hts[j].end()) //empty bucket
             continue;
+        //cout << "found in table " << j << endl;
         auto points = hts[j].at(hash);
         thresholdCount = 0;
         for(auto candidate : points){

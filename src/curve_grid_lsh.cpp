@@ -24,10 +24,13 @@ LSH *LoadInput(int argc, char* argv[]) {
     cout << lsh->getDataset()->getMean() << endl;
     //TODO:find formula for window and min
     auto dataset = lsh->getDataset();
-    lsh->setHashTableStruct(new CurveHashTableStruct(lsh->getNumOfHashTables(),dataset->getSize(),lsh->getNumOfFunctions(),dataset->getDimension(),0.000002,dataset->getMax(),2));
+    lsh->setHashTableStruct(new CurveHashTableStruct(lsh->getNumOfHashTables(),dataset->getSize(),lsh->getNumOfFunctions(),dataset->getDimension(),0.04,dataset->getMax(),2));
     auto points = lsh->getDataset()->getData();
     for (auto & point : points)
         lsh->getHashTableStruct()->addToAllHashTables(point);
+    auto tables = lsh->getHashTableStruct()->getAllHashTables();
+    for (int i =0; i < lsh->getNumOfHashTables(); i++)
+        cout << "buckets: " << tables[i].bucket_count() << endl;
     lsh->setQueryData(parseQueryFileCurves(lsh->getQueryFilename()));
     return lsh;
 }
