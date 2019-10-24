@@ -53,7 +53,7 @@ int PointHasher::hash(Point* point,int hashIndex) const {
     return modulo(sum, partialHashRange);
 }
 
-int PointHasher::operator()(Object *obj) const {
+int PointHasher::operator()(Object *obj, bool insert) const {
     Point *point = dynamic_cast<Point *>(obj);
     int numPartialHashBits = 32/amplificationSize;
     int res = 0;
