@@ -46,7 +46,7 @@ void CurveHasher::pad(Curve *curve) {
     vector<Point> pointVec (curve->getPoints());
     auto sz = pointVec.size();
     for (int i=0; i < max-sz; i++)
-        pointVec.push_back((*new Point(vector<double> (numDimension,0))));
+        pointVec.push_back((*new Point(vector<double> (numDimension,0xffff))));
     sz = pointVec.size();
     curve->setPoints(pointVec);
 }
