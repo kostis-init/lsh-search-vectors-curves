@@ -133,6 +133,31 @@ add_executable(curve_grid_lsh
         src/Projection.cpp src/Projection.h 
         src/Cube.h src/search.cpp src/search.h src/RelevantTraversals.cpp src/RelevantTraversals.h src/GenericAlgorithm.h src/Cube.cpp)
 
+add_executable(curve_grid_hypercube
+        src/curve_grid_hypercube.cpp
+        src/Curve.cpp
+        src/Curve.h
+        src/curve_hasher.cpp
+        src/Dataset.cpp
+        src/Dataset.h
+        src/distance.h
+        src/distance.cpp
+        src/hasher.h
+        src/HashTableStruct.h
+        src/HashTableStruct.cpp
+        src/Object.h
+        src/Point.cpp
+        src/Point.h
+        src/point_hasher.cpp
+        src/utils.cpp
+        src/utils.h 
+        src/ui.cpp 
+        src/ui.h 
+        src/LSH.h
+        src/parse_files.cpp src/parse_files.h
+        src/Projection.cpp src/Projection.h 
+        src/Cube.h src/search.cpp src/search.h src/RelevantTraversals.cpp src/RelevantTraversals.h src/GenericAlgorithm.h src/Cube.cpp)
+
 add_executable(test_curve_grid_lsh
         src/test_curve_grid_lsh.cpp
         src/curve_grid_lsh.h

@@ -67,6 +67,22 @@ void readArgumentsCubePoints(Cube* cube, int argc, char **argv) {
         cube->setMaxProbes(stoi(parser->getCmdOption("-probes")));
 }   
 
+void readArgumentsCubeCurves(Cube* cube, int argc, char **argv) {
+    auto parser = new InputParser(argc,argv);
+    if (parser->cmdOptionExists("-d"))
+        cube->getLsh()->setInputFilename(parser->getCmdOption("-d"));
+    if (parser->cmdOptionExists("-q"))
+        cube->getLsh()->setQueryFilename(parser->getCmdOption("-q"));
+    if (parser->cmdOptionExists("-o"))
+        cube->getLsh()->setOutputFilename(parser->getCmdOption("-o"));
+    if (parser->cmdOptionExists("-k_hypercube"))
+        cube->setDimension(stoi(parser->getCmdOption("-k")));
+    if (parser->cmdOptionExists("-M"))
+        cube->setMaxChecked(stoi(parser->getCmdOption("-M")));
+    if (parser->cmdOptionExists("-probes"))
+        cube->setMaxProbes(stoi(parser->getCmdOption("-probes")));
+}   
+
 void readArgumentsLSHCurves(LSH* lsh, int argc, char **argv) {
     auto parser = new InputParser(argc,argv);
     if (parser->cmdOptionExists("-d"))
