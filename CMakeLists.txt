@@ -109,7 +109,7 @@ add_executable(lsh
         src/Projection.cpp src/Projection.h src/RelevantTraversals.cpp src/RelevantTraversals.h)
 
 add_executable(curve_grid_lsh
-        src/curve_grid_lsh.cpp
+        src/mainCurvesGridLSH.cpp
         src/Curve.cpp
         src/Curve.h
         src/curve_hasher.cpp
@@ -134,7 +134,7 @@ add_executable(curve_grid_lsh
         src/Cube.h src/search.cpp src/search.h src/RelevantTraversals.cpp src/RelevantTraversals.h src/GenericAlgorithm.h src/Cube.cpp)
 
 add_executable(curve_grid_hypercube
-        src/curve_grid_hypercube.cpp
+        src/mainCurvesGridCube.cpp
         src/Curve.cpp
         src/Curve.h
         src/curve_hasher.cpp

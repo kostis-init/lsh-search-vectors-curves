@@ -76,7 +76,7 @@ void readArgumentsCubeCurves(Cube* cube, int argc, char **argv) {
     if (parser->cmdOptionExists("-o"))
         cube->getLsh()->setOutputFilename(parser->getCmdOption("-o"));
     if (parser->cmdOptionExists("-k_hypercube"))
-        cube->setDimension(stoi(parser->getCmdOption("-k")));
+        cube->setDimension(stoi(parser->getCmdOption("-k_hypercube")));
     if (parser->cmdOptionExists("-M"))
         cube->setMaxChecked(stoi(parser->getCmdOption("-M")));
     if (parser->cmdOptionExists("-probes"))

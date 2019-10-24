@@ -11,6 +11,8 @@
 #include "distance.h"
 #include "search.h"
 
+#define MAX_LEN 50
+
 LSH *LoadInput(int argc, char* argv[]) {
     auto lsh = new LSH(new DTW());
     readArgumentsLSHCurves(lsh, argc, argv);
@@ -20,7 +22,7 @@ LSH *LoadInput(int argc, char* argv[]) {
         lsh->setQueryFilename(askQueryFile());
     if(!lsh->isOutputFileGiven())
         lsh->setOutputFilename(askOutputFile());
-    lsh->setData(parseQueryFileCurves(lsh->getInputFilename()));
+    lsh->setData(parseInputFileCurvesMaxLength(lsh->getInputFilename(),MAX_LEN));
     cout << lsh->getDataset()->getMean() << endl;
     //TODO:find formula for window and min
     auto dataset = lsh->getDataset();
@@ -31,12 +33,13 @@ LSH *LoadInput(int argc, char* argv[]) {
     auto tables = lsh->getHashTableStruct()->getAllHashTables();
     for (int i =0; i < lsh->getNumOfHashTables(); i++)
         cout << "buckets: " << tables[i].bucket_count() << endl;
-    lsh->setQueryData(parseQueryFileCurves(lsh->getQueryFilename()));
+    lsh->setQueryData(parseQueryFileCurvesMaxLength(lsh->getQueryFilename(),MAX_LEN));
     return lsh;
 }
 
 
 int main(int argc, char* argv[]){
     auto lsh = LoadInput(argc,argv);
+    search_LSH_vs_BruteForce(lsh);
     DoQueries(lsh);
 }

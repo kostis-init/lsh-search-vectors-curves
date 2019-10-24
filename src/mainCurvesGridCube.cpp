@@ -7,6 +7,8 @@
 #include "ui.h"
 #include "parse_files.h"
 
+#define MAX_LEN 30
+
 using namespace std;
 
 int main(int argc, char* argv[]){
@@ -19,16 +21,17 @@ int main(int argc, char* argv[]){
         lsh->setQueryFilename(askQueryFile());
     if(!lsh->isOutputFileGiven())
         lsh->setOutputFilename(askOutputFile());
-    lsh->setData(parseInputFileCurves(lsh->getInputFilename()));
+    lsh->setData(parseInputFileCurvesMaxLength(lsh->getInputFilename(), MAX_LEN));
     if(!cube->isDimensionGiven())
         cube->setDimension(log(lsh->getDataset()->getSize())/log(2));
     auto dataset = lsh->getDataset();
     lsh->setHashTableStruct(new CurveHashTableStruct(
         lsh->getNumOfHashTables(),lsh->getNumOfFunctions(),dataset->getDimension(),
         0.000002,dataset->getMax(),2));
-    lsh->setQueryData(parseQueryFileCurves(lsh->getQueryFilename()));
+    lsh->setQueryData(parseQueryFileCurvesMaxLength(lsh->getQueryFilename(), MAX_LEN));
     cube->createBinaryMaps();
     cube->createVertices();
+    search_Cube_vs_BruteForce(cube);
     DoQueries(cube);
     return 0;
 }
