@@ -70,5 +70,5 @@ Run all the following commands in project's root directory.
     * Average AF = distanceProjectionCube/distanceTrue = 3.8
 
 ##### Authors
-* [Kostis Michailidis](https://github.com/kostismich7)
-* [Loukas Litsos](https://github.com/lkslts64)
+* [Kostis Michailidis](https://github.com/kostismich7) (AM: 1115201500098)
+* [Loukas Litsos](https://github.com/lkslts64) (AM: 1115201500082)
